@@ -9,7 +9,7 @@ Her madde `CHECKLIST.md` içinde kontrol satırına sahiptir. Değişiklikte ilg
 - **F-04:** Klavye: 29 Türk harfi alfabetik sırada (`A B C Ç D E F G Ğ H I İ J K L M N O Ö P R S Ş T U Ü V Y Z`), her biri buton.
 - **F-05:** Doğru harf: ilgili tüm yerlerde görünür, tuşa kalın marker tarzı yeşil daire çizilir, tuş devre dışı kalır, doğru sesi çalar.
 - **F-06:** Doğru harf, hata sayısı > 0 ise hatayı 1 azaltır (animasyon bir adım geri).
-- **F-07:** Yanlış harf: tuşa kalın marker tarzı kırmızı çarpı çizilir, tuş devre dışı, hata +1 (animasyon bir adım ileri), yanlış sesi.
+- **F-07:** Yanlış harf: tuşa kalın marker tarzı kırmızı çarpı çizilir (boyu harfin ~%110–120'si; daire ise harfi çevreler), tuş devre dışı, hata +1 (animasyon bir adım ileri), yanlış sesi.
 - **F-08:** 6 hatada oyun kaybedilir; tüm harfler açılınca kazanılır.
 - **F-09:** Kelime tahmini: giriş + "Tahmin Et" butonu, Enter ile de çalışır. Doğruysa doğrudan kazanılır.
 - **F-10:** Yanlış tahmin hata +1 sayılır, kırmızı etiket olarak "Yanlış Tahminler" listesine eklenir; aynı yanlış kelime tekrar sayılmaz. Karşılaştırma `tr-TR` büyük harfle.
@@ -49,7 +49,7 @@ Her madde `CHECKLIST.md` içinde kontrol satırına sahiptir. Değişiklikte ilg
 ## Tema
 - **F-60:** Varsayılan koyu (kara tahta). Tema butonu açık ↔ koyu; tercih `localStorage`'da.
 - **F-61:** Tüm öğeler iki temada okunaklı; geçişler ≈0.3 sn.
-- **F-62:** `config.js → BACKGROUNDS.light / .dark`: boşsa varsayılan doku (kâğıt / kara tahta), dolu ise o temada görsel arka plan (cover). Görsel arka planda bölmeler okunaklılık için daha opak olur.
+- **F-62:** `config.js → BACKGROUNDS.light / .dark`: boşsa varsayılan doku (kâğıt / kara tahta), dolu ise o temada görsel arka plan (cover). Bölmeler görsel arka planda da şeffaf kalır (görseller düz fon: açıkta çok açık gri, koyuda çok koyu gri olacak).
 
 ## Kurallar penceresi
 - **F-70:** "Kurallar" butonu tam ekran perde üzerinde modal açar; yumuşak açılma/kapanma, "Kapat" butonu, Esc ve perdeye tıklama ile kapanır, taşarsa kaydırılır.

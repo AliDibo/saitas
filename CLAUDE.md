@@ -90,7 +90,8 @@ animasyonunu sadece `config.js` düzenleyerek takmasını sağlar. Lottie için 
 - Bölmelerde **başlık yazısı yok** (KLAVYE / HARF SAYISINA GÖRE BÖLME kaldırıldı), animasyon bölmesinde **hata sayısı yazısı yok**.
 - Bölmelerde **tek çerçeve**; arkada ikinci soluk çerçeve istenmiyor.
 - Ses/tema butonları Kurallar/Yeniden Başlat ile **aynı el çizimi buton dilinde**, emoji yok, el çizimi SVG ikon.
-- Arka plan her tema için `config.js → BACKGROUNDS` ile değiştirilebilir; varsayılan doku korunur.
+- Arka plan her tema için `config.js → BACKGROUNDS` ile değiştirilebilir; varsayılan doku korunur. Görsel arka planda bölmeler **karartılmaz/opaklaşmaz** (kullanıcının görselleri düz açık gri / koyu gri fon olacak).
+- Kırmızı çarpı harfin **~%110–120'si** boyunda (büyük olmasın).
 - Git: yerel repo kuruldu; kullanıcı GitHub repo URL'sini verecek (bkz. TODO.md).
 - Ton: samimi, eğlenceli Türkçe.
 

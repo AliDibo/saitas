@@ -2,6 +2,15 @@
 
 En yeni kayıt en üstte. Biçim: tarih – ne değişti – neden – etkilenen dosyalar.
 
+## 2026-10-28 – v1.1.1 Arka plan ve çarpı boyutu
+**Ne:**
+- Özel arka plan görseli varken bölmelerin opaklaşması kaldırıldı; bölmeler her durumda şeffaf.
+- Kırmızı çarpı küçültüldü (harfin ~%110–120'si), çizgi kalınlığı orana göre biraz inceltildi.
+
+**Neden:** Kullanıcı geri bildirimi (arka plan görselleri düz fon olacak; çarpı çok büyüktü).
+
+**Dosyalar:** `public/css/style.css`, `public/js/game.js`, `SPEC.md`, `CLAUDE.md`, `CHECKLIST.md`.
+
 ## 2026-10-28 – v1.1.0 Görsel düzeltmeler
 **Ne:**
 - Animasyon bölmesindeki "Hata: n / 6" yazısı kaldırıldı (ekran okuyucu için gizli metin kaldı).

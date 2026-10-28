@@ -159,8 +159,9 @@
       ink.setAttribute('filter', 'url(#mk-rough)');
       ink.append(
         svgPath('M66 12 C 40 2, 10 16, 6 46 C 2 76, 24 98, 52 97 C 84 96, 101 72, 97 44 C 94 20, 74 4, 46 8 C 34 10, 24 15, 18 22', 'mk-circle'),
-        svgPath('M14 12 C 34 34, 60 60, 90 92', 'mk-x'),
-        svgPath('M90 10 C 70 30, 44 58, 10 94', 'mk-x mk-x2')
+        // Çarpı harf boyunun ~%115'i kadar (dairenin aksine harfin üstünde durur)
+        svgPath('M29 27 C 39 38, 52 54, 72 75', 'mk-x'),
+        svgPath('M72 26 C 60 38, 47 54, 28 76', 'mk-x mk-x2')
       );
       mark.appendChild(ink);
 

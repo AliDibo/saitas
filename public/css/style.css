@@ -112,10 +112,6 @@ body {
   background-position: center;
   background-repeat: no-repeat;
 }
-/* Görsel arka planda bölmeler biraz daha opak olsun ki yazılar okunsun */
-:root[data-bg-light]:not([data-theme="dark"]) { --panel-bg: rgba(247, 246, 242, 0.82); }
-:root[data-bg-dark][data-theme="dark"] { --panel-bg: rgba(38, 53, 47, 0.82); }
-
 button, input { font: inherit; color: inherit; }
 button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 img { max-width: 100%; }
@@ -392,7 +388,7 @@ img { max-width: 100%; }
   stroke-dashoffset: 1;
   transition: stroke-dashoffset 0.38s cubic-bezier(.5, .1, .4, 1);
 }
-.key-mark .mk-x { stroke-width: 9.5; }
+.key-mark .mk-x { stroke-width: 8; }
 .key-mark .mk-circle { stroke: var(--green); }
 .key-mark .mk-x { stroke: var(--red); }
 .key-mark .mk-x2 { transition-delay: 0.15s; }

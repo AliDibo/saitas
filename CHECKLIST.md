@@ -22,7 +22,7 @@ Durum: ✅ test edildi · ⬜ henüz test edilmedi (gerçek cihaz / ses dosyası
 - [x] F-04 29 harf alfabetik
 - [x] F-05 Doğru harf: kalın marker yeşil daire, tüm yerlerde açılıyor, tuş devre dışı
 - [x] F-06 Doğru harf hatayı 1 azaltıyor (2 yanlış + 1 doğru = 1 hata)
-- [x] F-07 Yanlış harf: kalın marker kırmızı çarpı, hata +1
+- [x] F-07 Yanlış harf: kalın marker kırmızı çarpı (harfin ~%115'i), hata +1
 - [x] F-08 6 hatada kayıp, tüm harfler açılınca kazanç
 - [x] F-09 Tahmin Et butonu + Enter, doğru kelime = kazanç
 - [x] F-10 Yanlış tahmin +1 hata, kırmızı etiket, tekrar sayılmıyor
@@ -45,7 +45,7 @@ Durum: ✅ test edildi · ⬜ henüz test edilmedi (gerçek cihaz / ses dosyası
 - [x] F-55 Ses butonu temanın tersi, sessizde soluk
 - [x] F-56 Dosya yokken sentez sesler
 - [x] F-60/61 Tema geçişi ve kaydı, iki temada okunaklılık
-- [x] F-62 Özel arka plan (koyu temada test görseliyle denendi, bölmeler okunaklı)
+- [x] F-62 Özel arka plan (koyu temada test görseliyle denendi, bölmeler şeffaf kalıyor)
 - [ ] F-62 Açık temada özel arka plan (kullanıcı görseli gelince)
 - [x] F-70/71 Kurallar penceresi, Esc ile kapanma, markdown
 - [x] F-80/81/82/83 Mobil düzenler
