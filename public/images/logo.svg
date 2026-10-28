@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 120" width="1920" height="120">
+  <!-- YER TUTUCU LOGO – kendi logonla değiştir (önerilen 1920×120, şeffaf PNG/SVG) -->
+  <defs>
+    <filter id="r"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="5"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter>
+  </defs>
+  <g filter="url(#r)" font-family="'Comic Sans MS','Chalkboard SE','Segoe Print',cursive" font-weight="700" text-anchor="middle">
+    <text x="963" y="88" font-size="84" fill="#1d1d1d" letter-spacing="10">ADAM ASMACA</text>
+    <text x="960" y="84" font-size="84" fill="#ffb547" stroke="#1d1d1d" stroke-width="4" paint-order="stroke" letter-spacing="10">ADAM ASMACA</text>
+    <path d="M700 104 C 860 98, 1060 110, 1220 101" fill="none" stroke="#5daeff" stroke-width="7" stroke-linecap="round"/>
+  </g>
+</svg>

@@ -1,0 +1,66 @@
+# ==========================================================================
+# Adam Asmaca – Apache / cPanel güvenlik ve MIME ayarları
+# ==========================================================================
+
+# Dizin listeleme kapalı, sembolik link takibi sınırlı
+Options -Indexes
+DirectoryIndex index.html
+
+# --- Gizli / hassas dosyalara erişim yasak --------------------------------
+# Nokta ile başlayan dosyalar (.git, .env, .htaccess …) ve dokümanlar
+<FilesMatch "(^\.|\.(?i:md|yml|yaml|json|lock|log|bak|sql|sh|ini|env|git)$)">
+  Require all denied
+</FilesMatch>
+RedirectMatch 404 /\.git
+
+# --- Doğru MIME tipleri (fetch içerik tipini kontrol ediyor) --------------
+AddDefaultCharset utf-8
+AddType "text/plain; charset=utf-8" .txt
+AddType "text/css; charset=utf-8" .css
+AddType "application/javascript; charset=utf-8" .js
+AddType image/svg+xml .svg
+AddType audio/mpeg .mp3
+AddType audio/ogg .ogg
+AddType video/mp4 .mp4
+AddType video/webm .webm
+
+# --- Güvenlik başlıkları ---------------------------------------------------
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "DENY"
+  Header always set Referrer-Policy "no-referrer"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
+  Header always set Cross-Origin-Opener-Policy "same-origin"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+  Header unset X-Powered-By
+  # HTTPS aktifse HSTS'i açmak için alttaki satırın başındaki # işaretini kaldır
+  # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+  # words.txt / kural.txt her zaman güncel okunsun
+  <FilesMatch "\.txt$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
+
+# --- Sadece GET / HEAD (statik site) ---------------------------------------
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{REQUEST_METHOD} !^(GET|HEAD)$ [NC]
+  RewriteRule .* - [F,L]
+
+  # HTTPS'e yönlendirme (SSL sertifikası aktifse # işaretlerini kaldır)
+  # RewriteCond %{HTTPS} off
+  # RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# --- Sıkıştırma ve önbellek --------------------------------------------------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript image/svg+xml
+</IfModule>
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/png "access plus 7 days"
+  ExpiresByType image/gif "access plus 7 days"
+  ExpiresByType image/svg+xml "access plus 7 days"
+  ExpiresByType audio/mpeg "access plus 7 days"
+</IfModule>

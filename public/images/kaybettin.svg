@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <!-- YER TUTUCU KAYBETME ANİMASYONU – kendi GIF'inle değiştir (önerilen 800×600) -->
+  <style>
+    .ink { fill: none; stroke: #1d1d1d; stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; }
+    .fig { animation: sway 2.6s ease-in-out infinite; transform-origin: 400px 150px; }
+    .drop { animation: rain 1.1s linear infinite; stroke: #5daeff; stroke-width: 5; stroke-linecap: round; }
+    .drop:nth-of-type(2n) { animation-delay: -0.4s; }
+    .drop:nth-of-type(3n) { animation-delay: -0.8s; }
+    .cloud { animation: drift 4s ease-in-out infinite alternate; }
+    @keyframes sway { 0%,100% { transform: rotate(4deg) } 50% { transform: rotate(-4deg) } }
+    @keyframes rain { from { transform: translateY(0); opacity: 1 } to { transform: translateY(160px); opacity: 0 } }
+    @keyframes drift { from { transform: translateX(-12px) } to { transform: translateX(12px) } }
+  </style>
+  <rect width="800" height="600" rx="24" fill="#f7f6f2"/>
+  <g class="cloud">
+    <path class="ink" fill="#c9ccd1" d="M560 120 C 530 120, 520 90, 545 78 C 540 50, 575 38, 595 55 C 610 30, 655 35, 655 65 C 685 62, 695 100, 670 112 C 670 125, 640 128, 625 120 Z"/>
+    <path class="drop" d="M570 140 l-4 18"/><path class="drop" d="M600 145 l-4 18"/>
+    <path class="drop" d="M630 140 l-4 18"/><path class="drop" d="M655 148 l-4 18"/>
+  </g>
+  <text x="250" y="110" text-anchor="middle" font-family="'Comic Sans MS','Chalkboard SE',cursive" font-weight="700" font-size="72" fill="#ff8585" stroke="#1d1d1d" stroke-width="5" paint-order="stroke">KAYBETTİN</text>
+  <path class="ink" d="M60 540 C 260 532, 540 546, 740 536"/>
+  <path class="ink" d="M200 540 C 198 400, 202 260, 200 150"/>
+  <path class="ink" d="M188 152 C 260 148, 340 154, 420 150"/>
+  <path class="ink" d="M200 200 L 250 152"/>
+  <g class="fig">
+    <path class="ink" d="M400 150 L 400 190"/>
+    <circle class="ink" cx="400" cy="222" r="32"/>
+    <path class="ink" d="M386 210 l10 10 M396 210 l-10 10 M404 210 l10 10 M414 210 l-10 10"/>
+    <path class="ink" d="M386 240 q 14 -10 28 0"/>
+    <path class="ink" d="M400 254 L 400 360 M400 280 L 365 330 M400 280 L 435 330 M400 360 L 372 420 M400 360 L 428 420"/>
+  </g>
+</svg>

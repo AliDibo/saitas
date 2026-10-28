@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <!-- YER TUTUCU KAZANMA ANİMASYONU – kendi GIF'inle değiştir (önerilen 800×600) -->
+  <style>
+    .ink { fill: none; stroke: #1d1d1d; stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; }
+    .jump { animation: jump 0.9s ease-in-out infinite; transform-origin: 400px 470px; }
+    .armL { animation: wave 0.45s ease-in-out infinite alternate; transform-origin: 400px 290px; }
+    .armR { animation: wave 0.45s ease-in-out infinite alternate-reverse; transform-origin: 400px 290px; }
+    .c { animation: fall 2.4s linear infinite; }
+    .c:nth-of-type(2n) { animation-duration: 3s; animation-delay: -1s; }
+    .c:nth-of-type(3n) { animation-duration: 2.1s; animation-delay: -0.5s; }
+    .title { animation: pulse 1.2s ease-in-out infinite; transform-origin: 400px 100px; }
+    @keyframes jump { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-40px) } }
+    @keyframes wave { from { transform: rotate(-12deg) } to { transform: rotate(12deg) } }
+    @keyframes fall { from { transform: translateY(-120px) rotate(0) } to { transform: translateY(640px) rotate(360deg) } }
+    @keyframes pulse { 0%,100% { transform: scale(1) } 50% { transform: scale(1.06) } }
+  </style>
+  <rect width="800" height="600" rx="24" fill="#f7f6f2"/>
+  <g>
+    <rect class="c" x="80" y="0" width="16" height="10" fill="#ffb547"/>
+    <rect class="c" x="180" y="40" width="12" height="12" fill="#5daeff"/>
+    <rect class="c" x="290" y="-30" width="16" height="9" fill="#1d8a4e"/>
+    <rect class="c" x="520" y="10" width="14" height="14" fill="#d5323e"/>
+    <rect class="c" x="620" y="-50" width="16" height="10" fill="#ffb547"/>
+    <rect class="c" x="720" y="30" width="12" height="12" fill="#5daeff"/>
+    <rect class="c" x="440" y="-80" width="10" height="16" fill="#1d8a4e"/>
+    <rect class="c" x="140" y="-90" width="14" height="10" fill="#d5323e"/>
+  </g>
+  <text class="title" x="400" y="120" text-anchor="middle" font-family="'Comic Sans MS','Chalkboard SE',cursive" font-weight="700" font-size="84" fill="#86e7a8" stroke="#1d1d1d" stroke-width="5" paint-order="stroke">KAZANDIN!</text>
+  <path class="ink" d="M60 520 C 260 512, 540 526, 740 516"/>
+  <g class="jump">
+    <circle class="ink" cx="400" cy="230" r="38"/>
+    <path class="ink" d="M384 222 l0 4 M416 222 l0 4"/>
+    <path class="ink" d="M380 244 q 20 18 40 0"/>
+    <path class="ink" d="M400 268 C 402 320, 398 370, 400 410"/>
+    <path class="ink armL" d="M400 290 L 340 230"/>
+    <path class="ink armR" d="M400 290 L 460 230"/>
+    <path class="ink" d="M400 410 L 360 470 M400 410 L 440 470"/>
+  </g>
+</svg>

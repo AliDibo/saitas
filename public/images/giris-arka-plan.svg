@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080" preserveAspectRatio="xMidYMid slice">
+  <!-- YER TUTUCU GİRİŞ ARKA PLANI – kendi görsel/GIF'inle değiştir (önerilen 1920×1080) -->
+  <defs>
+    <filter id="paper"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .08 0"/></filter>
+    <filter id="r"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="6"/></filter>
+    <radialGradient id="g" cx="30%" cy="25%" r="80%"><stop offset="0" stop-color="#f7f6f2"/><stop offset="1" stop-color="#dcdad3"/></radialGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#g)"/>
+  <rect width="1920" height="1080" filter="url(#paper)"/>
+  <g filter="url(#r)" fill="none" stroke="#1d1d1d" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M0 860 C 400 850, 800 868, 1200 855 S 1700 850, 1920 862"/>
+    <path d="M520 860 C 516 700, 524 450, 518 240"/>
+    <path d="M500 244 C 650 238, 800 246, 940 240"/>
+    <path d="M520 330 L 610 245"/>
+    <path d="M880 242 C 884 270, 876 300, 880 330"/>
+    <path d="M880 330 C 915 330, 935 355, 932 385 C 929 418, 905 440, 877 438 C 848 436, 828 412, 830 382 C 832 352, 852 330, 885 334"/>
+    <path d="M880 438 C 884 500, 876 560, 880 620"/>
+    <path d="M880 480 L 820 550 M880 480 L 940 550 M880 620 L 830 710 M880 620 L 930 710"/>
+    <path d="M1300 860 C 1296 780, 1304 700, 1296 620 M1360 860 C 1364 780, 1356 700, 1364 620"/>
+    <path d="M1296 620 C 1230 625, 1210 580, 1235 545 C 1190 520, 1205 460, 1250 455 C 1240 400, 1290 370, 1330 390 C 1350 350, 1420 355, 1428 400 C 1475 400, 1490 455, 1460 480 C 1495 515, 1470 575, 1425 572 C 1430 610, 1390 630, 1364 620"/>
+    <path d="M300 860 l-8 -26 M700 860 l10 -22 l10 24 M1600 860 l8 -24 l10 26"/>
+  </g>
+</svg>

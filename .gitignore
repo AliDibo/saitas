@@ -1,0 +1,14 @@
+# İşletim sistemi / editör
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+.vscode/
+
+# Gizli bilgiler asla repoya girmesin
+.env
+*.key
+*.pem
+
+# Claude yerel ayarları
+.claude/settings.local.json

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="tr" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- Güvenlik: sadece kendi dosyalarımız + Google Fonts. Satır içi script yok.
+       (frame-ancestors meta'da çalışmaz; .htaccess başlığında tanımlı) -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="description" content="Türkçe Adam Asmaca – kalemle çizilmiş, eğlenceli kelime tahmin oyunu.">
+  <meta name="theme-color" content="#25352f">
+  <title>Adam Asmaca</title>
+  <link rel="icon" href="images/giris-buton.svg" type="image/svg+xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Patrick+Hand&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Tema, sayfa çizilmeden önce uygulanır (göz kırpmayı önler) -->
+  <script src="js/theme-init.js"></script>
+  <script src="js/config.js" defer></script>
+  <script src="js/util.js" defer></script>
+  <script src="js/audio.js" defer></script>
+  <script src="js/hangman.js" defer></script>
+  <script src="js/game.js" defer></script>
+</head>
+<body>
+  <!-- ================= ÜST BANNER ================= -->
+  <header class="banner" id="banner">
+    <img class="banner-logo" id="logo" alt="Adam Asmaca logosu">
+  </header>
+
+  <!-- Sağ üst: ses + tema -->
+  <div class="top-controls" id="top-controls">
+    <button type="button" class="round-btn sound-btn" id="btn-sound" aria-label="Ses modu">
+      <span class="round-btn-icon" id="sound-icon" aria-hidden="true">🔊</span>
+    </button>
+    <button type="button" class="round-btn theme-btn" id="btn-theme" aria-label="Temayı değiştir">
+      <svg class="round-btn-icon theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.5"/>
+        <path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.2 5.2l1.8 1.8M17 17l1.8 1.8M5.2 18.8 7 17M17 7l1.8-1.8"/>
+      </svg>
+      <svg class="round-btn-icon theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- ================= OYUN ================= -->
+  <main class="game" id="game" aria-label="Adam asmaca oyunu">
+    <section class="panel panel-anim" aria-label="Adam asmaca animasyonu">
+      <div class="hangman" id="hangman"></div>
+      <p class="error-count" id="error-count" aria-live="polite">Hata: 0 / 6</p>
+    </section>
+
+    <div class="right-col">
+      <section class="panel panel-keys" aria-labelledby="keys-title">
+        <h2 class="panel-title" id="keys-title">KLAVYE</h2>
+        <div class="keyboard" id="keyboard" role="group" aria-label="Harf klavyesi"></div>
+      </section>
+
+      <section class="panel panel-word" aria-labelledby="word-title">
+        <h2 class="panel-title" id="word-title">HARF SAYISINA GÖRE BÖLME</h2>
+        <div class="word" id="word" aria-label="Gizli kelime"></div>
+
+        <form class="guess" id="guess-form" autocomplete="off" novalidate>
+          <label class="sr-only" for="guess-input">Kelime tahmini</label>
+          <input class="guess-input" id="guess-input" type="text" inputmode="text"
+                 maxlength="10" spellcheck="false" autocapitalize="characters" autocorrect="off"
+                 placeholder="Kelimeyi tahmin et…">
+          <button type="submit" class="sketch-btn guess-btn" id="guess-btn">Tahmin Et</button>
+        </form>
+        <p class="guess-hint" id="guess-hint" aria-live="polite"></p>
+
+        <div class="wrong-guesses">
+          <h3 class="wrong-title">Yanlış Tahminler</h3>
+          <ul class="wrong-list" id="wrong-list" aria-live="polite"></ul>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Sabit alt butonlar -->
+  <button type="button" class="sketch-btn corner-btn corner-left" id="btn-rules">Kurallar</button>
+  <button type="button" class="sketch-btn corner-btn corner-right" id="btn-restart">Yeniden Başlat</button>
+
+  <!-- Uyarı balonu -->
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden>
+    <span class="toast-text" id="toast-text"></span>
+    <button type="button" class="toast-close" id="toast-close" aria-label="Uyarıyı kapat">✕</button>
+  </div>
+
+  <!-- ================= GİRİŞ EKRANI ================= -->
+  <div class="intro" id="intro">
+    <img class="intro-bg" id="intro-bg" alt="" aria-hidden="true">
+    <div class="intro-shade"></div>
+    <div class="intro-center">
+      <button type="button" class="intro-btn" id="intro-btn" aria-label="Oyunu başlat">
+        <img class="intro-btn-img" id="intro-btn-img" alt="">
+      </button>
+      <span class="intro-label" aria-hidden="true">AS</span>
+    </div>
+  </div>
+
+  <!-- ================= SONUÇ EKRANI ================= -->
+  <div class="result" id="result" role="dialog" aria-modal="true" aria-labelledby="result-word" hidden>
+    <div class="result-inner">
+      <img class="result-gif" id="result-gif" alt="">
+      <p class="result-word" id="result-word"></p>
+      <button type="button" class="sketch-btn result-btn" id="result-restart">Yeniden Başlat</button>
+    </div>
+  </div>
+
+  <!-- ================= KURALLAR ================= -->
+  <div class="modal" id="rules-modal" role="dialog" aria-modal="true" aria-labelledby="rules-title" hidden>
+    <div class="modal-card">
+      <h2 class="modal-title" id="rules-title">Kurallar</h2>
+      <div class="rules-content" id="rules-content">Yükleniyor…</div>
+      <button type="button" class="sketch-btn modal-close" id="rules-close">Kapat</button>
+    </div>
+  </div>
+
+  <noscript><p class="noscript">Bu oyun için JavaScript'in açık olması gerekir.</p></noscript>
+</body>
+</html>

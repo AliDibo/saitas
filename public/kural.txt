@@ -1,0 +1,16 @@
+# 🎯 Amaç
+Gizli kelimeyi, adam tamamen asılmadan bul! Kelime **5 ile 10 harf** arasındadır ve her harfi için bir çizgi görürsün.
+
+# ⌨️ Harf Tahmini
+Klavyeden bir harfe bas (bilgisayarda kendi klavyeni de kullanabilirsin).
+- Harf kelimede varsa ✅ **yeşil daire** çizilir, harf yerine yerleşir.
+- Harf kelimede yoksa ❌ **kırmızı çarpı** çizilir ve adam bir adım daha asılır.
+
+# 💚 İkinci Şans
+Her doğru harf, eğer hatan varsa **bir hatanı siler**; çizim bir adım geri gider. Yani doğru tahminlerle adamı kurtarabilirsin!
+
+# 🧠 Kelime Tahmini
+Kelimeyi bildiğini düşünüyorsan alttaki kutuya yaz ve **Tahmin Et**'e bas (ya da Enter). Doğruysa anında kazanırsın 🎉. Yanlışsa bir hata sayılır ve kelime *Yanlış Tahminler* listesine eklenir; aynı kelimeyi tekrar denemek sayılmaz.
+
+# 💀 Kazanma ve Kaybetme
+Tüm harfleri açarsan **kazanırsın**. **6 hata** yaparsan oyun biter. İstediğin an **Yeniden Başlat** ile yeni kelimeye geçebilirsin. Bol şans! 🍀
