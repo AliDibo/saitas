@@ -21,6 +21,7 @@ karakter ve boşluk kullanma, küçük harf kullan.
 
 | Dosya (config anahtarı) | Önerilen boyut / biçim | Şu an |
 |---|---|---|
+| `BACKGROUNDS.light` / `.dark` | 1920×1080 JPG/PNG/WebP (boş = varsayılan kâğıt / kara tahta) | boş |
 | `IMAGES.logo` | 1920×120, şeffaf PNG veya SVG | yer tutucu `logo.svg` |
 | `IMAGES.introBg` | 1920×1080, JPG / GIF | yer tutucu `giris-arka-plan.svg` |
 | `IMAGES.introButton` | 512×512, kare PNG | yer tutucu `giris-buton.svg` |

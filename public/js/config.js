@@ -17,6 +17,15 @@ window.AA_CONFIG = Object.freeze({
     loseGif:     'images/kaybettin.svg'        // Kaybetme GIF'i (önerilen 800×600)
   }),
 
+  /* === Sayfa arka planı =================================================
+     Boş ('') bırakılırsa varsayılan kullanılır: açıkta kâğıt, koyuda kara tahta.
+     Kendi görselini kullanmak için images/ klasörüne koy ve adını yaz,
+     ör. light: 'images/arka-plan-acik.jpg' (önerilen 1920×1080, ekranı kaplar). */
+  BACKGROUNDS: Object.freeze({
+    light: '',
+    dark:  ''
+  }),
+
   /* === Sesler ===========================================================
      Dosya yoksa oyun otomatik olarak sentezlenmiş yer tutucu ses çalar. */
   SOUNDS: Object.freeze({

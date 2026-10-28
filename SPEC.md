@@ -7,9 +7,9 @@ Her madde `CHECKLIST.md` içinde kontrol satırına sahiptir. Değişiklikte ilg
 - **F-02:** `words.txt` okunurken boşluklar temizlenir, boş satırlar atılır, `tr-TR` büyük harfe çevrilir, 5–10 dışı ve Türk alfabesi dışı karakter içerenler elenir.
 - **F-03:** Kelimenin her harfi için el çizimi alt çizgi (kelime yeri) gösterilir.
 - **F-04:** Klavye: 29 Türk harfi alfabetik sırada (`A B C Ç D E F G Ğ H I İ J K L M N O Ö P R S Ş T U Ü V Y Z`), her biri buton.
-- **F-05:** Doğru harf: ilgili tüm yerlerde görünür, tuşa yeşil daire çizilir, tuş devre dışı kalır, doğru sesi çalar.
+- **F-05:** Doğru harf: ilgili tüm yerlerde görünür, tuşa kalın marker tarzı yeşil daire çizilir, tuş devre dışı kalır, doğru sesi çalar.
 - **F-06:** Doğru harf, hata sayısı > 0 ise hatayı 1 azaltır (animasyon bir adım geri).
-- **F-07:** Yanlış harf: tuşa kırmızı çarpı çizilir, tuş devre dışı, hata +1 (animasyon bir adım ileri), yanlış sesi.
+- **F-07:** Yanlış harf: tuşa kalın marker tarzı kırmızı çarpı çizilir, tuş devre dışı, hata +1 (animasyon bir adım ileri), yanlış sesi.
 - **F-08:** 6 hatada oyun kaybedilir; tüm harfler açılınca kazanılır.
 - **F-09:** Kelime tahmini: giriş + "Tahmin Et" butonu, Enter ile de çalışır. Doğruysa doğrudan kazanılır.
 - **F-10:** Yanlış tahmin hata +1 sayılır, kırmızı etiket olarak "Yanlış Tahminler" listesine eklenir; aynı yanlış kelime tekrar sayılmaz. Karşılaştırma `tr-TR` büyük harfle.
@@ -21,18 +21,19 @@ Her madde `CHECKLIST.md` içinde kontrol satırına sahiptir. Değişiklikte ilg
 - **F-20:** Animasyon hata sayısına (0–6) bağlı; 0 = başlangıç, 6 = kayıp.
 - **F-21:** Hata artınca ileri, azalınca geri oynar; geçişler yumuşak.
 - **F-22:** `config.js → HANGMAN.mode`: `svg` (yer tutucu), `frames` (7 görsel), `video` (scrub). Kullanıcı dosyayı `images/`'e koyup adı config'de değiştirerek animasyonu değiştirir.
-- **F-23:** Animasyon alanı solda büyük dikey bölmede, üstünde başlık yok.
+- **F-23:** Animasyon alanı solda büyük dikey bölmede; üstünde başlık, içinde hata sayısı yazısı yok (hata sayısı sadece ekran okuyucuya duyurulur).
 
 ## Ekran düzeni
 - **F-30:** Üst banner: `10vh`, tam genişlik, sadece üst kenarlık, ortada sığdırılmış logo (`config.js → IMAGES.logo`).
-- **F-31:** Ana alan iki sütun: sol animasyon; sağ üst "KLAVYE" (tuşlar yatay ortalı, flex-wrap); sağ alt "HARF SAYISINA GÖRE BÖLME" (kelime yerleri + tahmin + yanlış tahminler).
-- **F-32:** Sağ üst sabit: ses ve tema butonları yan yana, banner'ın dikey ortasında; hover büyümesi hizayı bozmaz.
+- **F-31:** Ana alan iki sütun: sol animasyon; sağ üst klavye bölmesi (tuşlar yatay ortalı, flex-wrap); sağ alt kelime bölmesi (kelime yerleri + tahmin + yanlış tahminler). Bölmelerde başlık yazısı yok (kullanıcı isteği, 2026-10-28).
+- **F-32:** Sağ üst sabit: ses ve tema butonları yan yana, banner'ın dikey ortasında; Kurallar/Yeniden Başlat ile aynı el çizimi buton dili (kalın titrek kenar, parıltı gölgesi, el çizimi SVG ikonlar); hover büyümesi hizayı bozmaz.
+- **F-34:** Bölmelerde tek el çizimi çerçeve var, arkasında ikinci soluk çerçeve yok.
 - **F-33:** Sol alt "Kurallar", sağ alt "Yeniden Başlat": eşit boyut/font, aynı yatay çizgi, kenarlardan eşit uzaklık, içerikle çakışmaz.
 
 ## Ekranlar ve akış
 - **F-40:** Giriş ekranı: tam ekran arka plan (cover) + hafif karartma; ortada beyaz yuvarlak buton, içinde %60 opak görsel, butonun altında "AS" yazısı.
 - **F-41:** Giriş butonuna basınca giriş ekranı kapanır, oyun açılır, müzik başlar.
-- **F-42:** Sonuç ekranı: koyu perde, ortada GIF (kazanma/kaybetme), altında kelime (kazanınca yeşil, kaybedince kırmızı), altında "Yeniden Başlat".
+- **F-42:** Sonuç ekranı: koyu perde, ortada GIF (kazanma/kaybetme), altında kelime (kazanınca yeşil, kaybedince kırmızı; orta boy, İ/Ö/Ü noktaları GIF'e binmez), altında "Yeniden Başlat".
 - **F-43:** Sonuç ekranı fade-in; görsel hafif büyüyerek, kelime ve buton sırayla aşağıdan yukarı belirir.
 - **F-44:** Sonuç ekranında müzik durur, kazanma/kaybetme sesi çalar; sabit butonlar ve oyun gizli/etkisiz.
 
@@ -48,6 +49,7 @@ Her madde `CHECKLIST.md` içinde kontrol satırına sahiptir. Değişiklikte ilg
 ## Tema
 - **F-60:** Varsayılan koyu (kara tahta). Tema butonu açık ↔ koyu; tercih `localStorage`'da.
 - **F-61:** Tüm öğeler iki temada okunaklı; geçişler ≈0.3 sn.
+- **F-62:** `config.js → BACKGROUNDS.light / .dark`: boşsa varsayılan doku (kâğıt / kara tahta), dolu ise o temada görsel arka plan (cover). Görsel arka planda bölmeler okunaklılık için daha opak olur.
 
 ## Kurallar penceresi
 - **F-70:** "Kurallar" butonu tam ekran perde üzerinde modal açar; yumuşak açılma/kapanma, "Kapat" butonu, Esc ve perdeye tıklama ile kapanır, taşarsa kaydırılır.

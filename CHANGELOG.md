@@ -2,6 +2,20 @@
 
 En yeni kayıt en üstte. Biçim: tarih – ne değişti – neden – etkilenen dosyalar.
 
+## 2026-10-28 – v1.1.0 Görsel düzeltmeler
+**Ne:**
+- Animasyon bölmesindeki "Hata: n / 6" yazısı kaldırıldı (ekran okuyucu için gizli metin kaldı).
+- "KLAVYE" ve "HARF SAYISINA GÖRE BÖLME" başlıkları kaldırıldı.
+- Bölmelerin arkasındaki soluk ikinci çerçeve kaldırıldı.
+- Ses ve tema butonları Kurallar/Yeniden Başlat tarzında el çizimi buton oldu; emoji yerine el çizimi SVG ikonlar.
+- Sonuç ekranındaki kelime küçültüldü, satır aralığı artırıldı (İ/Ö/Ü noktaları GIF'e binmiyor).
+- Doğru/yanlış işaretleri kalın, titrek, hafif taşkın marker darbesi oldu.
+- Yeni: `config.js → BACKGROUNDS` ile açık ve koyu tema arka planı ayrı ayrı değiştirilebilir.
+
+**Neden:** Kullanıcı geri bildirimi.
+
+**Dosyalar:** `public/index.html`, `public/css/style.css`, `public/js/game.js`, `public/js/config.js`, `SPEC.md`, `CLAUDE.md`, `CHECKLIST.md`, `README.md`.
+
 ## 2026-10-28 – v1.0.0 İlk sürüm
 **Ne:** Türkçe Adam Asmaca oyunu sıfırdan kuruldu.
 - Kara tahta (koyu, varsayılan) ve buruşuk kâğıt (açık) temaları, kalemle çizilmiş görünüm.

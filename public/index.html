@@ -27,6 +27,18 @@
   <script src="js/game.js" defer></script>
 </head>
 <body>
+  <!-- Ortak kalem / marker titreme filtreleri (klavye işaretleri ve ikonlar kullanır) -->
+  <svg class="svg-defs" aria-hidden="true" focusable="false">
+    <filter id="mk-rough" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="8"/>
+      <feDisplacementMap in="SourceGraphic" scale="8"/>
+    </filter>
+    <filter id="ic-rough" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.25" numOctaves="2" seed="4"/>
+      <feDisplacementMap in="SourceGraphic" scale="1.1"/>
+    </filter>
+  </svg>
+
   <!-- ================= ÜST BANNER ================= -->
   <header class="banner" id="banner">
     <img class="banner-logo" id="logo" alt="Adam Asmaca logosu">
@@ -34,16 +46,28 @@
 
   <!-- Sağ üst: ses + tema -->
   <div class="top-controls" id="top-controls">
-    <button type="button" class="round-btn sound-btn" id="btn-sound" aria-label="Ses modu">
-      <span class="round-btn-icon" id="sound-icon" aria-hidden="true">🔊</span>
+    <!-- Ses modu: data-mode = all | fx | mute → CSS ilgili ikonu gösterir -->
+    <button type="button" class="round-btn sound-btn" id="btn-sound" data-mode="all" aria-label="Ses modu">
+      <svg class="round-btn-icon icon-all" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3.5 9.3h3.8l4.6-4v13.4l-4.6-4H3.5z"/>
+        <path d="M15.3 9.2c1.3 1.6 1.3 4 0 5.6M18 6.6c2.6 3 2.6 7.8 0 10.8"/>
+      </svg>
+      <svg class="round-btn-icon icon-fx" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6 16.6V11a6 6 0 0 1 12-.1v5.7l1.6 1.6H4.4z"/>
+        <path d="M10 20.6c.6 1.2 3.4 1.2 4 0M12 3.2v1.6"/>
+      </svg>
+      <svg class="round-btn-icon icon-mute" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3.5 9.3h3.8l4.6-4v13.4l-4.6-4H3.5z"/>
+        <path d="M15.6 9.4l5 5.2M20.6 9.3l-5 5.3"/>
+      </svg>
     </button>
     <button type="button" class="round-btn theme-btn" id="btn-theme" aria-label="Temayı değiştir">
-      <svg class="round-btn-icon theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true">
-        <circle cx="12" cy="12" r="4.5"/>
-        <path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.2 5.2l1.8 1.8M17 17l1.8 1.8M5.2 18.8 7 17M17 7l1.8-1.8"/>
+      <svg class="round-btn-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 7.6c2.6-.1 4.5 2 4.4 4.5-.1 2.5-2.1 4.4-4.5 4.3-2.5-.1-4.3-2.1-4.2-4.5.1-2.4 2-4.2 4.6-4.1"/>
+        <path d="M12 2.4v2.4M12.1 19.2v2.4M2.4 12h2.4M19.2 12.1h2.4M5.2 5.3l1.7 1.7M17.1 17l1.7 1.8M5.2 18.8 7 17.1M17 7l1.8-1.8"/>
       </svg>
-      <svg class="round-btn-icon theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/>
+      <svg class="round-btn-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M19.8 14.6c-4.9 1.9-10.4-1.6-10.6-6.9-.1-1.5.2-2.8.8-3.9-4.4 1.2-6.9 5.6-5.9 9.9 1.1 4.6 5.8 7.4 10.3 6.2 2.5-.7 4.4-2.6 5.4-5.3z"/>
       </svg>
     </button>
   </div>
@@ -52,17 +76,16 @@
   <main class="game" id="game" aria-label="Adam asmaca oyunu">
     <section class="panel panel-anim" aria-label="Adam asmaca animasyonu">
       <div class="hangman" id="hangman"></div>
-      <p class="error-count" id="error-count" aria-live="polite">Hata: 0 / 6</p>
+      <!-- Hata sayısı sadece ekran okuyucular için (görselden zaten anlaşılıyor) -->
+      <p class="sr-only" id="error-count" aria-live="polite">Hata: 0 / 6</p>
     </section>
 
     <div class="right-col">
-      <section class="panel panel-keys" aria-labelledby="keys-title">
-        <h2 class="panel-title" id="keys-title">KLAVYE</h2>
+      <section class="panel panel-keys" aria-label="Klavye">
         <div class="keyboard" id="keyboard" role="group" aria-label="Harf klavyesi"></div>
       </section>
 
-      <section class="panel panel-word" aria-labelledby="word-title">
-        <h2 class="panel-title" id="word-title">HARF SAYISINA GÖRE BÖLME</h2>
+      <section class="panel panel-word" aria-label="Kelime ve tahmin">
         <div class="word" id="word" aria-label="Gizli kelime"></div>
 
         <form class="guess" id="guess-form" autocomplete="off" novalidate>

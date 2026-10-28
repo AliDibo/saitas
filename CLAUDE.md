@@ -67,6 +67,8 @@ animasyonunu sadece `config.js` düzenleyerek takmasını sağlar. Lottie için 
 - Büyük harf dönüşümü her zaman `toLocaleUpperCase('tr-TR')`.
 - Dosya adlarında Türkçe karakter ve boşluk yok, hepsi küçük harf (Linux büyük/küçük harf duyarlı).
 - Renkler sadece CSS değişkenlerinden (`:root` / `[data-theme="dark"]`).
+- CSP nedeniyle HTML'de `style=""` niteliği kullanılmaz; dinamik stil JS'den `element.style.setProperty` ile verilir.
+- CSS değişkeniyle verilen `url()` yolları JS'de tam adrese çevrilir (yoksa `css/` klasörüne göre çözülür).
 - Tekrarlanan kod yerine yardımcı fonksiyon.
 
 ## Güvenlik notları
@@ -84,6 +86,11 @@ animasyonunu sadece `config.js` düzenleyerek takmasını sağlar. Lottie için 
 - Kelime yerleri: **el çizimi alt çizgi** (kutu değil).
 - Klavye tuşları: **çerçevesiz el yazısı harf**; doğru = yeşil daire çizilir, yanlış = kırmızı çarpı çizilir.
 - 29 harfli Türk alfabesi (Q, W, X yok).
+- Doğru/yanlış işaretleri **kalın marker** gibi (SVG filtre `#mk-rough`, `index.html` başındaki ortak `<svg class="svg-defs">`).
+- Bölmelerde **başlık yazısı yok** (KLAVYE / HARF SAYISINA GÖRE BÖLME kaldırıldı), animasyon bölmesinde **hata sayısı yazısı yok**.
+- Bölmelerde **tek çerçeve**; arkada ikinci soluk çerçeve istenmiyor.
+- Ses/tema butonları Kurallar/Yeniden Başlat ile **aynı el çizimi buton dilinde**, emoji yok, el çizimi SVG ikon.
+- Arka plan her tema için `config.js → BACKGROUNDS` ile değiştirilebilir; varsayılan doku korunur.
 - Git: yerel repo kuruldu; kullanıcı GitHub repo URL'sini verecek (bkz. TODO.md).
 - Ton: samimi, eğlenceli Türkçe.
 

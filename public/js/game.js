@@ -41,7 +41,6 @@
     btnRules: $('btn-rules'),
     btnRestart: $('btn-restart'),
     btnSound: $('btn-sound'),
-    soundIcon: $('sound-icon'),
     btnTheme: $('btn-theme'),
     toast: $('toast'),
     toastText: $('toast-text'),
@@ -155,11 +154,15 @@
       mark.setAttribute('class', 'key-mark');
       mark.setAttribute('viewBox', '-6 -6 112 112');
       mark.setAttribute('aria-hidden', 'true');
-      mark.append(
-        svgPath('M52 8 C 78 7, 96 27, 94 52 C 92 78, 70 95, 46 92 C 20 89, 5 68, 8 44 C 11 22, 30 7, 60 12', 'mk-circle'),
-        svgPath('M18 16 C 40 40, 60 62, 84 86', 'mk-x'),
-        svgPath('M84 14 C 62 38, 40 60, 16 88', 'mk-x mk-x2')
+      // Marker darbeleri: daire başlangıcını geçip hafif dışarı taşar, çarpı kolları eğri
+      const ink = document.createElementNS(SVG_NS, 'g');
+      ink.setAttribute('filter', 'url(#mk-rough)');
+      ink.append(
+        svgPath('M66 12 C 40 2, 10 16, 6 46 C 2 76, 24 98, 52 97 C 84 96, 101 72, 97 44 C 94 20, 74 4, 46 8 C 34 10, 24 15, 18 22', 'mk-circle'),
+        svgPath('M14 12 C 34 34, 60 60, 90 92', 'mk-x'),
+        svgPath('M90 10 C 70 30, 44 58, 10 94', 'mk-x mk-x2')
       );
+      mark.appendChild(ink);
 
       btn.append(span, mark);
       btn.addEventListener('click', () => guessLetter(letter));
@@ -205,8 +208,7 @@
 
   function updateErrors() {
     Hangman.setStage(state.errors);
-    el.errorCount.textContent = 'Hata: ' + state.errors + ' / ' + G.maxErrors;
-    el.errorCount.classList.toggle('is-danger', state.errors >= G.maxErrors - 2);
+    el.errorCount.textContent = 'Hata: ' + state.errors + ' / ' + G.maxErrors; // ekran okuyucu
   }
 
   function isSolved() {
@@ -387,16 +389,17 @@
     });
   }
 
-  const SOUND_UI = {
-    all:  { icon: '🔊', label: 'Ses: hepsi açık (müzik + efektler). Değiştirmek için tıkla.' },
-    fx:   { icon: '🔔', label: 'Ses: sadece efektler. Değiştirmek için tıkla.' },
-    mute: { icon: '🔇', label: 'Ses: sessiz. Değiştirmek için tıkla.' }
+  const SOUND_LABELS = {
+    all:  'Ses: hepsi açık (müzik + efektler). Değiştirmek için tıkla.',
+    fx:   'Ses: sadece efektler. Değiştirmek için tıkla.',
+    mute: 'Ses: sessiz. Değiştirmek için tıkla.'
   };
 
+  /** İkon seçimi CSS'te: data-mode="all|fx|mute" */
   function renderSoundButton(mode) {
-    el.soundIcon.textContent = SOUND_UI[mode].icon;
-    el.btnSound.setAttribute('aria-label', SOUND_UI[mode].label);
-    el.btnSound.title = SOUND_UI[mode].label;
+    el.btnSound.dataset.mode = mode;
+    el.btnSound.setAttribute('aria-label', SOUND_LABELS[mode]);
+    el.btnSound.title = SOUND_LABELS[mode];
     el.btnSound.classList.toggle('is-mute', mode === 'mute');
   }
 
@@ -447,6 +450,25 @@
     el.logo.src = CFG.IMAGES.logo;
     el.introBg.src = CFG.IMAGES.introBg;
     el.introBtnImg.src = CFG.IMAGES.introButton;
+    initBackgrounds();
+  }
+
+  /** config.js → BACKGROUNDS: boş değilse o temanın varsayılan dokusu yerine görsel kullanılır. */
+  function initBackgrounds() {
+    const root = document.documentElement;
+    const safePath = /^images\/[a-z0-9_\-.]+\.(png|jpe?g|gif|webp|svg)$/;
+    ['light', 'dark'].forEach((theme) => {
+      const path = CFG.BACKGROUNDS[theme];
+      if (!path) return;
+      if (!safePath.test(path) || path.includes('..')) {
+        console.warn('[Adam Asmaca] Geçersiz arka plan yolu:', path);
+        return;
+      }
+      // Tam adres: değişken CSS içinde kullanıldığında yol css/ klasörüne göre çözülmesin
+      const abs = new URL(path, document.baseURI).href;
+      root.style.setProperty('--bg-img-' + theme, 'url("' + abs + '")');
+      root.setAttribute('data-bg-' + theme, '');
+    });
   }
 
   /* === Başlat ========================================================== */
