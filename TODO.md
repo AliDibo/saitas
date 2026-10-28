@@ -9,7 +9,8 @@
   - [ ] Giriş butonu görseli (512×512)
   - [ ] Kazanma GIF'i / Kaybetme GIF'i (800×600)
   - [ ] Müzik + 4 ses efekti (MP3)
-  - [ ] (İsteğe bağlı) Kendi adam asmaca animasyonu: 7 PNG veya 1 MP4
+  - [ ] Kendi adam asmaca animasyonu (önerilen: `sequence` kare dizisi, bkz. GORSEL-REHBERI.md)
+  - [ ] (İsteğe bağlı) Açık / koyu tema arka plan görselleri
 
 ## Açık sorular
 - Fontlar Google Fonts'tan geliyor. KVKK açısından self-host (sunucuya indirip kullanmak) istenir mi?

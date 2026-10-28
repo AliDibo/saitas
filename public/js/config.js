@@ -46,18 +46,48 @@ window.AA_CONFIG = Object.freeze({
   }),
 
   /* === Adam asmaca animasyonu ===========================================
-     mode: 'svg'    → yerleşik kalem çizimi (dosya gerekmez, varsayılan)
-           'frames' → 7 görsel: frames[0] = 0 hata ... frames[6] = 6 hata
-           'video'  → tek video; 0→6 durumları eşit aralıklarla sıralı olmalı */
+     mode: 'svg'      → yerleşik kalem çizimi (dosya gerekmez, varsayılan)
+           'frames'   → 7 görsel, aralarında yumuşak geçiş (0 hata … 6 hata)
+           'sequence' → kare dizisi (ÖNERİLEN, kendi animasyonun için):
+                        çok sayıda kare, ileri VE geri gerçek animasyon oynar
+           'video'    → tek video, ilgili ana yumuşak sarma (ileri/geri)
+     Ayrıntılı rehber: proje kökündeki GORSEL-REHBERI.md */
   HANGMAN: Object.freeze({
     mode: 'svg',
+
+    /* --- 'frames' modu --- */
     frames: Object.freeze([
       'images/adam-0.png', 'images/adam-1.png', 'images/adam-2.png',
       'images/adam-3.png', 'images/adam-4.png', 'images/adam-5.png',
       'images/adam-6.png'
     ]),
+
+    /* --- 'sequence' modu ---
+       Dosyalar: images/animasyon/kare-000.webp, kare-001.webp, … kare-060.webp
+       stageFrames: her hata sayısının (0..6) denk geldiği kare numarası.
+       Örn. 6 hata = kare 60. Hata artınca aradaki kareler ileri,
+       azalınca geri oynatılır. */
+    sequence: Object.freeze({
+      folder: 'images/animasyon/',
+      prefix: 'kare-',
+      digits: 3,               // 3 → kare-000, kare-001 …
+      ext: 'webp',             // webp | png | jpg | svg
+      count: 61,               // toplam kare sayısı (0'dan başlar)
+      stageFrames: Object.freeze([0, 10, 20, 30, 40, 50, 60]),
+      fps: 30                  // geçişte saniyedeki kare
+    }),
+
+    /* --- 'video' modu ---
+       videoStages: her hata sayısının (0..6) videodaki saniyesi.
+       null bırakılırsa video süresi 7 eşit parçaya bölünür. */
     video: 'images/adam-animasyon.mp4',
-    transitionMs: 550 // geçiş süresi (ms)
+    videoStages: null,         // örn. [0, 1.2, 2.4, 3.5, 4.6, 5.8, 7.0]
+
+    /* Koyu temada görselleri ters çevir (siyah kalem → beyaz tebeşir).
+       Kendi görsellerin siyah çizgi + şeffaf zeminse true bırak. */
+    invertInDark: true,
+
+    transitionMs: 550          // 'svg', 'frames' ve 'video' geçiş süresi (ms)
   }),
 
   /* === Metin dosyaları ================================================= */

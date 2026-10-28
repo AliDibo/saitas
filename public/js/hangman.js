@@ -61,10 +61,16 @@ window.AAHangman = (function () {
   function mount(container) {
     root = container;
     root.textContent = '';
-    mode = ['svg', 'frames', 'video'].includes(CFG.mode) ? CFG.mode : 'svg';
+    mode = ['svg', 'frames', 'sequence', 'video'].includes(CFG.mode) ? CFG.mode : 'svg';
+    if (mode === 'sequence' && !sequenceValid()) {
+      console.warn('[Adam Asmaca] HANGMAN.sequence ayarları hatalı, yerleşik çizime dönüldü.');
+      mode = 'svg';
+    }
     root.style.setProperty('--hm-ms', CFG.transitionMs + 'ms');
     root.dataset.mode = mode;
+    root.classList.toggle('hm-invert', mode !== 'svg' && CFG.invertInDark === true);
     if (mode === 'frames') buildFrames();
+    else if (mode === 'sequence') buildSequence();
     else if (mode === 'video') buildVideo();
     else buildSvg();
   }
@@ -72,6 +78,7 @@ window.AAHangman = (function () {
   function setStage(n) {
     const target = Math.max(0, Math.min(MAX, n | 0));
     if (mode === 'frames') showFrame(target);
+    else if (mode === 'sequence') playSequenceTo(CFG.sequence.stageFrames[target]);
     else if (mode === 'video') seekVideo(target);
     else drawSvg(target);
     current = target;
@@ -82,6 +89,13 @@ window.AAHangman = (function () {
     if (mode === 'svg') {
       drawSvg(0);
       redrawScene();
+    }
+    if (mode === 'sequence') {
+      // Yeni oyunda başa geri oynatmak yerine doğrudan ilk kareye atla
+      clearTimeout(seqTimer);
+      seqTimer = 0;
+      seqFrame = seqTarget = CFG.sequence.stageFrames[0];
+      seqImg.src = seqUrls[seqFrame];
     }
     setStage(0);
   }
@@ -179,6 +193,60 @@ window.AAHangman = (function () {
     stageEls.forEach((img, i) => img.classList.toggle('is-active', i === n));
   }
 
+  /* === Sequence modu (kare dizisi) ======================================
+     Tüm kareler önceden yüklenir; hedef kareye fps hızında ileri ya da geri
+     kare kare gidilir. Gerçek animasyon her iki yönde de oynar. */
+  let seqImg = null;
+  let seqUrls = [];
+  let seqFrame = 0;
+  let seqTarget = 0;
+  let seqTimer = 0;
+  const seqCache = [];
+
+  function sequenceValid() {
+    const s = CFG.sequence;
+    if (!s || !/^images\/[a-z0-9_\-/]*$/.test(s.folder) || s.folder.includes('..')) return false;
+    if (!/^[a-z0-9_\-]*$/.test(s.prefix) || !/^(webp|png|jpe?g|svg|gif)$/.test(s.ext)) return false;
+    if (!(s.count > 1 && s.count <= 1000) || !(s.digits >= 0 && s.digits <= 6)) return false;
+    const st = s.stageFrames;
+    return Array.isArray(st) && st.length === MAX + 1 &&
+      st.every((f, i) => Number.isInteger(f) && f >= 0 && f < s.count && (i === 0 || f >= st[i - 1]));
+  }
+
+  function buildSequence() {
+    const s = CFG.sequence;
+    seqUrls = [];
+    for (let i = 0; i < s.count; i++) {
+      seqUrls.push(s.folder + s.prefix + String(i).padStart(s.digits, '0') + '.' + s.ext);
+    }
+    // Önbelleğe al (geçişte takılma olmasın)
+    seqUrls.forEach((url, i) => {
+      const im = new Image();
+      im.decoding = 'async';
+      im.src = url;
+      seqCache[i] = im;
+    });
+    seqImg = document.createElement('img');
+    seqImg.className = 'hm-seq';
+    seqImg.alt = 'Adam asmaca animasyonu';
+    seqFrame = seqTarget = s.stageFrames[0];
+    seqImg.src = seqUrls[seqFrame];
+    root.appendChild(seqImg);
+  }
+
+  function playSequenceTo(frame) {
+    seqTarget = frame;
+    if (seqTimer) return; // zaten oynuyor; yeni hedefe doğru devam eder
+    const stepMs = 1000 / Math.max(1, CFG.sequence.fps);
+    const tick = () => {
+      if (seqFrame === seqTarget) { seqTimer = 0; return; }
+      seqFrame += seqFrame < seqTarget ? 1 : -1;
+      seqImg.src = seqUrls[seqFrame];
+      seqTimer = window.setTimeout(tick, stepMs);
+    };
+    seqTimer = window.setTimeout(tick, 0);
+  }
+
   /* === Video modu (scrub) =============================================== */
   function buildVideo() {
     video = document.createElement('video');
@@ -197,7 +265,9 @@ window.AAHangman = (function () {
       const dur = video.duration;
       if (!isFinite(dur) || dur <= 0) return;
       const from = video.currentTime;
-      const to = Math.min(dur - 0.01, (n / MAX) * dur);
+      const stages = CFG.videoStages;
+      const custom = Array.isArray(stages) && stages.length === MAX + 1 && stages.every((t) => typeof t === 'number' && t >= 0);
+      const to = Math.min(dur - 0.01, custom ? stages[n] : (n / MAX) * dur);
       const start = performance.now();
       cancelAnimationFrame(videoAnim);
       const step = (now) => {

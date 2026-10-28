@@ -2,6 +2,17 @@
 
 En yeni kayıt en üstte. Biçim: tarih – ne değişti – neden – etkilenen dosyalar.
 
+## 2026-10-28 – v1.2.0 Kendi animasyonu için kare dizisi modu
+**Ne:**
+- Yeni `HANGMAN.mode = 'sequence'`: PNG/WebP kare dizisi, `stageFrames` ile hata→kare eşlemesi, `fps` hızında ileri/geri kare kare oynatma.
+- `video` modunda `videoStages` ile her aşamanın saniyesi ayarlanabiliyor.
+- `invertInDark`: koyu temada kullanıcı animasyonu otomatik ters çevrilir.
+- Yeni `GORSEL-REHBERI.md`: tüm görsel/ses/animasyon ölçüleri ve dosya tipleri.
+
+**Neden:** Kullanıcı asılma animasyonunu kendisi tasarlayacak; görsellerin nasıl değiştirileceğini listeleme isteği.
+
+**Dosyalar:** `public/js/config.js`, `public/js/hangman.js`, `public/css/style.css`, `GORSEL-REHBERI.md`, `README.md`, `SPEC.md`, `CLAUDE.md`, `CHECKLIST.md`, `TODO.md`.
+
 ## 2026-10-28 – v1.1.1 Arka plan ve çarpı boyutu
 **Ne:**
 - Özel arka plan görseli varken bölmelerin opaklaşması kaldırıldı; bölmeler her durumda şeffaf.

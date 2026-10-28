@@ -29,8 +29,14 @@ Türkçe, cartoon (kalemle çizilmiş) temalı Adam Asmaca web oyunu. Paylaşım
    göre renk değiştirir (`currentColor`), çok hafif.
 2. **`"frames"`:** Kullanıcının 7 görseli (`adam-0.png` … `adam-6.png`) üst üste konur, aktif kare
    çapraz geçişle (crossfade) gösterilir. "7 fotoğraf sistemi" isteyen için.
-3. **`"video"`:** Tek video dosyası; hata sayısına karşılık gelen zamana yumuşak "scrub" yapılır
-   (ileri/geri). Video 0→6 sırasını eşit aralıklarla içermeli.
+3. **`"sequence"` (kullanıcının kendi animasyonu için önerilen):** PNG/WebP kare dizisi
+   (`images/animasyon/kare-000.webp` …). `stageFrames` her hata sayısını bir kareye eşler; hedef kareye
+   `fps` hızında kare kare **ileri veya geri** gidilir (setTimeout zinciri, kareler önceden yüklenir).
+   Yeni oyunda geri oynatmadan ilk kareye atlar.
+4. **`"video"`:** Tek video dosyası; hata sayısına karşılık gelen zamana yumuşak "scrub" yapılır
+   (ileri/geri). `videoStages` verilmezse süre 7 eşit parçaya bölünür. Akıcı geri sarma için `-g 1`.
+- `invertInDark: true` → koyu temada kullanıcı görselleri `filter: invert(1) hue-rotate(180deg)`.
+- Kullanıcıya yönelik tüm görsel/ses/animasyon ölçüleri: **`GORSEL-REHBERI.md`** (değişince güncelle).
 Seçim gerekçesi: SVG dosyasız çalışır, geri oynatma doğal; diğer iki mod kullanıcının kendi
 animasyonunu sadece `config.js` düzenleyerek takmasını sağlar. Lottie için harici kütüphane gerekirdi.
 
@@ -44,7 +50,7 @@ animasyonunu sadece `config.js` düzenleyerek takmasını sağlar. Lottie için 
 ## Dosya yapısı
 ```
 /                      → repo kökü (web'e AÇILMAZ)
-├─ CLAUDE.md SPEC.md CHANGELOG.md CHECKLIST.md TODO.md README.md
+├─ CLAUDE.md SPEC.md CHANGELOG.md CHECKLIST.md TODO.md README.md GORSEL-REHBERI.md
 ├─ .cpanel.yml         → cPanel deploy: public/ içeriğini public_html'e kopyalar
 ├─ .claude/launch.json → yerel önizleme sunucusu (py -m http.server)
 └─ public/             → SİTENİN KENDİSİ (sadece bu klasör yayınlanır)
@@ -92,6 +98,7 @@ animasyonunu sadece `config.js` düzenleyerek takmasını sağlar. Lottie için 
 - Ses/tema butonları Kurallar/Yeniden Başlat ile **aynı el çizimi buton dilinde**, emoji yok, el çizimi SVG ikon.
 - Arka plan her tema için `config.js → BACKGROUNDS` ile değiştirilebilir; varsayılan doku korunur. Görsel arka planda bölmeler **karartılmaz/opaklaşmaz** (kullanıcının görselleri düz açık gri / koyu gri fon olacak).
 - Kırmızı çarpı harfin **~%110–120'si** boyunda (büyük olmasın).
+- Asılma animasyonunu **kullanıcı kendisi tasarlayacak** → `sequence` modu önerildi (2026-10-28).
 - Git: yerel repo kuruldu; kullanıcı GitHub repo URL'sini verecek (bkz. TODO.md).
 - Ton: samimi, eğlenceli Türkçe.
 

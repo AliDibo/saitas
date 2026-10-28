@@ -30,7 +30,9 @@ Durum: ✅ test edildi · ⬜ henüz test edilmedi (gerçek cihaz / ses dosyası
 - [x] F-12 Kullanılmış kelime localStorage'da
 - [x] F-13 Yeniden Başlat her şeyi sıfırlıyor
 - [x] F-20/21 Animasyon ileri / geri yumuşak
-- [ ] F-22 `frames` ve `video` modları (kullanıcı dosyası gelince test et)
+- [x] F-22 `sequence` modu: 13 karelik test dizisiyle ileri (0→4) ve geri (4→2) kare kare doğrulandı
+- [x] F-24 Koyu temada `invertInDark` uygulanıyor
+- [ ] F-22 `frames` ve `video` modları + kullanıcının gerçek animasyonu (dosya gelince test et)
 - [x] F-30 Banner 10vh, üst kenarlık, logo ortada
 - [x] F-31 İki sütun düzen
 - [x] F-32 Ses + tema sağ üstte, hover'da hiza korunuyor

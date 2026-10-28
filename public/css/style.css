@@ -338,8 +338,18 @@ img { max-width: 100%; }
 }
 .hm-frame.is-active { opacity: 1; }
 
-/* video modu */
-.hm-video { width: 100%; height: 100%; object-fit: contain; }
+/* sequence ve video modu: bölmeyi doldurur, oranı korur */
+.hm-seq,
+.hm-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* config.js → HANGMAN.invertInDark: koyu temada siyah çizgi → beyaz */
+:root[data-theme="dark"] .hangman.hm-invert > * { filter: invert(1) hue-rotate(180deg); }
 
 /* === 7. KLAVYE =========================================================== */
 .keyboard {

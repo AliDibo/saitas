@@ -15,6 +15,8 @@ py -m http.server 8080 --bind 127.0.0.1 --directory public
 Sonra tarayıcıda `http://localhost:8080` adresine git.
 
 ## Dosyalarını değiştirmek
+> Tüm ölçüler, dosya tipleri ve kendi animasyonunu ekleme adımları: **[GORSEL-REHBERI.md](GORSEL-REHBERI.md)**
+
 Tüm görseller, GIF'ler ve sesler `public/images/` klasöründe. Dosya adları **tek bir yerde**:
 `public/js/config.js`. Yeni dosyayı klasöre koy, adını config'de güncelle. Dosya adlarında Türkçe
 karakter ve boşluk kullanma, küçük harf kullan.
@@ -30,6 +32,7 @@ karakter ve boşluk kullanma, küçük harf kullan.
 | `SOUNDS.music` | MP3, döngüye uygun, 1–3 dk | yok → sentez melodi |
 | `SOUNDS.correct` / `wrong` | MP3, < 1 sn | yok → sentez ses |
 | `SOUNDS.win` / `lose` | MP3, 1–3 sn | yok → sentez ses |
+| `HANGMAN.sequence` (mode `sequence`, önerilen) | Kare dizisi, 600×800 şeffaf WebP/PNG, `kare-000…` | yok → yerleşik SVG |
 | `HANGMAN.frames` (mode `frames`) | 7 PNG, aynı boyut (ör. 600×800), şeffaf | yok → yerleşik SVG |
 | `HANGMAN.video` (mode `video`) | MP4/WebM, 0→6 eşit aralıklı | yok → yerleşik SVG |
 

@@ -20,7 +20,8 @@ Her madde `CHECKLIST.md` içinde kontrol satırına sahiptir. Değişiklikte ilg
 ## Animasyon
 - **F-20:** Animasyon hata sayısına (0–6) bağlı; 0 = başlangıç, 6 = kayıp.
 - **F-21:** Hata artınca ileri, azalınca geri oynar; geçişler yumuşak.
-- **F-22:** `config.js → HANGMAN.mode`: `svg` (yer tutucu), `frames` (7 görsel), `video` (scrub). Kullanıcı dosyayı `images/`'e koyup adı config'de değiştirerek animasyonu değiştirir.
+- **F-22:** `config.js → HANGMAN.mode`: `svg` (yer tutucu), `frames` (7 görsel, crossfade), `sequence` (kare dizisi; aşamalar `stageFrames` ile kareye eşlenir, `fps` hızında ileri/geri kare kare oynar), `video` (scrub; `videoStages` ile özel saniyeler). Kullanıcı dosyayı `images/`'e koyup config'i değiştirerek animasyonu değiştirir.
+- **F-24:** `HANGMAN.invertInDark: true` → koyu temada kullanıcı animasyonu ters çevrilir (siyah çizgi → beyaz). Hatalı `sequence` ayarında yerleşik SVG'ye dönülür ve konsola uyarı yazılır.
 - **F-23:** Animasyon alanı solda büyük dikey bölmede; üstünde başlık, içinde hata sayısı yazısı yok (hata sayısı sadece ekran okuyucuya duyurulur).
 
 ## Ekran düzeni
