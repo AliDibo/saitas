@@ -1,7 +1,7 @@
 # TODO – Bekleyen işler ve açık sorular
 
 ## Kullanıcıdan beklenenler
-- [ ] GitHub repo URL'si → `git remote add origin <URL>` + ilk push
+- [x] GitHub repo: https://github.com/AliDibo/saitas (push edildi)
 - [ ] cPanel kullanıcı adı → `.cpanel.yml` içindeki `KULLANICI_ADI` değiştirilecek
 - [ ] Gerçek dosyalar (`images/` klasörüne, adlar `public/js/config.js` içinde):
   - [ ] Logo (1920×120, şeffaf PNG)
