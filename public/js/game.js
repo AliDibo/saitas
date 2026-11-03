@@ -71,7 +71,7 @@
     node.classList.remove(cls);
     window.setTimeout(() => {
       if (!node.classList.contains(cls)) node.hidden = true;
-    }, U.reducedMotion() ? 0 : ms);
+    }, ms);
   }
 
   function showToast(message) {
@@ -312,7 +312,7 @@
     el.guessInput.blur();
     if (!won) revealLetters(null);
     // Son animasyon adımı görünsün, sonra sonuç ekranı
-    window.setTimeout(() => showResult(won), U.reducedMotion() ? 100 : 900);
+    window.setTimeout(() => showResult(won), 900);
   }
 
   function showResult(won) {
@@ -419,7 +419,7 @@
     Sound.unlock();               // tarayıcı otomatik oynatma kuralı: tıklama içinde
     Sound.playMusic(true);
     el.intro.classList.add('is-leaving');
-    window.setTimeout(() => { el.intro.hidden = true; }, U.reducedMotion() ? 0 : 500);
+    window.setTimeout(() => { el.intro.hidden = true; }, 500);
   }
 
   /* === Fiziksel klavye ================================================= */

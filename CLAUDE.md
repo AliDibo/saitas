@@ -22,7 +22,7 @@ Türkçe, cartoon (kalemle çizilmiş) temalı Adam Asmaca web oyunu. Paylaşım
   `config.js` içindeki yedek liste kullanılır ve ekranda uyarı çıkar.
 
 ### Animasyon tekniği (gerekçeli)
-`config.js → HANGMAN.mode` üç mod destekler:
+`config.js → HANGMAN.mode` dört mod destekler:
 1. **`"svg"` (varsayılan, yer tutucu):** `js/hangman.js` içinde kalemle çizilmiş SVG (darağacı + ağaç,
    2. referans fotoğraftaki gibi). Her parça `pathLength=1` + `stroke-dashoffset` geçişiyle **çizilerek**
    gelir, hata azalınca **silinerek** geri gider. Dosya gerektirmez, her çözünürlükte keskin, temaya
@@ -62,7 +62,7 @@ animasyonunu sadece `config.js` düzenleyerek takmasını sağlar. Lottie için 
    ├─ js/config.js     → TÜM dosya adları, ses seviyeleri, sabitler (kullanıcı sadece burayı düzenler)
    ├─ js/util.js       → güvenli fetch, depolama, Türkçe metin yardımcıları, mini markdown
    ├─ js/audio.js      → ses yöneticisi (3 mod, sentez yedek)
-   ├─ js/hangman.js    → animasyon (svg / frames / video)
+   ├─ js/hangman.js    → animasyon (svg / frames / sequence / video)
    ├─ js/game.js       → oyun mantığı ve arayüz
    └─ images/          → TÜM görseller, GIF'ler, sesler (.htaccess ile script çalıştırma kapalı)
 ```
@@ -99,10 +99,14 @@ animasyonunu sadece `config.js` düzenleyerek takmasını sağlar. Lottie için 
 - Arka plan her tema için `config.js → BACKGROUNDS` ile değiştirilebilir; varsayılan doku korunur. Görsel arka planda bölmeler **karartılmaz/opaklaşmaz** (kullanıcının görselleri düz açık gri / koyu gri fon olacak).
 - Kırmızı çarpı harfin **~%110–120'si** boyunda (büyük olmasın).
 - Asılma animasyonunu **kullanıcı kendisi tasarlayacak** → `sequence` modu önerildi (2026-10-28).
-- Git: yerel repo kuruldu; kullanıcı GitHub repo URL'sini verecek (bkz. TODO.md).
+- Git: https://github.com/AliDibo/saitas (`origin/main`). Değişiklikten sonra commit + push.
+- Banner'da üst çizgi **yok** (2026-11-03).
 - Ton: samimi, eğlenceli Türkçe.
 
 ## Bilinen kısıtlar
 - `file://` ile `fetch` çalışmaz → yedek kelime listesi + uyarı.
 - iOS Safari sessiz modda (fiziksel anahtar) Web Audio sesi çalmayabilir.
 - Google Fonts yüklenemezse sistem el yazısı fontlarına düşer (Comic Sans MS vb.).
+- **Hareket azaltma:** Kullanıcının laptopunda Windows "Animasyon efektleri" kapalı → tarayıcı `prefers-reduced-motion: reduce` bildirir. Bu yüzden oyun animasyonları bu sorguyla **kapatılmaz** (önceki sürümde kapatılıyordu, laptopta animasyon görünmüyordu). Sadece sonsuz döngülü süs animasyonları durur.
+- Dosya güncellemesinden sonra tarayıcı eski CSS/JS'i önbellekten gösterebilir → Ctrl+F5.
+- Önizleme paneli arka plandayken CSS geçişleri ilerlemez; test ederken panel görünür olmalı.

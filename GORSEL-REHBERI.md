@@ -96,7 +96,22 @@ Animasyonu istediğin programda yap (After Effects, Procreate Dreams, Rive, Krit
 - `videoStages`: her hata sayısının saniyesi, ör. `[0, 1.2, 2.4, 3.5, 4.6, 5.8, 7.0]`. `null` = eşit böl.
 - Video sessiz oynatılır; sesler ayrıca `SOUNDS` ile gelir.
 
-## 4. Kontrol listesi (dosya değiştirdikten sonra)
+## 4. Kazanma / kaybetme görseli: SVG mi, GIF mi?
+Şu anki `kazandin.svg` / `kaybettin.svg` **yer tutucudur**; kendi dosyan gelene kadar böyle kalabilir.
+Hangi biçimi seçeceğin, nasıl çizdiğine bağlı:
+
+| Biçim | Ne zaman | Artı | Eksi |
+|---|---|---|---|
+| **Hareketli WebP** (önerilen) | Çizim programında kare kare animasyon yapıyorsan | Tam renk, şeffaflık, GIF'ten 3–5 kat küçük | Elle düzenlenemez |
+| GIF | Elindeki araç sadece GIF veriyorsa | Her yerde açılır | 256 renk, şeffaf kenarlar tırtıklı, dosya büyük |
+| SVG | Vektör (Figma, Illustrator, Inkscape) çiziyorsan | Çok küçük (birkaç KB), her ekranda keskin | Karmaşık el çizimi animasyonu SVG ile zor |
+
+**SVG oluşturma:** Figma / Inkscape / Illustrator'da çiz → "SVG olarak dışa aktar". Animasyon için
+SVGator gibi bir araçta hareketlendir ve **"CSS animasyonu"** olarak dışa aktar. JavaScript'li SVG
+**çalışmaz** (görsel `<img>` ile gösterildiği için güvenlik gereği içindeki script kapalıdır).
+Kontrol: dosyayı tarayıcıda tek başına açınca hareket ediyorsa ve içinde `<script>` yoksa uygundur.
+
+## 5. Kontrol listesi (dosya değiştirdikten sonra)
 - [ ] Dosya adı küçük harf, Türkçe karakter/boşluk yok, uzantı config ile aynı
 - [ ] Sayfayı **Ctrl+F5** ile yenile (tarayıcı eski dosyayı önbellekte tutabilir)
 - [ ] Açık ve koyu temada bak; telefonda dikey ve yatay bak

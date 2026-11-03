@@ -2,6 +2,16 @@
 
 En yeni kayıt en üstte. Biçim: tarih – ne değişti – neden – etkilenen dosyalar.
 
+## 2026-11-03 – v1.2.1 Laptopta animasyon düzeltmesi, üst çizgi kaldırıldı
+**Ne:**
+- Windows'ta "Animasyon efektleri" kapalıyken tarayıcının bildirdiği `prefers-reduced-motion` artık oyun animasyonlarını kapatmıyor; sadece sürekli süs hareketleri (giriş butonu zıplaması, sallanma) duruyor. JS'teki kısaltılmış süreler kaldırıldı (`util.reducedMotion` silindi).
+- Banner'ın üstündeki tema renginde çizgi (`border-top`) kaldırıldı.
+- `GORSEL-REHBERI.md`: kazanma/kaybetme görseli için SVG / GIF / WebP karşılaştırması ve SVG oluşturma notu.
+
+**Neden:** Kullanıcının laptopunda animasyonlar görünmüyordu (Windows animasyon efektleri kapalı: `MinAnimate=0`); üst çizginin kaldırılması istendi.
+
+**Dosyalar:** `public/css/style.css`, `public/js/game.js`, `public/js/util.js`, `SPEC.md`, `CLAUDE.md`, `CHECKLIST.md`, `GORSEL-REHBERI.md`.
+
 ## 2026-10-28 – v1.2.0 Kendi animasyonu için kare dizisi modu
 **Ne:**
 - Yeni `HANGMAN.mode = 'sequence'`: PNG/WebP kare dizisi, `stageFrames` ile hata→kare eşlemesi, `fps` hızında ileri/geri kare kare oynatma.

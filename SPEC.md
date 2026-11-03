@@ -25,7 +25,7 @@ Her madde `CHECKLIST.md` içinde kontrol satırına sahiptir. Değişiklikte ilg
 - **F-23:** Animasyon alanı solda büyük dikey bölmede; üstünde başlık, içinde hata sayısı yazısı yok (hata sayısı sadece ekran okuyucuya duyurulur).
 
 ## Ekran düzeni
-- **F-30:** Üst banner: `10vh`, tam genişlik, sadece üst kenarlık, ortada sığdırılmış logo (`config.js → IMAGES.logo`).
+- **F-30:** Üst banner: `10vh`, tam genişlik, kenarlık yok (üst çizgi kullanıcı isteğiyle 2026-11-03'te kaldırıldı), ortada sığdırılmış logo (`config.js → IMAGES.logo`).
 - **F-31:** Ana alan iki sütun: sol animasyon; sağ üst klavye bölmesi (tuşlar yatay ortalı, flex-wrap); sağ alt kelime bölmesi (kelime yerleri + tahmin + yanlış tahminler). Bölmelerde başlık yazısı yok (kullanıcı isteği, 2026-10-28).
 - **F-32:** Sağ üst sabit: ses ve tema butonları yan yana, banner'ın dikey ortasında; Kurallar/Yeniden Başlat ile aynı el çizimi buton dili (kalın titrek kenar, parıltı gölgesi, el çizimi SVG ikonlar); hover büyümesi hizayı bozmaz.
 - **F-34:** Bölmelerde tek el çizimi çerçeve var, arkasında ikinci soluk çerçeve yok.
@@ -50,6 +50,7 @@ Her madde `CHECKLIST.md` içinde kontrol satırına sahiptir. Değişiklikte ilg
 ## Tema
 - **F-60:** Varsayılan koyu (kara tahta). Tema butonu açık ↔ koyu; tercih `localStorage`'da.
 - **F-61:** Tüm öğeler iki temada okunaklı; geçişler ≈0.3 sn.
+- **F-63:** İşletim sisteminde "animasyon efektleri" kapalı olsa da (`prefers-reduced-motion: reduce`) oyun animasyonları (çizim, daire/çarpı, geçişler, sonuç ekranı) oynar; sadece sürekli tekrarlayan süs hareketleri (giriş butonu zıplaması, asılı adam sallanması) durur.
 - **F-62:** `config.js → BACKGROUNDS.light / .dark`: boşsa varsayılan doku (kâğıt / kara tahta), dolu ise o temada görsel arka plan (cover). Bölmeler görsel arka planda da şeffaf kalır (görseller düz fon: açıkta çok açık gri, koyuda çok koyu gri olacak).
 
 ## Kurallar penceresi

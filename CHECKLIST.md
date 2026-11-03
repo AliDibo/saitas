@@ -1,6 +1,6 @@
 # CHECKLIST – Regresyon Kontrol Listesi
 
-Her değişiklikten sonra ilgili satırları kontrol et. Son tam kontrol: **2026-10-28** (v1.1.0, tarayıcı önizlemesi).
+Her değişiklikten sonra ilgili satırları kontrol et. Son tam kontrol: **2026-11-03** (v1.2.1, tarayıcı önizlemesi).
 Durum: ✅ test edildi · ⬜ henüz test edilmedi (gerçek cihaz / ses dosyası gerektirir)
 
 ## Test boyutları
@@ -33,7 +33,7 @@ Durum: ✅ test edildi · ⬜ henüz test edilmedi (gerçek cihaz / ses dosyası
 - [x] F-22 `sequence` modu: 13 karelik test dizisiyle ileri (0→4) ve geri (4→2) kare kare doğrulandı
 - [x] F-24 Koyu temada `invertInDark` uygulanıyor
 - [ ] F-22 `frames` ve `video` modları + kullanıcının gerçek animasyonu (dosya gelince test et)
-- [x] F-30 Banner 10vh, üst kenarlık, logo ortada
+- [x] F-30 Banner 10vh, üst çizgi yok, logo ortada
 - [x] F-31 İki sütun düzen
 - [x] F-32 Ses + tema sağ üstte, hover'da hiza korunuyor
 - [x] F-33 Kurallar / Yeniden Başlat eşit boyut, aynı çizgi
@@ -47,6 +47,8 @@ Durum: ✅ test edildi · ⬜ henüz test edilmedi (gerçek cihaz / ses dosyası
 - [x] F-55 Ses butonu temanın tersi, sessizde soluk
 - [x] F-56 Dosya yokken sentez sesler
 - [x] F-60/61 Tema geçişi ve kaydı, iki temada okunaklılık
+- [x] F-63 Windows animasyon efektleri kapalıyken (`prefers-reduced-motion: reduce`) çarpı ve adam çizimi kademeli oynuyor (ölçüldü)
+- [ ] F-63 Kullanıcının laptopunda canlı sitede Ctrl+F5 sonrası kontrol
 - [x] F-62 Özel arka plan (koyu temada test görseliyle denendi, bölmeler şeffaf kalıyor)
 - [ ] F-62 Açık temada özel arka plan (kullanıcı görseli gelince)
 - [x] F-70/71 Kurallar penceresi, Esc ile kapanma, markdown

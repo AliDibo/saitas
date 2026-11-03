@@ -164,8 +164,6 @@ window.AAUtil = (function () {
     return Math.floor(Math.random() * max);
   }
 
-  const reducedMotion = () =>
-    window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  return { upperTR, isTurkishWord, sanitizeGuess, fetchText, storage, renderMarkdown, randomInt, reducedMotion };
+  return { upperTR, isTurkishWord, sanitizeGuess, fetchText, storage, renderMarkdown, randomInt };
 })();

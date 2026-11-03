@@ -172,13 +172,12 @@ img { max-width: 100%; }
   height: var(--banner-h);
   min-height: 48px;
   width: 100%;
-  border-top: 4px solid var(--ink);
   display: flex;
   align-items: center;
   justify-content: center;
   /* Logo sağ üst butonlarla çakışmasın */
   padding: 4px calc(var(--round-size) * 2 + var(--edge) + 18px);
-  transition: border-color var(--t), opacity var(--t);
+  transition: opacity var(--t);
 }
 .banner-logo {
   display: block;
@@ -807,7 +806,7 @@ body.is-over .toast {
     --slot-fs: clamp(19px, 3.2vw, 30px);
     --title-fs: 12px;
   }
-  .banner { min-height: 40px; border-top-width: 3px; padding-top: 2px; padding-bottom: 2px; }
+  .banner { min-height: 40px; padding-top: 2px; padding-bottom: 2px; }
   .top-controls { top: max(20px, calc(var(--banner-h) / 2)); }
   .game {
     grid-template-columns: minmax(150px, 30%) 1fr;
@@ -830,12 +829,11 @@ body.is-over .toast {
   .guess-btn { padding: 0 0.6em; }
 }
 
-/* === 14. HAREKET AZALTMA ================================================= */
+/* === 14. HAREKET AZALTMA =================================================
+   Windows'ta "Animasyon efektleri" kapalıysa tarayıcı bu sorguyu tetikler.
+   Oyunun geri bildirim animasyonları (çizim, daire/çarpı, sonuç ekranı) kısa ve
+   oyunun parçası olduğu için KAPATILMAZ; sadece sürekli dönen süs hareketleri durur. */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    transition-delay: 0s !important;
-  }
+  .intro-btn,
+  .hangman.is-dead .hm-figure { animation: none; }
 }
