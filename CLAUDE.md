@@ -22,7 +22,7 @@ Türkçe, cartoon (kalemle çizilmiş) temalı Adam Asmaca web oyunu. Paylaşım
   `config.js` içindeki yedek liste kullanılır ve ekranda uyarı çıkar.
 
 ### Animasyon tekniği (gerekçeli)
-`config.js → HANGMAN.mode` dört mod destekler:
+`config.js → HANGMAN.mode` beş mod destekler (`sprite` 5. madde):
 1. **`"svg"` (varsayılan, yer tutucu):** `js/hangman.js` içinde kalemle çizilmiş SVG (darağacı + ağaç,
    2. referans fotoğraftaki gibi). Her parça `pathLength=1` + `stroke-dashoffset` geçişiyle **çizilerek**
    gelir, hata azalınca **silinerek** geri gider. Dosya gerektirmez, her çözünürlükte keskin, temaya
@@ -35,6 +35,12 @@ Türkçe, cartoon (kalemle çizilmiş) temalı Adam Asmaca web oyunu. Paylaşım
    Yeni oyunda geri oynatmadan ilk kareye atlar.
 4. **`"video"`:** Tek video dosyası; hata sayısına karşılık gelen zamana yumuşak "scrub" yapılır
    (ileri/geri). `videoStages` verilmezse süre 7 eşit parçaya bölünür. Akıcı geri sarma için `-g 1`.
+5. **`"sprite"` (kullanıcının SEÇTİĞİ yöntem, 2026-11-03):** sabit `daragaci.png` + `adam-sprite.png` (ip + adam, tüm
+   kareler tek resimde ızgara). `background-position` ile kare seçilir; sequence ile aynı kare oynatıcı (`playTo`/`jumpTo`).
+   Kutu `container-type: size` + `cqw/cqh` ile bölmeye sığar. Adam `.hm-man` `pivot` etrafında rAF ile sallanır,
+   genlik hata sayısıyla orantılı (zaman tabanlı yumuşatma). **Aynı sallanma yerleşik `svg` çiziminde de var:**
+   ip `SCENE`'den çıkarıldı (`ROPE`), ip + adam `.hm-swing` grubunda (170,59) etrafında döner. 60 ayrı dosya indirmek istenmediği için seçildi;
+   video + karıştırma modu fikri geri sarmada takılma riski yüzünden elendi.
 - `invertInDark: true` → koyu temada kullanıcı görselleri `filter: invert(1) hue-rotate(180deg)`.
 - Kullanıcıya yönelik tüm görsel/ses/animasyon ölçüleri: **`GORSEL-REHBERI.md`** (değişince güncelle).
 Seçim gerekçesi: SVG dosyasız çalışır, geri oynatma doğal; diğer iki mod kullanıcının kendi
@@ -62,7 +68,7 @@ animasyonunu sadece `config.js` düzenleyerek takmasını sağlar. Lottie için 
    ├─ js/config.js     → TÜM dosya adları, ses seviyeleri, sabitler (kullanıcı sadece burayı düzenler)
    ├─ js/util.js       → güvenli fetch, depolama, Türkçe metin yardımcıları, mini markdown
    ├─ js/audio.js      → ses yöneticisi (3 mod, sentez yedek)
-   ├─ js/hangman.js    → animasyon (svg / frames / sequence / video)
+   ├─ js/hangman.js    → animasyon (svg / frames / sequence / sprite / video)
    ├─ js/game.js       → oyun mantığı ve arayüz
    └─ images/          → TÜM görseller, GIF'ler, sesler (.htaccess ile script çalıştırma kapalı)
 ```
@@ -98,7 +104,8 @@ animasyonunu sadece `config.js` düzenleyerek takmasını sağlar. Lottie için 
 - Ses/tema butonları Kurallar/Yeniden Başlat ile **aynı el çizimi buton dilinde**, emoji yok, el çizimi SVG ikon.
 - Arka plan her tema için `config.js → BACKGROUNDS` ile değiştirilebilir; varsayılan doku korunur. Görsel arka planda bölmeler **karartılmaz/opaklaşmaz** (kullanıcının görselleri düz açık gri / koyu gri fon olacak).
 - Kırmızı çarpı harfin **~%110–120'si** boyunda (büyük olmasın).
-- Asılma animasyonunu **kullanıcı kendisi tasarlayacak** → `sequence` modu önerildi (2026-10-28).
+- Asılma animasyonunu **kullanıcı kendisi tasarlayacak** → **`sprite` modu**: sabit darağacı + tek sprite sheet, hata arttıkça artan sallanma **±10°** (`sway.maxDeg`).
+- Dosya türü seçimi (2026-11-03): logo **`logo.png`**, kazanma/kaybetme **`kazandin.gif` / `kaybettin.gif`**. Dosya yoksa `game.js → PLACEHOLDERS` içindeki `.svg` yer tutucular gösterilir (yer tutucu svg'leri silme).
 - Git: https://github.com/AliDibo/saitas (`origin/main`). Değişiklikten sonra commit + push.
 - Banner'da üst çizgi **yok** (2026-11-03).
 - Ton: samimi, eğlenceli Türkçe.
@@ -107,6 +114,6 @@ animasyonunu sadece `config.js` düzenleyerek takmasını sağlar. Lottie için 
 - `file://` ile `fetch` çalışmaz → yedek kelime listesi + uyarı.
 - iOS Safari sessiz modda (fiziksel anahtar) Web Audio sesi çalmayabilir.
 - Google Fonts yüklenemezse sistem el yazısı fontlarına düşer (Comic Sans MS vb.).
-- **Hareket azaltma:** Kullanıcının laptopunda Windows "Animasyon efektleri" kapalı → tarayıcı `prefers-reduced-motion: reduce` bildirir. Bu yüzden oyun animasyonları bu sorguyla **kapatılmaz** (önceki sürümde kapatılıyordu, laptopta animasyon görünmüyordu). Sadece sonsuz döngülü süs animasyonları durur.
+- **Hareket azaltma:** Kullanıcının laptopunda Windows "Animasyon efektleri" kapalı → tarayıcı `prefers-reduced-motion: reduce` bildirir. Bu yüzden oyun animasyonları bu sorguyla **kapatılmaz** (önceki sürümde kapatılıyordu, laptopta animasyon görünmüyordu). Sadece giriş butonunun zıplaması durur; adamın sallanması kullanıcı isteği olduğu için durmaz.
 - Dosya güncellemesinden sonra tarayıcı eski CSS/JS'i önbellekten gösterebilir → Ctrl+F5.
 - Önizleme paneli arka plandayken CSS geçişleri ilerlemez; test ederken panel görünür olmalı.

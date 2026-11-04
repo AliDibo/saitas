@@ -1,118 +1,244 @@
 # Görsel, Ses ve Animasyon Rehberi
 
-Tüm dosyalar **`public/images/`** klasörüne konur. Dosya adları **tek bir yerde** tanımlıdır:
-**`public/js/config.js`**. Yeni dosyayı klasöre koy → config'de adını yaz → kaydet → (sitede) commit + push + deploy.
+Bu rehber şu soruların cevabı: **Hangi dosyayı hazırlayacağım? Hangi klasöre koyacağım? Adı ne olacak?
+Başka bir şey yapmam gerekiyor mu?**
 
-**Dosya adı kuralları** (hosting Linux, büyük/küçük harf duyarlı):
-- Sadece küçük harf, rakam, `-` ve `_`. Türkçe karakter (ç ğ ı ö ş ü) ve boşluk **yok**.
-- Uzantı config'te yazdığınla birebir aynı olmalı (`.PNG` ≠ `.png`).
-- Doğru: `arka-plan-koyu.webp` · Yanlış: `Arka Plan Koyu.PNG`
+---
 
-## 1. Görseller
+## 0. Önce 3 kural
 
-| Ne | config.js anahtarı | Çözünürlük | Dosya tipi | Not |
-|---|---|---|---|---|
-| Açık tema arka planı | `BACKGROUNDS.light` | **1920×1080** (en az), mümkünse 2560×1440 | WebP (önerilen), JPG, PNG | Ekranı kaplar (`cover`): kenarları telefonda kırpılabilir, önemli öğe koyma. Boş `''` = kâğıt dokusu |
-| Koyu tema arka planı | `BACKGROUNDS.dark` | 1920×1080 (en az) | WebP, JPG, PNG | Boş `''` = kara tahta |
-| Üst banner logosu | `IMAGES.logo` | **1920×120** (16:1) | PNG (şeffaf) veya SVG | İki temada da görünmeli (koyu kenarlı renkli yazı en güvenlisi). Telefonda çok küçülür, uzun-ince olmalı |
-| Giriş ekranı arka planı | `IMAGES.introBg` | **1920×1080** | JPG, WebP, GIF (hareketli olabilir) | `cover`; üstüne %38 karartma uygulanır |
-| Giriş butonu görseli | `IMAGES.introButton` | **512×512** (kare) | PNG (şeffaf) veya SVG | Beyaz yuvarlak butonun ortasında %60 opaklıkla durur; kenarlarda boşluk bırak |
-| Kazanma görseli | `IMAGES.winGif` | **800×600** (4:3) | GIF, WebP (hareketli), SVG | Ekran yüksekliğinin en fazla %55'i kadar gösterilir |
-| Kaybetme görseli | `IMAGES.loseGif` | 800×600 | GIF, WebP, SVG | |
+1. **Tek klasör:** Bütün görseller, GIF'ler, sesler ve animasyon dosyaları **aynı klasöre** gider:
 
-**Arka plan ipucu:** Açık temada beyaz üstüne çok açık gri, koyu temada siyah üstüne çok koyu gri gibi düz
-fonlar en iyi sonucu verir. Bölmeler şeffaftır; görsel karartılmaz. 1920×1080 bir WebP genelde 100–300 KB olur.
-
-**GIF yerine hareketli WebP:** Aynı kalitede 3–5 kat küçüktür, tüm modern tarayıcılarda çalışır.
-
-## 2. Sesler
-
-| Ne | config.js anahtarı | Süre | Tip | Ses seviyesi (`VOLUMES`) |
-|---|---|---|---|---|
-| Arka plan müziği | `SOUNDS.music` | 1–3 dk, döngüye uygun (başı-sonu kesintisiz) | MP3 128 kbps | 0.3 |
-| Doğru harf | `SOUNDS.correct` | < 0,5 sn | MP3 | 0.4 |
-| Yanlış harf | `SOUNDS.wrong` | < 0,5 sn | MP3 | 0.4 |
-| Kazanma | `SOUNDS.win` | 1–3 sn | MP3 | 0.5 |
-| Kaybetme | `SOUNDS.lose` | 1–3 sn | MP3 | 0.5 |
-
-Efektlerin başında sessizlik olmasın (gecikme gibi hissettirir). Dosya yoksa oyun sentez ses çalar.
-
-## 3. Adam asmaca animasyonu (kendi tasarımın)
-
-`config.js → HANGMAN.mode` ile seçilir. 4 seçenek var:
-
-| Mod | Ne zaman | Geçiş |
-|---|---|---|
-| `'svg'` | Varsayılan yerleşik çizim | Çizilerek gelir, silinerek gider |
-| `'frames'` | Sadece 7 sabit resim çizeceksen | Resimler arası yumuşak geçiş (crossfade) |
-| **`'sequence'`** | **Gerçek animasyon tasarlıyorsan — ÖNERİLEN** | Kare kare ileri **ve geri** oynar |
-| `'video'` | Elinde tek video varsa | Videoda ilgili saniyeye yumuşak sarma |
-
-### Ortak kurallar (tüm modlar)
-- **Boyut:** Dikey kompozisyon, **600×800** (3:4) önerilir; tüm kareler **aynı boyutta** olmalı.
-  Bölmeye oranı korunarak sığdırılır (masaüstünde ~300×450 px, telefonda daha küçük görünür; 600×800 retina ekranda keskin kalır).
-- **Zemin:** **Şeffaf** (PNG / WebP alfa). Düz beyaz zemin koyarsan koyu temada beyaz kutu görünür.
-- **Renk:** Siyah çizgi + şeffaf zemin çiz. `invertInDark: true` (varsayılan) koyu temada çizgileri otomatik
-  beyaza çevirir (renkli kısımlar da tersine döner — renk kullanıyorsan `false` yap ve iki temada da
-  okunacak renkler seç).
-- **Aşamalar:** 0 = başlangıç (darağacı vs.), 1–6 = her hatada eklenen parça, 6 = kayıp anı.
-
-### A) `'sequence'` – kare dizisi (önerilen)
-Animasyonu istediğin programda yap (After Effects, Procreate Dreams, Rive, Krita, Photoshop…) ve
-**PNG/WebP kare dizisi** olarak dışa aktar.
-
-1. Kareleri `public/images/animasyon/` klasörüne koy: `kare-000.webp`, `kare-001.webp`, … (numara 0'dan, aynı basamak sayısı).
-2. Hangi karenin hangi hata sayısına denk geldiğini not al. Örnek: 30 fps, her aşama arası 10 kare:
-
-   | Hata | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
-   |---|---|---|---|---|---|---|---|
-   | Kare | 0 | 10 | 20 | 30 | 40 | 50 | 60 |
-
-3. `config.js`:
-   ```js
-   mode: 'sequence',
-   sequence: {
-     folder: 'images/animasyon/',
-     prefix: 'kare-',
-     digits: 3,          // kare-000 → 3 basamak
-     ext: 'webp',
-     count: 61,          // toplam kare (0–60)
-     stageFrames: [0, 10, 20, 30, 40, 50, 60],
-     fps: 30
-   },
    ```
-- Aşamalar arası kare sayısı eşit olmak zorunda değil (ör. `[0, 8, 20, 26, 34, 42, 70]`).
-- Toplam boyut: 600×800 WebP kare ~15–40 KB → 61 kare ≈ 1–2,5 MB. Kare sayısını 100'ün altında tut.
-- Doğru harfte animasyon bir önceki aşamaya **geri oynar**, yeni oyunda doğrudan ilk kareye döner.
+   Saitas Cartoon\public\images\
+   ```
+   (Masaüstündeki proje klasörü → `public` → `images`.) Alt klasör açma.
 
-### B) `'frames'` – 7 resim
-`adam-0.png` … `adam-6.png` (600×800, şeffaf PNG/WebP). `frames` listesindeki adları güncelle, `mode: 'frames'`.
+2. **Ad kuralı:** Dosya adını **aşağıdaki tablolarda yazdığı gibi, harfi harfine** ver.
+   - Sadece **küçük harf**, rakam ve `-` kullan.
+   - Türkçe karakter (ç ğ ı ö ş ü) ve **boşluk yok**.
+   - Uzantı da aynı olmalı: `logo.PNG` ≠ `logo.png`, `kazandin.GIF` ≠ `kazandin.gif`.
+   - Windows uzantıları gizliyorsa: Dosya Gezgini → **Görünüm → Göster → Dosya adı uzantıları**'nı aç.
+     Yoksa `logo.png.png` gibi çift uzantılı ad oluşur ve site dosyayı bulamaz.
 
-### C) `'video'` – tek video
-- **MP4 (H.264)**, 600×800 veya 720×960. Şeffaflık gerekiyorsa video yerine `sequence` kullan
-  (şeffaf video Safari'de çalışmaz).
-- Geri sarmanın akıcı olması için her kare anahtar kare olmalı. Dışa aktarırken "keyframe interval = 1"
-  seç, ya da: `ffmpeg -i girdi.mov -c:v libx264 -g 1 -pix_fmt yuv420p -an images/adam-animasyon.mp4`
-- `videoStages`: her hata sayısının saniyesi, ör. `[0, 1.2, 2.4, 3.5, 4.6, 5.8, 7.0]`. `null` = eşit böl.
-- Video sessiz oynatılır; sesler ayrıca `SOUNDS` ile gelir.
+3. **Koyduktan sonra:** Tarayıcıda **Ctrl+F5** ile yenile (eski dosya önbellekte kalabilir).
+   Canlı sitede görünmesi için: commit + push + cPanel'de deploy.
 
-## 4. Kazanma / kaybetme görseli: SVG mi, GIF mi?
-Şu anki `kazandin.svg` / `kaybettin.svg` **yer tutucudur**; kendi dosyan gelene kadar böyle kalabilir.
-Hangi biçimi seçeceğin, nasıl çizdiğine bağlı:
+---
 
-| Biçim | Ne zaman | Artı | Eksi |
-|---|---|---|---|
-| **Hareketli WebP** (önerilen) | Çizim programında kare kare animasyon yapıyorsan | Tam renk, şeffaflık, GIF'ten 3–5 kat küçük | Elle düzenlenemez |
-| GIF | Elindeki araç sadece GIF veriyorsa | Her yerde açılır | 256 renk, şeffaf kenarlar tırtıklı, dosya büyük |
-| SVG | Vektör (Figma, Illustrator, Inkscape) çiziyorsan | Çok küçük (birkaç KB), her ekranda keskin | Karmaşık el çizimi animasyonu SVG ile zor |
+## 1. Klasör haritası (her şey hazır olduğunda böyle görünecek)
 
-**SVG oluşturma:** Figma / Inkscape / Illustrator'da çiz → "SVG olarak dışa aktar". Animasyon için
-SVGator gibi bir araçta hareketlendir ve **"CSS animasyonu"** olarak dışa aktar. JavaScript'li SVG
-**çalışmaz** (görsel `<img>` ile gösterildiği için güvenlik gereği içindeki script kapalıdır).
-Kontrol: dosyayı tarayıcıda tek başına açınca hareket ediyorsa ve içinde `<script>` yoksa uygundur.
+```
+public\images\
+│
+├─ logo.png              ← Üst banner logosu
+├─ kazandin.gif          ← Kazanınca çıkan görsel
+├─ kaybettin.gif         ← Kaybedince çıkan görsel
+│
+├─ daragaci.png          ← Asılma animasyonu: sabit darağacı
+├─ adam-sprite.png       ← Asılma animasyonu: adamın tüm kareleri (tek resim)
+│
+├─ muzik.mp3             ← Arka plan müziği
+├─ dogru.mp3             ← Doğru harf sesi
+├─ yanlis.mp3            ← Yanlış harf sesi
+├─ kazanma.mp3           ← Kazanma sesi
+├─ kaybetme.mp3          ← Kaybetme sesi
+│
+├─ (isteğe bağlı) giris-arka-plan.jpg / giris-buton.png / arka-plan-acik.webp / arka-plan-koyu.webp
+│
+└─ … ve şu an duran yer tutucular: logo.svg, kazandin.svg, kaybettin.svg,
+     giris-arka-plan.svg, giris-buton.svg, .htaccess   → BUNLARI SİLME
+```
 
-## 5. Kontrol listesi (dosya değiştirdikten sonra)
-- [ ] Dosya adı küçük harf, Türkçe karakter/boşluk yok, uzantı config ile aynı
-- [ ] Sayfayı **Ctrl+F5** ile yenile (tarayıcı eski dosyayı önbellekte tutabilir)
-- [ ] Açık ve koyu temada bak; telefonda dikey ve yatay bak
-- [ ] Görsel görünmüyorsa: F12 → Console'da 404 hatası var mı (yanlış ad/yol)
+> **Yer tutucuları silme.** Kendi dosyan yokken site onları gösterir. Kendi dosyanı koyunca
+> site otomatik olarak seninkini kullanır; yer tutucu orada dursa da görünmez.
+
+---
+
+## 2. Dosya dosya liste
+
+Dosyalar üç gruba ayrılıyor:
+
+| Grup | Ne yapacaksın |
+|---|---|
+| **A – Sadece koy** | Dosyayı verilen adla klasöre koy. **Başka hiçbir şey yapma.** |
+| **B – Koy + config'te 1 satır** | Dosyayı koy, `public\js\config.js` içinde gösterilen **tek satırı** değiştir. |
+| **C – Asılma animasyonu** | 2 dosyayı koy, config'te `mode` satırını değiştir (Bölüm 3). |
+
+### A – Sadece koy (config'e dokunma)
+
+| # | Ne | Dosya adı (tam olarak bu) | Tür | Boyut / süre | Şu an yoksa ne görünüyor |
+|---|---|---|---|---|---|
+| 1 | Üst banner logosu | **`logo.png`** | Şeffaf PNG | **1920×120** px | Yer tutucu "ADAM ASMACA" yazısı |
+| 2 | Kazanma görseli | **`kazandin.gif`** | GIF | **800×600** px | Zıplayan çöp adam (yer tutucu) |
+| 3 | Kaybetme görseli | **`kaybettin.gif`** | GIF | **800×600** px | Asılı çöp adam (yer tutucu) |
+| 4 | Arka plan müziği | **`muzik.mp3`** | MP3 | 1–3 dk, başı-sonu birleşebilen | Bilgisayarın çaldığı basit melodi |
+| 5 | Doğru harf sesi | **`dogru.mp3`** | MP3 | 0,5 sn'den kısa | Bilgisayar "bip"i |
+| 6 | Yanlış harf sesi | **`yanlis.mp3`** | MP3 | 0,5 sn'den kısa | Bilgisayar "bzzt"i |
+| 7 | Kazanma sesi | **`kazanma.mp3`** | MP3 | 1–3 sn | Bilgisayar melodisi |
+| 8 | Kaybetme sesi | **`kaybetme.mp3`** | MP3 | 1–3 sn | Bilgisayar melodisi |
+
+Notlar:
+- **Logo:** uzun ve ince olmalı (16'ya 1). İki temada da okunsun diye koyu kenarlı renkli yazı en güvenlisi.
+  Telefonda çok küçük görünür.
+- **Kazanma / kaybetme:** ekran yüksekliğinin en fazla yarısı kadar gösterilir, altında kelime yazar.
+- **Sesler:** efektlerin başında sessizlik bırakma, gecikmiş gibi duyulur. Ses seviyeleri `config.js → VOLUMES`.
+
+### B – Koy + config'te 1 satır değiştir
+
+`public\js\config.js` dosyasını Not Defteri veya VS Code ile aç, aşağıdaki satırı bul (Ctrl+F ile
+`giris-arka-plan`, `giris-buton`, `light:` ya da `dark:` ara) ve **sadece tırnak içindeki adı** değiştir.
+Tırnakları ve satır sonundaki virgülü silme.
+
+| # | Ne | Önerilen ad | Tür | Boyut | config.js'te ŞU AN | Şöyle yap |
+|---|---|---|---|---|---|---|
+| 9 | Giriş ekranı arka planı | `giris-arka-plan.jpg` | JPG, WebP veya hareketli GIF | **1920×1080** | `introBg:     'images/giris-arka-plan.svg',` | `introBg:     'images/giris-arka-plan.jpg',` |
+| 10 | Giriş butonundaki resim | `giris-buton.png` | Şeffaf PNG | **512×512** (kare) | `introButton: 'images/giris-buton.svg',` | `introButton: 'images/giris-buton.png',` |
+| 11 | Açık tema sayfa arka planı | `arka-plan-acik.webp` | WebP, JPG veya PNG | **1920×1080** (en az) | `light: '',` | `light: 'images/arka-plan-acik.webp',` |
+| 12 | Koyu tema sayfa arka planı | `arka-plan-koyu.webp` | WebP, JPG veya PNG | **1920×1080** (en az) | `dark:  ''` | `dark:  'images/arka-plan-koyu.webp'` |
+
+Notlar:
+- **9 – Giriş arka planı:** ekranı tamamen kaplar, telefonda kenarları kesilir; kenarlara önemli şey koyma.
+  Üstüne hafif karartma uygulanır.
+- **10 – Giriş butonu:** beyaz yuvarlak butonun ortasında %60 saydamlıkla durur; resmin kenarlarında boşluk bırak.
+- **11 / 12 – Sayfa arka planı:** düz fon en iyisi (açıkta beyaz üstüne çok açık gri, koyuda siyah üstüne çok
+  koyu gri). Bölmeler şeffaf kalır. Geri almak için adı silip `''` bırak → kâğıt / kara tahta geri gelir.
+- Önerilen adı kullanmak zorunda değilsin; hangi adı verirsen config'e de **aynısını** yaz.
+
+### C – Asılma animasyonu (2 dosya + 1 satır)
+
+| # | Ne | Dosya adı (tam olarak bu) | Tür | Boyut |
+|---|---|---|---|---|
+| 13 | Sabit darağacı | **`daragaci.png`** | Şeffaf PNG, siyah çizgi | **360×480** (veya 720×960) |
+| 14 | Adamın tüm kareleri | **`adam-sprite.png`** | Şeffaf PNG, siyah çizgi | **2880×2400** (37 kare × 360×480, 8 sütun) |
+
+İkisini de koyduktan sonra `config.js`'te şu satırı değiştir:
+
+```
+ŞU AN:      mode: 'svg',
+ŞÖYLE YAP:  mode: 'sprite',
+```
+
+Nasıl çizileceği adım adım **Bölüm 3**'te. Dosyalardan biri eksikse site çökmez, şimdiki yerleşik
+çizime döner.
+
+---
+
+## 3. Asılma animasyonunu hazırlama (sprite)
+
+**Fikir:** Darağacı tek bir sabit resim. Adam ise kare kare çizilmiş bir animasyon; ama 37 ayrı dosya yerine
+**hepsi tek bir resimde ızgara gibi dizili**. Site her an bu resmin sadece bir karesini gösterir. Hata artınca
+ileri, doğru harfte geri oynar; hata arttıkça adam ipin bağlandığı yerden daha çok sallanır (6 hatada ±10°).
+
+### Adım 1 – Aynı tuvalde iki katman aç
+- Tuval: **360×480** px (dikey, 3'e 4). Daha keskin istersen 720×960; oran aynı kalsın.
+- **Katman 1 – Darağacı:** direk, kiriş, payanda, zemin. **İp çizme.** Bu katman hiç değişmez.
+- **Katman 2 – Adam:** ip + adam. Animasyonu bu katmanda yap.
+- Zemin **şeffaf**, çizgiler **siyah**. (Koyu temada site çizgileri otomatik beyaza çevirir.)
+
+### Adım 2 – İpi doğru yere çiz
+- İpin **tepesi**, kirişteki bağlanma noktasına **tam denk** gelsin (adam bu noktadan sallanacak).
+- Tepeyi tuvalin en üst kenarına yapıştırma, **5–10 px** boşluk bırak.
+
+### Adım 3 – Kareleri çiz (37 kare)
+Her aşama için 6 kare (kalemin o uzvu çizme hareketi), saniyede 12 kare:
+
+| Kare no. | Görünen |
+|---|---|
+| 0 | Sadece ip |
+| 1–6 | Kafa çiziliyor → kare 6'da kafa tamam |
+| 7–12 | Gövde → kare 12'de tamam |
+| 13–18 | Sol kol → 18'de tamam |
+| 19–24 | Sağ kol → 24'te tamam |
+| 25–30 | Sol bacak → 30'da tamam |
+| 31–36 | Sağ bacak (+ istersen çarpı gözler) → kare 36 = son hâl |
+
+### Adım 4 – Dışa aktar
+- **Darağacı katmanı** → tek PNG → adı **`daragaci.png`**.
+- **Adam katmanı** → **"Sprite Sheet"** olarak dışa aktar → adı **`adam-sprite.png`**.
+  - Ayarlar: **8 sütun**, kareler arası boşluk **0**, kenar payı **0**, kırpma **kapalı**.
+  - Kareler soldan sağa, satır satır dizilir:
+    ```
+    [ 0][ 1][ 2][ 3][ 4][ 5][ 6][ 7]
+    [ 8][ 9][10][11][12][13][14][15]
+    [16][17][18][19][20][21][22][23]
+    [24][25][26][27][28][29][30][31]
+    [32][33][34][35][36][  ][  ][  ]   ← son satırın boş kalması normal
+    ```
+  - Sonuç resim: **2880×2400** px. Daha büyük yapma; telefonlar çok büyük resimleri yavaş açar.
+  - Programında "Sprite Sheet" yoksa: kareleri tek tek PNG olarak dışa aktar, ücretsiz bir
+    "sprite sheet packer" aracıyla aynı ayarlarla birleştir.
+
+### Adım 5 – Klasöre koy, config'i değiştir
+1. `daragaci.png` ve `adam-sprite.png` → `public\images\`
+2. `config.js` → `mode: 'svg',` satırını `mode: 'sprite',` yap.
+3. **Ctrl+F5.**
+
+### Kareleri ya da sütunları farklı yaptıysan
+`config.js` → `sprite` bölümünde şu değerleri kendi dosyana göre değiştir:
+
+```js
+sprite: {
+  gallows: 'images/daragaci.png',
+  sheet: 'images/adam-sprite.png',
+  columns: 8,                              // sprite'ta bir satırdaki kare sayısı
+  count: 37,                               // toplam kare sayısı
+  stageFrames: [0, 6, 12, 18, 24, 30, 36], // 0,1,2…6 hatada hangi kare görünsün
+  fps: 12,                                 // saniyede kaç kare oynasın
+  pivot: { x: 50, y: 2 }                   // ipin tepesinin karedeki yeri (yüzde)
+},
+sway: { maxDeg: 10, periodMs: 2800 },      // 6 hatada ±10°; kapatmak için maxDeg: 0
+```
+
+**`pivot` hesabı:** ipin tepesi 360×480 karede (180, 10) pikseldeyse → `x = 180 ÷ 360 × 100 = 50`,
+`y = 10 ÷ 480 × 100 ≈ 2`.
+
+---
+
+## 4. Desteklenen dosya türleri
+
+Site tek bir türe bağlı değil; adını ne yazdıysan o dosyayı açar.
+
+| Tür | Hareketli olabilir mi? | Not |
+|---|---|---|
+| PNG | Hayır (APNG ise evet) | Şeffaflık için en kolayı |
+| GIF | Evet | Her yerde çalışır; 256 renk, dosya büyük |
+| WebP | Evet | GIF'ten 3–5 kat küçük, şeffaflık var — mümkünse bunu tercih et |
+| JPG | Hayır | Şeffaflık yok; sadece arka planlar için |
+| AVIF | Evet | Çok küçük, bazı eski tarayıcılar açmaz |
+| SVG | Evet (sadece CSS animasyonu) | İçinde JavaScript varsa hareket etmez |
+
+Türü değiştirirsen (ör. `kazandin.gif` yerine `kazandin.webp`), `config.js`'teki adı da değiştirmelisin
+(A grubu dosyalar için de geçerli: `winGif: 'images/kazandin.webp',`).
+
+**Kazanma/kaybetme için SVG yapmak istersen:** Figma / Inkscape / Illustrator'da çiz, SVGator gibi bir
+araçla hareketlendir ve **"CSS animasyonu"** olarak dışa aktar. Dosyayı tarayıcıda tek başına açınca
+hareket ediyorsa ve içinde `<script>` yoksa uygundur.
+
+---
+
+## 5. İleri seviye: diğer animasyon modları
+
+Sprite yerine bunları kullanmak istersen `mode` satırını değiştir:
+
+| `mode` | Dosyalar (hepsi `public\images\` içinde) | Ne zaman |
+|---|---|---|
+| `'svg'` | Dosya gerekmez | Şu anki yerleşik çizim |
+| `'sequence'` | `animasyon\kare-000.png`, `kare-001.png` … (bu modda alt klasör **gerekir**) | Her kare ayrı dosya |
+| `'frames'` | `adam-0.png` … `adam-6.png` (7 resim) | Animasyon yok, sadece 7 durum |
+| `'video'` | `adam-animasyon.mp4` | Tek video; geri sararken takılmaması için `ffmpeg -i girdi.mov -c:v libx264 -g 1 -pix_fmt yuv420p -an adam-animasyon.mp4` |
+
+Her modun ayarları `config.js → HANGMAN` içinde, yanlarında açıklamalarıyla duruyor.
+Hepsinde: zemin şeffaf, çizgi siyah, dikey oran.
+
+---
+
+## 6. Görünmüyorsa kontrol et
+
+- [ ] Dosya `public\images\` içinde mi? (Alt klasörde değil.)
+- [ ] Ad **birebir** tablodaki gibi mi? Küçük harf, Türkçe karakter yok, boşluk yok.
+- [ ] Uzantı doğru mu? `logo.png.png` olmuş olabilir (Kural 0.2'deki uzantı ayarını aç).
+- [ ] B grubu dosyaysa `config.js`'teki ad dosyanın adıyla aynı mı? Tırnaklar ve virgül yerinde mi?
+- [ ] Tarayıcıda **Ctrl+F5** yaptın mı?
+- [ ] Hâlâ yoksa: **F12 → Console** sekmesi. `404` yazan satır, sitenin aradığı adı gösterir; dosyanın
+      adını ona göre düzelt.

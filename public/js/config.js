@@ -8,13 +8,15 @@
 
 window.AA_CONFIG = Object.freeze({
 
-  /* === Görseller ======================================================= */
+  /* === Görseller =======================================================
+     Desteklenen türler: png, apng, jpg, gif, webp, avif, svg.
+     logo / winGif / loseGif dosyası bulunamazsa yerleşik yer tutucu (.svg) gösterilir. */
   IMAGES: Object.freeze({
-    logo:        'images/logo.svg',            // Üst banner logosu (önerilen 1920×120, şeffaf PNG olabilir)
-    introBg:     'images/giris-arka-plan.svg', // Giriş ekranı arka planı (önerilen 1920×1080, GIF olabilir)
-    introButton: 'images/giris-buton.svg',     // Yuvarlak giriş butonundaki görsel (önerilen 512×512)
-    winGif:      'images/kazandin.svg',        // Kazanma GIF'i (önerilen 800×600)
-    loseGif:     'images/kaybettin.svg'        // Kaybetme GIF'i (önerilen 800×600)
+    logo:        'images/logo.png',            // Üst banner logosu (1920×120, şeffaf PNG)
+    introBg:     'images/giris-arka-plan.gif', // Giriş ekranı arka planı (önerilen 1920×1080, GIF olabilir)
+    introButton: 'images/giris-buton.png',     // Yuvarlak giriş butonundaki görsel (önerilen 512×512)
+    winGif:      'images/kazandin.gif',        // Kazanma GIF'i (800×600)
+    loseGif:     'images/kaybettin.gif'        // Kaybetme GIF'i (800×600)
   }),
 
   /* === Sayfa arka planı =================================================
@@ -48,8 +50,9 @@ window.AA_CONFIG = Object.freeze({
   /* === Adam asmaca animasyonu ===========================================
      mode: 'svg'      → yerleşik kalem çizimi (dosya gerekmez, varsayılan)
            'frames'   → 7 görsel, aralarında yumuşak geçiş (0 hata … 6 hata)
-           'sequence' → kare dizisi (ÖNERİLEN, kendi animasyonun için):
-                        çok sayıda kare, ileri VE geri gerçek animasyon oynar
+           'sprite'   → ÖNERİLEN: sabit darağacı + tüm kareler TEK resimde,
+                        ileri/geri oynar, hata arttıkça adam daha çok sallanır
+           'sequence' → aynı şey ama her kare ayrı dosya
            'video'    → tek video, ilgili ana yumuşak sarma (ileri/geri)
      Ayrıntılı rehber: proje kökündeki GORSEL-REHBERI.md */
   HANGMAN: Object.freeze({
@@ -63,7 +66,7 @@ window.AA_CONFIG = Object.freeze({
     ]),
 
     /* --- 'sequence' modu ---
-       Dosyalar: images/animasyon/kare-000.webp, kare-001.webp, … kare-060.webp
+       Dosyalar: images/animasyon/kare-000.png, kare-001.png, … kare-060.png
        stageFrames: her hata sayısının (0..6) denk geldiği kare numarası.
        Örn. 6 hata = kare 60. Hata artınca aradaki kareler ileri,
        azalınca geri oynatılır. */
@@ -71,10 +74,34 @@ window.AA_CONFIG = Object.freeze({
       folder: 'images/animasyon/',
       prefix: 'kare-',
       digits: 3,               // 3 → kare-000, kare-001 …
-      ext: 'webp',             // webp | png | jpg | svg
+      ext: 'png',              // png (önerilen) | webp | avif | jpg | gif | svg
       count: 61,               // toplam kare sayısı (0'dan başlar)
       stageFrames: Object.freeze([0, 10, 20, 30, 40, 50, 60]),
       fps: 30                  // geçişte saniyedeki kare
+    }),
+
+    /* --- 'sprite' modu (ÖNERİLEN: tek indirme) ---
+       gallows: sadece darağacı, hep sabit duran resim.
+       sheet:   adamın TÜM kareleri tek resimde, soldan sağa / satır satır.
+       Darağacı ile tek kare AYNI en-boy oranında olmalı (ör. ikisi de 3:4)
+       ve ipin tepesi her ikisinde de aynı noktada durmalı.
+       pivot:   ipin tepesinin karedeki yeri, yüzde (x soldan, y üstten).
+                Adam bu noktanın etrafında sallanır. */
+    sprite: Object.freeze({
+      gallows: 'images/daragaci.png',
+      sheet: 'images/adam-sprite.png',
+      columns: 8,              // sheet'te bir satırdaki kare sayısı
+      count: 37,               // toplam kare (0'dan başlar)
+      stageFrames: Object.freeze([0, 6, 12, 18, 24, 30, 36]),
+      fps: 12,                 // el çizimi animasyonda 12 doğal durur
+      pivot: Object.freeze({ x: 50, y: 2 })
+    }),
+
+    /* Sallanma (yerleşik çizim ve 'sprite'): 0 hatada durur, her hatada artar,
+       6 hatada ±maxDeg olur. periodMs: bir tam gidip gelme süresi. */
+    sway: Object.freeze({
+      maxDeg: 10,
+      periodMs: 2800
     }),
 
     /* --- 'video' modu ---

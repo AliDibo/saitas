@@ -21,6 +21,9 @@ Her madde `CHECKLIST.md` içinde kontrol satırına sahiptir. Değişiklikte ilg
 - **F-20:** Animasyon hata sayısına (0–6) bağlı; 0 = başlangıç, 6 = kayıp.
 - **F-21:** Hata artınca ileri, azalınca geri oynar; geçişler yumuşak.
 - **F-22:** `config.js → HANGMAN.mode`: `svg` (yer tutucu), `frames` (7 görsel, crossfade), `sequence` (kare dizisi; aşamalar `stageFrames` ile kareye eşlenir, `fps` hızında ileri/geri kare kare oynar), `video` (scrub; `videoStages` ile özel saniyeler). Kullanıcı dosyayı `images/`'e koyup config'i değiştirerek animasyonu değiştirir.
+- **F-26:** `sprite` modu: sabit darağacı resmi (`sprite.gallows`) + tüm kareler tek resimde (`sprite.sheet`, `columns`, `count`, `stageFrames`, `fps`). Kare oranı resimden hesaplanır, kutu bölmeye oranı korunarak sığar, darağacı ve adam aynı kutuda üst üste. Sheet yüklenemezse yerleşik SVG'ye dönülür.
+- **F-27:** Hem yerleşik çizimde (`svg`, ip + adam kirişteki bağlantı noktası 170,59 etrafında) hem `sprite` modunda (adam `pivot` etrafında) sallanma var; genlik `sway.maxDeg × hata/6` (0 hatada durur, 6 hatada ±10°), genlik değişimi yumuşak, yeni oyunda sıfırlanır. Oyun animasyonu sayıldığı için hareket azaltma ayarında da çalışır.
+- **F-25:** Görseller tek türe bağlı değil (png, apng, jpg, gif, webp, avif, svg). `logo`, `winGif`, `loseGif` dosyası bulunamazsa yerleşik `.svg` yer tutucusu gösterilir; logo yer tutucusu da yoksa "ADAM ASMACA" yazısı.
 - **F-24:** `HANGMAN.invertInDark: true` → koyu temada kullanıcı animasyonu ters çevrilir (siyah çizgi → beyaz). Hatalı `sequence` ayarında yerleşik SVG'ye dönülür ve konsola uyarı yazılır.
 - **F-23:** Animasyon alanı solda büyük dikey bölmede; üstünde başlık, içinde hata sayısı yazısı yok (hata sayısı sadece ekran okuyucuya duyurulur).
 
@@ -50,7 +53,7 @@ Her madde `CHECKLIST.md` içinde kontrol satırına sahiptir. Değişiklikte ilg
 ## Tema
 - **F-60:** Varsayılan koyu (kara tahta). Tema butonu açık ↔ koyu; tercih `localStorage`'da.
 - **F-61:** Tüm öğeler iki temada okunaklı; geçişler ≈0.3 sn.
-- **F-63:** İşletim sisteminde "animasyon efektleri" kapalı olsa da (`prefers-reduced-motion: reduce`) oyun animasyonları (çizim, daire/çarpı, geçişler, sonuç ekranı) oynar; sadece sürekli tekrarlayan süs hareketleri (giriş butonu zıplaması, asılı adam sallanması) durur.
+- **F-63:** İşletim sisteminde "animasyon efektleri" kapalı olsa da (`prefers-reduced-motion: reduce`) oyun animasyonları (çizim, daire/çarpı, geçişler, sonuç ekranı, adamın sallanması) oynar; sadece giriş butonunun zıplaması durur.
 - **F-62:** `config.js → BACKGROUNDS.light / .dark`: boşsa varsayılan doku (kâğıt / kara tahta), dolu ise o temada görsel arka plan (cover). Bölmeler görsel arka planda da şeffaf kalır (görseller düz fon: açıkta çok açık gri, koyuda çok koyu gri olacak).
 
 ## Kurallar penceresi
@@ -67,4 +70,5 @@ Her madde `CHECKLIST.md` içinde kontrol satırına sahiptir. Değişiklikte ilg
 - **F-90:** `words.txt` okunamazsa yedek liste + görünür uyarı; oyun çökmez.
 - **F-91:** Fiziksel klavyede harfe basınca ilgili tuş tetiklenir; tahmin girişi odaktayken veya bir pencere açıkken tetiklenmez.
 - **F-92:** Erişilebilirlik: görsellerde `alt`, butonlarda `aria-label`, durum değişiklikleri `aria-live` ile duyurulur.
+- **F-94:** `.htaccess` tüm resim türleri için doğru MIME tipini tanımlar (nosniff altında WebP/AVIF/APNG eski sunucularda da açılır).
 - **F-93:** Güvenlik: CSP, güvenlik başlıkları, `innerHTML` ile dış veri basılmaz, fetch MIME/köken kontrolü.

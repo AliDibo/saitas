@@ -1,9 +1,12 @@
 /* ==========================================================================
    hangman.js – Adam asmaca animasyonu (hata sayısı 0–6)
    Mod config.js → HANGMAN.mode ile seçilir:
-     'svg'    : yerleşik kalem çizimi; parçalar çizilerek gelir, silinerek gider
-     'frames' : 7 görsel arasında yumuşak çapraz geçiş
-     'video'  : tek videoda ilgili zamana yumuşak ileri/geri sarma
+     'svg'      : yerleşik kalem çizimi; parçalar çizilerek gelir, silinerek gider
+     'frames'   : 7 görsel arasında yumuşak çapraz geçiş
+     'sequence' : ayrı ayrı kare dosyaları, kare kare ileri/geri
+     'sprite'   : sabit darağacı + tek resimde tüm kareler (sprite sheet),
+                  kare kare ileri/geri, hata sayısıyla artan sallanma
+     'video'    : tek videoda ilgili zamana yumuşak ileri/geri sarma
    ========================================================================== */
 'use strict';
 
@@ -24,8 +27,6 @@ window.AAHangman = (function () {
     'M70 401 C 68 300, 73 190, 69 58',
     'M60 60 C 110 57, 160 62, 206 58',
     'M70 104 C 82 90, 94 76, 106 61',
-    // ip
-    'M170 59 C 172 72, 168 86, 170 100',
     // ağaç gövdesi
     'M238 401 C 236 360, 242 320, 236 272',
     'M264 401 C 266 360, 259 320, 265 272',
@@ -37,6 +38,9 @@ window.AAHangman = (function () {
     'M250 272 C 250 256, 246 246, 239 236', 'M256 262 C 262 250, 270 244, 278 236',
     'M224 226 c 3 -6, 7 -10, 12 -12', 'M286 202 c -2 -5, -5 -8, -10 -10'
   ];
+
+  // İp sahneyle birlikte çizilir ama adamla birlikte sallanır (tepesi kirişte, 170,59)
+  const ROPE = 'M170 59 C 172 72, 168 86, 170 100';
 
   const STAGES = [
     [], // 0 hata: sadece sahne
@@ -56,14 +60,15 @@ window.AAHangman = (function () {
   let stageEls = [];   // svg: her aşamanın <path> listesi | frames: <img> listesi
   let video = null;
   let videoAnim = 0;
+  let swayEl = null;   // sallanan öğe: svg'de ip+adam grubu, sprite'ta adam katmanı
 
   /* === Ortak ============================================================ */
   function mount(container) {
     root = container;
     root.textContent = '';
-    mode = ['svg', 'frames', 'sequence', 'video'].includes(CFG.mode) ? CFG.mode : 'svg';
-    if (mode === 'sequence' && !sequenceValid()) {
-      console.warn('[Adam Asmaca] HANGMAN.sequence ayarları hatalı, yerleşik çizime dönüldü.');
+    mode = ['svg', 'frames', 'sequence', 'sprite', 'video'].includes(CFG.mode) ? CFG.mode : 'svg';
+    if ((mode === 'sequence' && !sequenceValid()) || (mode === 'sprite' && !spriteValid())) {
+      console.warn('[Adam Asmaca] HANGMAN.' + mode + ' ayarları hatalı, yerleşik çizime dönüldü.');
       mode = 'svg';
     }
     root.style.setProperty('--hm-ms', CFG.transitionMs + 'ms');
@@ -71,16 +76,21 @@ window.AAHangman = (function () {
     root.classList.toggle('hm-invert', mode !== 'svg' && CFG.invertInDark === true);
     if (mode === 'frames') buildFrames();
     else if (mode === 'sequence') buildSequence();
+    else if (mode === 'sprite') buildSprite();
     else if (mode === 'video') buildVideo();
     else buildSvg();
   }
 
+  /** Kare tabanlı modların ayarları (sequence / sprite) */
+  const frameCfg = () => (mode === 'sprite' ? CFG.sprite : CFG.sequence);
+
   function setStage(n) {
     const target = Math.max(0, Math.min(MAX, n | 0));
     if (mode === 'frames') showFrame(target);
-    else if (mode === 'sequence') playSequenceTo(CFG.sequence.stageFrames[target]);
+    else if (mode === 'sequence' || mode === 'sprite') playTo(frameCfg().stageFrames[target]);
     else if (mode === 'video') seekVideo(target);
     else drawSvg(target);
+    if (mode === 'sprite' || mode === 'svg') setSwayLevel(target);
     current = target;
   }
 
@@ -90,13 +100,11 @@ window.AAHangman = (function () {
       drawSvg(0);
       redrawScene();
     }
-    if (mode === 'sequence') {
+    if (mode === 'sequence' || mode === 'sprite') {
       // Yeni oyunda başa geri oynatmak yerine doğrudan ilk kareye atla
-      clearTimeout(seqTimer);
-      seqTimer = 0;
-      seqFrame = seqTarget = CFG.sequence.stageFrames[0];
-      seqImg.src = seqUrls[seqFrame];
+      jumpTo(frameCfg().stageFrames[0]);
     }
+    stopSway();
     setStage(0);
   }
 
@@ -145,6 +153,13 @@ window.AAHangman = (function () {
     });
     art.appendChild(scene);
 
+    // Sallanan grup: ip + adam
+    const swing = document.createElementNS(SVG_NS, 'g');
+    swing.setAttribute('class', 'hm-swing');
+    const rope = makePath(ROPE, 'hm-stroke hm-rope');
+    rope.style.setProperty('--hm-delay', (SCENE.length * 45) + 'ms');
+    swing.appendChild(rope);
+
     const figure = document.createElementNS(SVG_NS, 'g');
     figure.setAttribute('class', 'hm-figure');
     stageEls = STAGES.map((paths) => paths.map((d, j) => {
@@ -153,7 +168,9 @@ window.AAHangman = (function () {
       figure.appendChild(p);
       return p;
     }));
-    art.appendChild(figure);
+    swing.appendChild(figure);
+    art.appendChild(swing);
+    swayEl = swing;
     svg.appendChild(art);
     root.appendChild(svg);
     redrawScene();
@@ -162,10 +179,15 @@ window.AAHangman = (function () {
   /** Sahneyi baştan çizerek gösterir (yeni oyun efekti). */
   function redrawScene() {
     const scene = root.querySelector('.hm-scene');
+    const rope = root.querySelector('.hm-rope');
     if (!scene) return;
     scene.classList.remove('is-drawn');
+    rope.classList.remove('is-drawn');
     void scene.getBoundingClientRect(); // reflow → animasyon yeniden başlasın
-    requestAnimationFrame(() => scene.classList.add('is-drawn'));
+    requestAnimationFrame(() => {
+      scene.classList.add('is-drawn');
+      rope.classList.add('is-drawn');
+    });
   }
 
   function drawSvg(n) {
@@ -193,24 +215,54 @@ window.AAHangman = (function () {
     stageEls.forEach((img, i) => img.classList.toggle('is-active', i === n));
   }
 
-  /* === Sequence modu (kare dizisi) ======================================
-     Tüm kareler önceden yüklenir; hedef kareye fps hızında ileri ya da geri
-     kare kare gidilir. Gerçek animasyon her iki yönde de oynar. */
+  /* === Ortak kare oynatıcı (sequence + sprite) ==========================
+     Hedef kareye fps hızında ileri ya da geri kare kare gidilir.
+     renderFrame(i): o modun i. kareyi ekrana basma yöntemi. */
+  let renderFrame = () => {};
+  let curFrame = 0;
+  let targetFrame = 0;
+  let frameTimer = 0;
+
+  function playTo(frame) {
+    targetFrame = frame;
+    if (frameTimer) return; // zaten oynuyor; yeni hedefe doğru devam eder
+    const stepMs = 1000 / Math.max(1, frameCfg().fps);
+    const tick = () => {
+      if (curFrame === targetFrame) { frameTimer = 0; return; }
+      curFrame += curFrame < targetFrame ? 1 : -1;
+      renderFrame(curFrame);
+      frameTimer = window.setTimeout(tick, stepMs);
+    };
+    frameTimer = window.setTimeout(tick, 0);
+  }
+
+  function jumpTo(frame) {
+    clearTimeout(frameTimer);
+    frameTimer = 0;
+    curFrame = targetFrame = frame;
+    renderFrame(frame);
+  }
+
+  /** stageFrames: 7 değer, artan sırada, 0..count-1 aralığında */
+  function stageFramesValid(st, count) {
+    return Array.isArray(st) && st.length === MAX + 1 &&
+      st.every((f, i) => Number.isInteger(f) && f >= 0 && f < count && (i === 0 || f >= st[i - 1]));
+  }
+
+  const SAFE_IMG = /^images\/[a-z0-9_\-/]+\.(png|apng|webp|avif|jpe?g|gif|svg)$/;
+  const safeImg = (p) => typeof p === 'string' && SAFE_IMG.test(p) && !p.includes('..');
+
+  /* === Sequence modu (ayrı kare dosyaları) ============================== */
   let seqImg = null;
   let seqUrls = [];
-  let seqFrame = 0;
-  let seqTarget = 0;
-  let seqTimer = 0;
   const seqCache = [];
 
   function sequenceValid() {
     const s = CFG.sequence;
     if (!s || !/^images\/[a-z0-9_\-/]*$/.test(s.folder) || s.folder.includes('..')) return false;
-    if (!/^[a-z0-9_\-]*$/.test(s.prefix) || !/^(webp|png|jpe?g|svg|gif)$/.test(s.ext)) return false;
+    if (!/^[a-z0-9_\-]*$/.test(s.prefix) || !/^(png|apng|webp|avif|jpe?g|gif|svg)$/.test(s.ext)) return false;
     if (!(s.count > 1 && s.count <= 1000) || !(s.digits >= 0 && s.digits <= 6)) return false;
-    const st = s.stageFrames;
-    return Array.isArray(st) && st.length === MAX + 1 &&
-      st.every((f, i) => Number.isInteger(f) && f >= 0 && f < s.count && (i === 0 || f >= st[i - 1]));
+    return stageFramesValid(s.stageFrames, s.count);
   }
 
   function buildSequence() {
@@ -229,22 +281,124 @@ window.AAHangman = (function () {
     seqImg = document.createElement('img');
     seqImg.className = 'hm-seq';
     seqImg.alt = 'Adam asmaca animasyonu';
-    seqFrame = seqTarget = s.stageFrames[0];
-    seqImg.src = seqUrls[seqFrame];
     root.appendChild(seqImg);
+    renderFrame = (i) => { seqImg.src = seqUrls[i]; };
+    jumpTo(s.stageFrames[0]);
   }
 
-  function playSequenceTo(frame) {
-    seqTarget = frame;
-    if (seqTimer) return; // zaten oynuyor; yeni hedefe doğru devam eder
-    const stepMs = 1000 / Math.max(1, CFG.sequence.fps);
-    const tick = () => {
-      if (seqFrame === seqTarget) { seqTimer = 0; return; }
-      seqFrame += seqFrame < seqTarget ? 1 : -1;
-      seqImg.src = seqUrls[seqFrame];
-      seqTimer = window.setTimeout(tick, stepMs);
+  /* === Sprite modu (sabit darağacı + tek resimde tüm kareler) ===========
+     Sprite sheet: kareler soldan sağa, satır satır dizilir (columns sütun).
+     Tek karenin boyutu resmin boyutundan hesaplanır. Darağacı ve kare aynı
+     en-boy oranında olmalı; ikisi üst üste aynı kutuya oturtulur. */
+  let spriteMan = null;
+  let spriteRows = 1;
+
+  function spriteValid() {
+    const s = CFG.sprite;
+    if (!s || !safeImg(s.sheet) || (s.gallows && !safeImg(s.gallows))) return false;
+    if (!(Number.isInteger(s.columns) && s.columns >= 1)) return false;
+    if (!(Number.isInteger(s.count) && s.count > 1 && s.count <= 400)) return false;
+    if (!s.pivot || !(s.pivot.x >= 0 && s.pivot.x <= 100 && s.pivot.y >= 0 && s.pivot.y <= 100)) return false;
+    return stageFramesValid(s.stageFrames, s.count);
+  }
+
+  function buildSprite() {
+    const s = CFG.sprite;
+    spriteRows = Math.ceil(s.count / s.columns);
+
+    const stage = document.createElement('div');
+    stage.className = 'hm-stage';
+    stage.setAttribute('role', 'img');
+    stage.setAttribute('aria-label', 'Adam asmaca animasyonu');
+
+    if (s.gallows) {
+      const gallows = document.createElement('img');
+      gallows.className = 'hm-gallows';
+      gallows.alt = '';
+      gallows.src = s.gallows;
+      gallows.addEventListener('error', () => {
+        console.warn('[Adam Asmaca] Darağacı görseli bulunamadı:', s.gallows);
+        gallows.hidden = true;
+      }, { once: true });
+      stage.appendChild(gallows);
+    }
+
+    spriteMan = document.createElement('div');
+    spriteMan.className = 'hm-man';
+    spriteMan.style.setProperty('transform-origin', s.pivot.x + '% ' + s.pivot.y + '%');
+    stage.appendChild(spriteMan);
+    swayEl = spriteMan;
+    root.appendChild(stage);
+
+    // Sheet'i önce yükle: kare oranını hesapla; yoksa yerleşik çizime dön
+    const sheet = new Image();
+    sheet.onload = () => {
+      const ratio = (sheet.naturalWidth / s.columns) / (sheet.naturalHeight / spriteRows);
+      root.style.setProperty('--hm-ratio', String(ratio));
+      spriteMan.style.setProperty('background-image', 'url("' + new URL(s.sheet, document.baseURI).href + '")');
+      spriteMan.style.setProperty('background-size', (s.columns * 100) + '% ' + (spriteRows * 100) + '%');
+      renderFrame(curFrame);
     };
-    seqTimer = window.setTimeout(tick, 0);
+    sheet.onerror = () => {
+      console.warn('[Adam Asmaca] Sprite sheet bulunamadı, yerleşik çizime dönüldü:', s.sheet);
+      stopSway();
+      root.textContent = '';
+      mode = 'svg';
+      root.dataset.mode = mode;
+      root.classList.remove('hm-invert');
+      buildSvg();
+      drawSvg(current);
+      setSwayLevel(current);
+    };
+    sheet.src = s.sheet;
+
+    renderFrame = (i) => {
+      const col = i % s.columns;
+      const row = Math.floor(i / s.columns);
+      const x = s.columns > 1 ? (col / (s.columns - 1)) * 100 : 0;
+      const y = spriteRows > 1 ? (row / (spriteRows - 1)) * 100 : 0;
+      spriteMan.style.setProperty('background-position', x + '% ' + y + '%');
+    };
+    jumpTo(s.stageFrames[0]);
+  }
+
+  /* === Sallanma (svg + sprite): açı hata sayısıyla orantılı ============
+     0 hatada durur, 6 hatada ±maxDeg. Oyun animasyonu sayılır; hareket
+     azaltma ayarında da çalışır (kullanıcı isteği). */
+  let swayAmp = 0;        // şu anki genlik (derece), hedefe yumuşakça yaklaşır
+  let swayTarget = 0;
+  let swayRaf = 0;
+  let swayLast = 0;
+
+  function setSwayLevel(errors) {
+    const sw = CFG.sway || {};
+    swayTarget = (Number(sw.maxDeg) || 0) * (errors / MAX);
+    if (!swayRaf && swayTarget > 0) {
+      swayLast = 0;
+      swayRaf = requestAnimationFrame(swayTick);
+    }
+  }
+
+  function swayTick(now) {
+    const period = Math.max(600, Number((CFG.sway || {}).periodMs) || 2800);
+    // Genlik ~0,5 sn'de yeni hedefe yaklaşır (kare hızından bağımsız)
+    const dt = swayLast ? Math.min(100, now - swayLast) : 16;
+    swayLast = now;
+    swayAmp += (swayTarget - swayAmp) * (1 - Math.exp(-dt / 250));
+    const angle = swayAmp * Math.sin((now / period) * Math.PI * 2);
+    swayEl.style.setProperty('transform', 'rotate(' + angle.toFixed(2) + 'deg)');
+    if (swayTarget === 0 && swayAmp < 0.05) {
+      stopSway();
+      return;
+    }
+    swayRaf = requestAnimationFrame(swayTick);
+  }
+
+  function stopSway() {
+    cancelAnimationFrame(swayRaf);
+    swayRaf = 0;
+    swayAmp = 0;
+    if (swayEl) swayEl.style.setProperty('transform', 'rotate(0deg)');
   }
 
   /* === Video modu (scrub) =============================================== */

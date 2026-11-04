@@ -32,8 +32,15 @@ Durum: ✅ test edildi · ⬜ henüz test edilmedi (gerçek cihaz / ses dosyası
 - [x] F-20/21 Animasyon ileri / geri yumuşak
 - [x] F-22 `sequence` modu: 13 karelik test dizisiyle ileri (0→4) ve geri (4→2) kare kare doğrulandı
 - [x] F-24 Koyu temada `invertInDark` uygulanıyor
+- [x] F-26 `sprite`: 37 karelik test sheet ile 0→18 ileri, 18→12 geri; darağacı sabit, ip bağlantı noktasına oturuyor; dosya yokken SVG'ye dönüyor
+- [x] F-27 Sallanma (sprite): 2 hatada ~±3°, 5 hatada ~±8° ölçüldü; yeni oyunda 0°
+- [x] F-27 Sallanma (yerleşik svg): 0 hatada 0°, 6 hatada 9,92° ölçüldü; ip adamla birlikte dönüyor
+- [ ] F-27 Yerleşik çizimde ±10°'de bacakların ağaca değip değmediği gözle kontrol (panel arka planda olduğu için görsel test yapılamadı)
+- [ ] F-26/27 Kullanıcının gerçek sprite + darağacı dosyalarıyla, mobil dikey/yatayda
 - [ ] F-22 `frames` ve `video` modları + kullanıcının gerçek animasyonu (dosya gelince test et)
 - [x] F-30 Banner 10vh, üst çizgi yok, logo ortada
+- [x] F-25 `logo.png` / `kazandin.gif` yokken yer tutucu svg gösteriliyor; geçici test GIF'i konunca GIF açıldı
+- [ ] F-94 Canlı sunucuda WebP / AVIF / GIF / PNG dosyalarının açıldığı kontrol edilecek
 - [x] F-31 İki sütun düzen
 - [x] F-32 Ses + tema sağ üstte, hover'da hiza korunuyor
 - [x] F-33 Kurallar / Yeniden Başlat eşit boyut, aynı çizgi

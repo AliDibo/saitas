@@ -315,14 +315,11 @@ img { max-width: 100%; }
 .hm-scene.is-drawn .hm-stroke { stroke-dashoffset: 0; }
 .hm-part { stroke-width: 4; }
 
-.hangman.is-dead .hm-figure {
+/* İp + adam: ipin darağacına bağlandığı nokta (170,59) etrafında sallanır.
+   Açıyı hangman.js verir (hata sayısıyla artar, config.js → HANGMAN.sway). */
+.hm-swing {
   transform-box: view-box;
   transform-origin: 170px 59px;
-  animation: hm-sway 2.6s ease-in-out infinite;
-}
-@keyframes hm-sway {
-  0%, 100% { transform: rotate(2deg); }
-  50% { transform: rotate(-2deg); }
 }
 
 /* frames modu */
@@ -345,6 +342,30 @@ img { max-width: 100%; }
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+
+/* sprite modu: kare oranında, bölmeye sığan kutu; darağacı ve adam üst üste.
+   container-type → kutu bölmenin hem enine hem boyuna göre küçülür (cqw/cqh) */
+.hangman[data-mode="sprite"] { container-type: size; }
+.hm-stage {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: min(100cqw, calc(100cqh * var(--hm-ratio, 0.75)));
+  aspect-ratio: var(--hm-ratio, 0.75);
+  transform: translateX(-50%);
+}
+.hm-gallows,
+.hm-man {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.hm-gallows { object-fit: fill; }
+.hm-man {
+  background-repeat: no-repeat;
+  will-change: transform;
 }
 
 /* config.js → HANGMAN.invertInDark: koyu temada siyah çizgi → beyaz */
@@ -834,6 +855,5 @@ body.is-over .toast {
    Oyunun geri bildirim animasyonları (çizim, daire/çarpı, sonuç ekranı) kısa ve
    oyunun parçası olduğu için KAPATILMAZ; sadece sürekli dönen süs hareketleri durur. */
 @media (prefers-reduced-motion: reduce) {
-  .intro-btn,
-  .hangman.is-dead .hm-figure { animation: none; }
+  .intro-btn { animation: none; }
 }

@@ -320,7 +320,8 @@
     Sound.stopMusic();
     Sound.play(won ? 'win' : 'lose');
 
-    el.resultGif.src = won ? CFG.IMAGES.winGif : CFG.IMAGES.loseGif;
+    setImage(el.resultGif, won ? CFG.IMAGES.winGif : CFG.IMAGES.loseGif,
+      won ? PLACEHOLDERS.winGif : PLACEHOLDERS.loseGif);
     el.resultGif.alt = won ? 'Kazandın!' : 'Kaybettin!';
     el.resultWord.textContent = state.word;
     el.resultWord.className = 'result-word ' + (won ? 'is-win' : 'is-lose');
@@ -440,15 +441,37 @@
   }
 
   /* === Görseller ======================================================= */
+  /* Kullanıcının dosyası henüz yoksa gösterilen yerleşik yer tutucular */
+  const PLACEHOLDERS = {
+    logo: 'images/logo.svg',
+    winGif: 'images/kazandin.svg',
+    loseGif: 'images/kaybettin.svg'
+  };
+
+  /**
+   * Görseli yükler; dosya bulunamazsa bir kez yedeğe geçer.
+   * Yedek de yüklenemezse onLastError çağrılır.
+   */
+  function setImage(img, src, fallback, onLastError) {
+    img.onerror = () => {
+      if (fallback && img.getAttribute('src') !== fallback) {
+        img.src = fallback;
+      } else {
+        img.onerror = null;
+        if (onLastError) onLastError();
+      }
+    };
+    img.src = src;
+  }
+
   function initImages() {
-    el.logo.addEventListener('error', () => {
-      // Logo yoksa yazı ile göster
+    setImage(el.logo, CFG.IMAGES.logo, PLACEHOLDERS.logo, () => {
+      // Logo hiç yoksa yazı ile göster
       const span = document.createElement('span');
       span.className = 'banner-fallback';
       span.textContent = 'ADAM ASMACA';
       el.logo.replaceWith(span);
-    }, { once: true });
-    el.logo.src = CFG.IMAGES.logo;
+    });
     el.introBg.src = CFG.IMAGES.introBg;
     el.introBtnImg.src = CFG.IMAGES.introButton;
     initBackgrounds();
@@ -457,7 +480,7 @@
   /** config.js → BACKGROUNDS: boş değilse o temanın varsayılan dokusu yerine görsel kullanılır. */
   function initBackgrounds() {
     const root = document.documentElement;
-    const safePath = /^images\/[a-z0-9_\-.]+\.(png|jpe?g|gif|webp|svg)$/;
+    const safePath = /^images\/[a-z0-9_\-.]+\.(png|apng|jpe?g|gif|webp|avif|svg)$/;
     ['light', 'dark'].forEach((theme) => {
       const path = CFG.BACKGROUNDS[theme];
       if (!path) return;

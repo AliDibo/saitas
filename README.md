@@ -24,15 +24,16 @@ karakter ve boşluk kullanma, küçük harf kullan.
 | Dosya (config anahtarı) | Önerilen boyut / biçim | Şu an |
 |---|---|---|
 | `BACKGROUNDS.light` / `.dark` | 1920×1080 JPG/PNG/WebP (boş = varsayılan kâğıt / kara tahta) | boş |
-| `IMAGES.logo` | 1920×120, şeffaf PNG veya SVG | yer tutucu `logo.svg` |
+| `IMAGES.logo` → `logo.png` | 1920×120, şeffaf PNG | dosya yok → yer tutucu `logo.svg` |
 | `IMAGES.introBg` | 1920×1080, JPG / GIF | yer tutucu `giris-arka-plan.svg` |
 | `IMAGES.introButton` | 512×512, kare PNG | yer tutucu `giris-buton.svg` |
-| `IMAGES.winGif` | 800×600 GIF | yer tutucu `kazandin.svg` |
-| `IMAGES.loseGif` | 800×600 GIF | yer tutucu `kaybettin.svg` |
+| `IMAGES.winGif` → `kazandin.gif` | 800×600 GIF | dosya yok → yer tutucu `kazandin.svg` |
+| `IMAGES.loseGif` → `kaybettin.gif` | 800×600 GIF | dosya yok → yer tutucu `kaybettin.svg` |
 | `SOUNDS.music` | MP3, döngüye uygun, 1–3 dk | yok → sentez melodi |
 | `SOUNDS.correct` / `wrong` | MP3, < 1 sn | yok → sentez ses |
 | `SOUNDS.win` / `lose` | MP3, 1–3 sn | yok → sentez ses |
-| `HANGMAN.sequence` (mode `sequence`, önerilen) | Kare dizisi, 600×800 şeffaf WebP/PNG, `kare-000…` | yok → yerleşik SVG |
+| `HANGMAN.sprite` (mode `sprite`, önerilen) | `daragaci.png` (sabit) + `adam-sprite.png` (37 kare 360×480, 8 sütun → 2880×2400, şeffaf) | yok → yerleşik SVG |
+| `HANGMAN.sequence` (mode `sequence`) | Kare dizisi, 600×800 şeffaf PNG, `kare-000.png…` | yok → yerleşik SVG |
 | `HANGMAN.frames` (mode `frames`) | 7 PNG, aynı boyut (ör. 600×800), şeffaf | yok → yerleşik SVG |
 | `HANGMAN.video` (mode `video`) | MP4/WebM, 0→6 eşit aralıklı | yok → yerleşik SVG |
 
