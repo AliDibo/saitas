@@ -8,10 +8,41 @@
   <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
   <meta name="referrer" content="no-referrer">
-  <meta name="description" content="Türkçe Adam Asmaca – kalemle çizilmiş, eğlenceli kelime tahmin oyunu.">
   <meta name="theme-color" content="#25352f">
+
+  <!-- ================================================================
+       SEKME / GOOGLE / PAYLAŞIM AYARLARI  (burayı sen düzenleyebilirsin)
+       Google ve WhatsApp sayfadaki JavaScript'i çalıştırmaz; bu yüzden bu
+       bilgiler config.js'te değil, burada durmak zorunda.
+       Sadece content="..." ve href="..." içindeki metinleri değiştir.
+       Ayrıntılı anlatım: GORSEL-REHBERI.md → "Sekme ve Google".
+       ================================================================ -->
+
+  <!-- 1) Sekmede ve Google sonucunda görünen başlık (en fazla ~60 karakter) -->
   <title>Adam Asmaca</title>
-  <link rel="icon" href="images/giris-buton.svg" type="image/svg+xml">
+
+  <!-- 2) Google'da başlığın altında çıkan açıklama (en fazla ~155 karakter) -->
+  <meta name="description" content="Türkçe Adam Asmaca – kalemle çizilmiş, eğlenceli kelime tahmin oyunu.">
+
+  <!-- 3) Sekme simgesi (favicon): kare, şeffaf PNG, 512×512 → images/favicon.png
+          Kendi dosyanı koyunca alttaki iki satırı silip yorumdaki iki satırı aç. -->
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="images/favicon.svg">
+  <!-- <link rel="icon" href="images/favicon.png" type="image/png"> -->
+  <!-- <link rel="apple-touch-icon" href="images/favicon.png"> -->
+
+  <!-- 4) WhatsApp / Facebook / X'te link paylaşınca çıkan kart.
+          Görsel: 1200×630 PNG/JPG → images/paylasim.png
+          ALAN-ADI.com yazan HER yeri kendi alan adınla değiştir (https:// kalsın). -->
+  <link rel="canonical" href="https://ALAN-ADI.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="tr_TR">
+  <meta property="og:url" content="https://ALAN-ADI.com/">
+  <meta property="og:title" content="Adam Asmaca">
+  <meta property="og:description" content="Türkçe Adam Asmaca – kalemle çizilmiş, eğlenceli kelime tahmin oyunu.">
+  <meta property="og:image" content="https://ALAN-ADI.com/images/paylasim.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <!-- ================================================================ -->
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -118,13 +149,9 @@
   <!-- ================= GİRİŞ EKRANI ================= -->
   <div class="intro" id="intro">
     <img class="intro-bg" id="intro-bg" alt="" aria-hidden="true">
-    <div class="intro-shade"></div>
-    <div class="intro-center">
-      <button type="button" class="intro-btn" id="intro-btn" aria-label="Oyunu başlat">
-        <img class="intro-btn-img" id="intro-btn-img" alt="">
-      </button>
-      <span class="intro-label" aria-hidden="true">AS</span>
-    </div>
+    <button type="button" class="intro-btn" id="intro-btn" aria-label="Oyunu başlat">
+      <img class="intro-btn-img" id="intro-btn-img" alt="">
+    </button>
   </div>
 
   <!-- ================= SONUÇ EKRANI ================= -->

@@ -2,7 +2,19 @@
 
 En yeni kayıt en üstte. Biçim: tarih – ne değişti – neden – etkilenen dosyalar.
 
-## 2026-11-04 – Doküman: GORSEL-REHBERI yeniden yazıldı (henüz commit'lenmedi)
+## 2026-11-04 – v1.4.0 Giriş ekranı, sonuç ekranı, logo, sekme/Google ayarları
+**Ne:**
+- Giriş ekranı: karartma katmanı ve buton görselindeki %60 soldurma kaldırıldı; görsel daireyi tamamen kaplıyor (köşeler kırpılıyor); "AS" yazısı kaldırıldı; buton büyütüldü ve ekranın tam ortasına alındı.
+- Sonuç ekranı arka planı tamamen siyah.
+- Logo, banner'da butonlar için ayrılan alan dışındaki boşluğu tamamen dolduruyor; önerilen logo oranı 720×120 (telefonda ~3 kat büyük). Yer tutucu `logo.svg` 720×120 yapıldı.
+- `index.html` başına düzenlenebilir "SEKME / GOOGLE / PAYLAŞIM AYARLARI" bloğu: başlık, açıklama, favicon, Open Graph / X kartı, canonical (alan adı yer tutucusu `ALAN-ADI.com`). Yeni yer tutucu `images/favicon.svg`.
+- Giriş arka planı ve giriş butonu görselleri bulunamazsa yerleşik `.svg` yer tutucuya düşüyor.
+
+**Neden:** Kullanıcı isteği (6 madde).
+
+**Dosyalar:** `public/index.html`, `public/css/style.css`, `public/js/game.js`, `public/js/config.js`, `public/images/logo.svg`, `public/images/favicon.svg`, `GORSEL-REHBERI.md`, `README.md`, `SPEC.md`, `CLAUDE.md`, `CHECKLIST.md`, `TODO.md`.
+
+## 2026-11-04 – Doküman: GORSEL-REHBERI yeniden yazıldı
 **Ne:** Rehber "hangi dosya → hangi klasör → hangi ad → config'te ne yapılır → yoksa ne görünür" düzeninde baştan yazıldı: klasör haritası, A (sadece koy) / B (koy + config'te 1 satır) / C (animasyon) grupları, config satırlarının önce/sonra hâli, Windows uzantı uyarısı, sorun giderme listesi.
 
 **Neden:** Kullanıcı dosyaların nereye hangi adla konacağının daha açık yazılmasını istedi.

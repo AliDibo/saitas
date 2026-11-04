@@ -444,6 +444,8 @@
   /* Kullanıcının dosyası henüz yoksa gösterilen yerleşik yer tutucular */
   const PLACEHOLDERS = {
     logo: 'images/logo.svg',
+    introBg: 'images/giris-arka-plan.svg',
+    introButton: 'images/giris-buton.svg',
     winGif: 'images/kazandin.svg',
     loseGif: 'images/kaybettin.svg'
   };
@@ -472,8 +474,8 @@
       span.textContent = 'ADAM ASMACA';
       el.logo.replaceWith(span);
     });
-    el.introBg.src = CFG.IMAGES.introBg;
-    el.introBtnImg.src = CFG.IMAGES.introButton;
+    setImage(el.introBg, CFG.IMAGES.introBg, PLACEHOLDERS.introBg);
+    setImage(el.introBtnImg, CFG.IMAGES.introButton, PLACEHOLDERS.introButton);
     initBackgrounds();
   }
 

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="512" height="512">
+  <!-- YER TUTUCU GİRİŞ BUTONU GÖRSELİ – kendi görselinle değiştir (önerilen 512×512, kare) -->
+  <g fill="none" stroke="#1d1d1d" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M40 180 C 38 130, 42 80, 40 24"/>
+    <path d="M30 26 C 80 22, 120 28, 150 24"/>
+    <path d="M40 60 L 76 26"/>
+    <path d="M140 25 C 142 35, 138 45, 140 54"/>
+    <path d="M140 54 C 156 54, 164 66, 163 78 C 162 92, 152 100, 139 99 C 126 98, 117 89, 118 76 C 119 63, 128 54, 143 56"/>
+    <path d="M140 99 L 140 145 M140 112 L 118 132 M140 112 L 162 132 M140 145 L 122 175 M140 145 L 158 175"/>
+    <path d="M20 182 C 80 178, 140 186, 186 180"/>
+  </g>
+</svg>

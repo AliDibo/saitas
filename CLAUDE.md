@@ -108,6 +108,10 @@ animasyonunu sadece `config.js` düzenleyerek takmasını sağlar. Lottie için 
 - Dosya türü seçimi (2026-11-03): logo **`logo.png`**, kazanma/kaybetme **`kazandin.gif` / `kaybettin.gif`**. Dosya yoksa `game.js → PLACEHOLDERS` içindeki `.svg` yer tutucular gösterilir (yer tutucu svg'leri silme).
 - Git: https://github.com/AliDibo/saitas (`origin/main`). Değişiklikten sonra commit + push.
 - Banner'da üst çizgi **yok** (2026-11-03).
+- (2026-11-04) Giriş ekranında **karartma ve soldurma yok**, **"AS" yazısı yok**; buton büyük ve ekranın tam ortasında, görsel daireyi **tamamen kaplar** (cover). Sonuç ekranı arka planı **tam siyah**.
+- Logo oranı **720×120** önerilir; ses/tema butonlarının yeri **değiştirilmeyecek** (kullanıcı bunu istemedi), logo kalan alanı doldurur.
+- Sekme/Google/paylaşım bilgileri `index.html` başındaki işaretli blokta (JS ile değil: tarayıcı dışı botlar JS çalıştırmaz). Alan adı henüz yok → `ALAN-ADI.com` yer tutucusu.
+- Kullanıcının eklediği büyük medya (`kaybettin.gif` 57 MB, `giris-arka-plan.gif` 23 MB) ve `giris-buton*.png` **commit'e alınmadı** (kullanıcı kararı). `git add -A` kullanırken bunları dışarıda bırak.
 - Ton: samimi, eğlenceli Türkçe.
 
 ## Bilinen kısıtlar

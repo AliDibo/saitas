@@ -38,7 +38,7 @@ Durum: ✅ test edildi · ⬜ henüz test edilmedi (gerçek cihaz / ses dosyası
 - [ ] F-27 Yerleşik çizimde ±10°'de bacakların ağaca değip değmediği gözle kontrol (panel arka planda olduğu için görsel test yapılamadı)
 - [ ] F-26/27 Kullanıcının gerçek sprite + darağacı dosyalarıyla, mobil dikey/yatayda
 - [ ] F-22 `frames` ve `video` modları + kullanıcının gerçek animasyonu (dosya gelince test et)
-- [x] F-30 Banner 10vh, üst çizgi yok, logo ortada
+- [x] F-30 Banner 10vh, üst çizgi yok, logo ortada; 720×120 yer tutucu logo 360 px'te 132×22, masaüstünde (566 px pane) 216×36
 - [x] F-25 `logo.png` / `kazandin.gif` yokken yer tutucu svg gösteriliyor; geçici test GIF'i konunca GIF açıldı
 - [ ] F-94 Canlı sunucuda WebP / AVIF / GIF / PNG dosyalarının açıldığı kontrol edilecek
 - [x] F-31 İki sütun düzen
@@ -47,8 +47,9 @@ Durum: ✅ test edildi · ⬜ henüz test edilmedi (gerçek cihaz / ses dosyası
 - [x] F-34 Bölmelerde tek çerçeve (ikinci soluk çerçeve yok)
 - [x] F-23 Animasyon bölmesinde hata yazısı yok; F-31 bölme başlıkları yok
 - [x] F-32 Ses/tema butonları el çizimi, iki temada (açık + koyu) kontrol edildi
-- [x] F-40/41 Giriş ekranı, "AS" yazısı butonun altında
-- [x] F-42/43/44 Sonuç ekranı, sıralı geçiş, diğer her şey gizli; kelime orta boy
+- [x] F-40/41 Giriş ekranı: karartma yok, buton görseli daireyi kaplıyor (cover, opaklık 1), AS yok, buton ortada (360×640'ta 170 px, merkez 180,320)
+- [x] F-42/43/44 Sonuç ekranı, sıralı geçiş, diğer her şey gizli; kelime orta boy; arka plan rgb(0,0,0)
+- [x] F-95 title / description / favicon.svg / og etiketleri sayfada; [ ] alan adı girilince og:image kontrolü
 - [ ] F-50–54 Gerçek ses dosyalarıyla seviye / takılma testi
 - [x] F-52 Ses modu döngüsü ve kaydı
 - [x] F-55 Ses butonu temanın tersi, sessizde soluk

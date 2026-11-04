@@ -1,11 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 120" width="1920" height="120">
-  <!-- YER TUTUCU LOGO – kendi logonla değiştir (önerilen 1920×120, şeffaf PNG/SVG) -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 120" width="720" height="120">
+  <!-- YER TUTUCU LOGO – kendi logonla değiştir: images/logo.png (720×120, şeffaf PNG) -->
   <defs>
     <filter id="r"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="5"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter>
   </defs>
   <g filter="url(#r)" font-family="'Comic Sans MS','Chalkboard SE','Segoe Print',cursive" font-weight="700" text-anchor="middle">
-    <text x="963" y="88" font-size="84" fill="#1d1d1d" letter-spacing="10">ADAM ASMACA</text>
-    <text x="960" y="84" font-size="84" fill="#ffb547" stroke="#1d1d1d" stroke-width="4" paint-order="stroke" letter-spacing="10">ADAM ASMACA</text>
-    <path d="M700 104 C 860 98, 1060 110, 1220 101" fill="none" stroke="#5daeff" stroke-width="7" stroke-linecap="round"/>
+    <text x="363" y="86" font-size="80" fill="#1d1d1d" letter-spacing="6">ADAM ASMACA</text>
+    <text x="360" y="82" font-size="80" fill="#ffb547" stroke="#1d1d1d" stroke-width="4" paint-order="stroke" letter-spacing="6">ADAM ASMACA</text>
+    <path d="M150 104 C 280 98, 440 110, 570 101" fill="none" stroke="#5daeff" stroke-width="7" stroke-linecap="round"/>
   </g>
 </svg>

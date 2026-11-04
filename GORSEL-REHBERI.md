@@ -44,10 +44,13 @@ public\images\
 ├─ kazanma.mp3           ← Kazanma sesi
 ├─ kaybetme.mp3          ← Kaybetme sesi
 │
+├─ favicon.png           ← Sekme simgesi (bkz. Bölüm 4)
+├─ paylasim.png          ← WhatsApp/Google paylaşım görseli (bkz. Bölüm 4)
+│
 ├─ (isteğe bağlı) giris-arka-plan.jpg / giris-buton.png / arka-plan-acik.webp / arka-plan-koyu.webp
 │
 └─ … ve şu an duran yer tutucular: logo.svg, kazandin.svg, kaybettin.svg,
-     giris-arka-plan.svg, giris-buton.svg, .htaccess   → BUNLARI SİLME
+     giris-arka-plan.svg, giris-buton.svg, favicon.svg, .htaccess   → BUNLARI SİLME
 ```
 
 > **Yer tutucuları silme.** Kendi dosyan yokken site onları gösterir. Kendi dosyanı koyunca
@@ -69,7 +72,7 @@ Dosyalar üç gruba ayrılıyor:
 
 | # | Ne | Dosya adı (tam olarak bu) | Tür | Boyut / süre | Şu an yoksa ne görünüyor |
 |---|---|---|---|---|---|
-| 1 | Üst banner logosu | **`logo.png`** | Şeffaf PNG | **1920×120** px | Yer tutucu "ADAM ASMACA" yazısı |
+| 1 | Üst banner logosu | **`logo.png`** | Şeffaf PNG | **720×120** px | Yer tutucu "ADAM ASMACA" yazısı |
 | 2 | Kazanma görseli | **`kazandin.gif`** | GIF | **800×600** px | Zıplayan çöp adam (yer tutucu) |
 | 3 | Kaybetme görseli | **`kaybettin.gif`** | GIF | **800×600** px | Asılı çöp adam (yer tutucu) |
 | 4 | Arka plan müziği | **`muzik.mp3`** | MP3 | 1–3 dk, başı-sonu birleşebilen | Bilgisayarın çaldığı basit melodi |
@@ -79,8 +82,11 @@ Dosyalar üç gruba ayrılıyor:
 | 8 | Kaybetme sesi | **`kaybetme.mp3`** | MP3 | 1–3 sn | Bilgisayar melodisi |
 
 Notlar:
-- **Logo:** uzun ve ince olmalı (16'ya 1). İki temada da okunsun diye koyu kenarlı renkli yazı en güvenlisi.
-  Telefonda çok küçük görünür.
+- **Logo:** **720×120** (6'ya 1). Logo, barda sağdaki ses/tema butonları için iki yandan ayrılan boşluğun
+  arasını doldurur ve tam ortada durur. Telefonda bu alan dar olduğu için kısa bir logo büyük görünür:
+  360 px telefonda 720×120 logo ~132×22 px, 1920×120 logo ise sadece ~132×8 px olurdu.
+  Daha da büyük görünsün istersen 480×120 (4'e 1) yapabilirsin. İki temada da okunsun diye koyu kenarlı
+  renkli yazı en güvenlisi.
 - **Kazanma / kaybetme:** ekran yüksekliğinin en fazla yarısı kadar gösterilir, altında kelime yazar.
 - **Sesler:** efektlerin başında sessizlik bırakma, gecikmiş gibi duyulur. Ses seviyeleri `config.js → VOLUMES`.
 
@@ -99,8 +105,12 @@ Tırnakları ve satır sonundaki virgülü silme.
 
 Notlar:
 - **9 – Giriş arka planı:** ekranı tamamen kaplar, telefonda kenarları kesilir; kenarlara önemli şey koyma.
-  Üstüne hafif karartma uygulanır.
-- **10 – Giriş butonu:** beyaz yuvarlak butonun ortasında %60 saydamlıkla durur; resmin kenarlarında boşluk bırak.
+  Site **hiç karartma uygulamaz**; daha soluk olsun istersen görseli kendin soldur.
+- **10 – Giriş butonu:** resim yuvarlak butonu **tamamen kaplar**, kare resmin köşeleri daire dışında kalıp
+  kırpılır; önemli kısmı ortada tut. Soldurma yok. Buton büyük olduğu için **512×512** kullan
+  (193×193 gibi küçük resim bulanık görünür).
+- **Dosya boyutu:** giriş arka planı her açılışta iner. 23 MB'lık GIF telefonda çok yavaş açılır;
+  hareketli **WebP**'ye çevirip 1–3 MB'a indir.
 - **11 / 12 – Sayfa arka planı:** düz fon en iyisi (açıkta beyaz üstüne çok açık gri, koyuda siyah üstüne çok
   koyu gri). Bölmeler şeffaf kalır. Geri almak için adı silip `''` bırak → kâğıt / kara tahta geri gelir.
 - Önerilen adı kullanmak zorunda değilsin; hangi adı verirsen config'e de **aynısını** yaz.
@@ -195,7 +205,27 @@ sway: { maxDeg: 10, periodMs: 2800 },      // 6 hatada ±10°; kapatmak için ma
 
 ---
 
-## 4. Desteklenen dosya türleri
+## 4. Sekme ve Google (başlık, açıklama, simge, paylaşım görseli)
+
+Bunlar `config.js`'te **değil**, **`public\index.html`** dosyasının en başındaki
+`SEKME / GOOGLE / PAYLAŞIM AYARLARI` yazan blokta. (Google ve WhatsApp sayfadaki JavaScript'i
+çalıştırmaz, bu yüzden bilgilerin HTML'de yazılı durması gerekiyor.)
+Dosyayı Not Defteri veya VS Code ile aç, sadece tırnak içindeki metinleri değiştir.
+
+| # | Nerede görünür | index.html'de neyi değiştirirsin | Dosya (`public\images\`) |
+|---|---|---|---|
+| 1 | Sekmedeki yazı ve Google sonucunun başlığı | `<title>Adam Asmaca</title>` arasındaki yazı (en fazla ~60 karakter) | — |
+| 2 | Google'da başlığın altındaki açıklama | `<meta name="description" content="...">` (en fazla ~155 karakter) | — |
+| 3 | Sekmedeki küçük simge (favicon), telefonda ana ekran simgesi | Dosyayı koy, sonra bloktaki `favicon.svg` yazan **iki satırı sil**, altındaki `<!-- ... favicon.png ... -->` **iki satırın başındaki `<!--` ve sonundaki `-->`'yi sil** | **`favicon.png`** – 512×512, kare, şeffaf PNG |
+| 4 | WhatsApp / Facebook / X'te link paylaşınca çıkan kart | `og:title` ve `og:description` metinleri | **`paylasim.png`** – **1200×630** PNG veya JPG |
+| 5 | Kartın ve Google'ın sitenin adresini bilmesi | `ALAN-ADI.com` yazan **3 yeri** kendi alan adınla değiştir (`https://` kalsın) | — |
+
+Notlar:
+- Google değişiklikleri hemen göstermez; sitenin yeniden taranması günler sürebilir.
+- WhatsApp önizlemeyi önbellekte tutar; eski kart çıkarsa birkaç gün bekle ya da linkin sonuna `?v=2` ekleyip paylaş.
+- `paylasim.png`'de önemli yazıyı ortada tut; bazı uygulamalar kenarlarını kırpar.
+
+## 5. Desteklenen dosya türleri
 
 Site tek bir türe bağlı değil; adını ne yazdıysan o dosyayı açar.
 
@@ -217,7 +247,7 @@ hareket ediyorsa ve içinde `<script>` yoksa uygundur.
 
 ---
 
-## 5. İleri seviye: diğer animasyon modları
+## 6. İleri seviye: diğer animasyon modları
 
 Sprite yerine bunları kullanmak istersen `mode` satırını değiştir:
 
@@ -233,7 +263,7 @@ Hepsinde: zemin şeffaf, çizgi siyah, dikey oran.
 
 ---
 
-## 6. Görünmüyorsa kontrol et
+## 7. Görünmüyorsa kontrol et
 
 - [ ] Dosya `public\images\` içinde mi? (Alt klasörde değil.)
 - [ ] Ad **birebir** tablodaki gibi mi? Küçük harf, Türkçe karakter yok, boşluk yok.

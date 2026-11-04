@@ -12,6 +12,15 @@
   - [ ] Kendi adam asmaca animasyonu: `images/daragaci.png` + `images/adam-sprite.png`, sonra `mode: 'sprite'` (bkz. GORSEL-REHBERI.md)
   - [ ] (İsteğe bağlı) Açık / koyu tema arka plan görselleri
 
+## Commit dışı bırakılan dosyalar (kullanıcı kararı, 2026-11-04)
+- `public/images/kaybettin.gif` (57 MB) ve `giris-arka-plan.gif` (23 MB) → küçültülünce (ör. hareketli WebP, 1–3 MB) eklenecek
+- `public/images/giris-buton.png` (193×193) ve `giris-buton2.png` (512×512) → hangisinin kullanılacağına karar verilince
+
+## Kullanıcıdan beklenen (yeni)
+- [ ] Alan adı → `index.html`'deki `ALAN-ADI.com` (3 yer)
+- [ ] `images/favicon.png` (512×512) ve `images/paylasim.png` (1200×630)
+- [ ] Logo `images/logo.png` → **720×120** oranında
+
 ## Commit bekleyen
 - [ ] v1.2.2 değişiklikleri (`.htaccess` MIME, logo PNG / GIF ayarı, yer tutucu yedeği) — kullanıcı "şimdi commitleme" dedi (2026-11-03)
 - [ ] v1.3.0 sprite modu ve sallanma

@@ -179,10 +179,14 @@ img { max-width: 100%; }
   padding: 4px calc(var(--round-size) * 2 + var(--edge) + 18px);
   transition: opacity var(--t);
 }
+/* Logo, sağ üst butonlar için iki yanda ayrılan boşluk dışındaki alanın
+   tamamını doldurur (oranı korunur, banner'ın tam ortasında kalır).
+   Telefonda genişlik dar olduğu için logonun en-boy oranı önemli:
+   720×120 (6:1) gibi kısa bir logo, 1920×120'ye göre ~3 kat büyük görünür. */
 .banner-logo {
   display: block;
-  max-width: 100%;
-  max-height: 100%;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 }
 /* Logo dosyası bulunamazsa gösterilen yazı */
@@ -616,16 +620,10 @@ body.is-over .toast {
   max-width: none;
   object-fit: cover;
 }
-.intro-shade { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.38); }
-.intro-center {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: clamp(10px, 2vh, 20px);
-}
+/* Görsellere karartma / soldurma uygulanmaz; gerekirse görselin kendisi soldurulur */
 .intro-btn {
-  width: clamp(120px, 24vmin, 210px);
+  position: relative;
+  width: clamp(170px, 40vmin, 340px);
   aspect-ratio: 1;
   border-radius: 50%;
   border: 5px solid #1d1d1d;
@@ -639,14 +637,13 @@ body.is-over .toast {
   animation: intro-bob 2.8s ease-in-out infinite;
 }
 .intro-btn:hover { transform: scale(1.07) rotate(-3deg); }
-.intro-btn-img { width: 72%; height: 72%; object-fit: contain; opacity: 0.6; }
-.intro-label {
-  font-family: var(--font-head);
-  font-weight: 700;
-  font-size: clamp(32px, 7vmin, 64px);
-  letter-spacing: 0.15em;
-  color: #fff;
-  text-shadow: 3px 3px 0 #1d1d1d, 0 0 18px rgba(0, 0, 0, 0.6);
+/* Görsel daireyi tamamen kaplar; köşeleri daire dışında kalıp kırpılır */
+.intro-btn-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
 }
 @keyframes intro-bob {
   0%, 100% { translate: 0 0; }
@@ -661,7 +658,7 @@ body.is-over .toast {
   display: grid;
   place-items: center;
   padding: 16px;
-  background: rgba(8, 10, 9, 0.88);
+  background: #000;
   opacity: 0;
   transition: opacity 0.45s ease;
 }
