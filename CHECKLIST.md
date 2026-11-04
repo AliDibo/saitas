@@ -49,7 +49,9 @@ Durum: ✅ test edildi · ⬜ henüz test edilmedi (gerçek cihaz / ses dosyası
 - [x] F-32 Ses/tema butonları el çizimi, iki temada (açık + koyu) kontrol edildi
 - [x] F-40/41 Giriş ekranı: karartma yok, buton görseli daireyi kaplıyor (cover, opaklık 1), AS yok, buton ortada (360×640'ta 170 px, merkez 180,320)
 - [x] F-42/43/44 Sonuç ekranı, sıralı geçiş, diğer her şey gizli; kelime orta boy; arka plan rgb(0,0,0)
-- [x] F-95 title / description / favicon.svg / og etiketleri sayfada; [ ] alan adı girilince og:image kontrolü
+- [x] F-95 title / description / favicon.svg / og etiketleri sayfada, alan adı saitas.com.tr; [ ] `paylasim.png` konunca WhatsApp önizleme kontrolü
+- [x] F-30 Logo kayma: 360×640'ta 232×43 sola yaslı (butonlara 10 px), 412×915'te sola yaslı, 844×390 ve 1280×720'de tam ortada
+- [x] F-40 Giriş butonu boş bantta: 360×640 (141 px), 412×915 (201), 646×730, 844×390 (110), 1280×720 (158) — hepsinde yazılara binmiyor
 - [ ] F-50–54 Gerçek ses dosyalarıyla seviye / takılma testi
 - [x] F-52 Ses modu döngüsü ve kaydı
 - [x] F-55 Ses butonu temanın tersi, sessizde soluk

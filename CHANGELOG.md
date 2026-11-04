@@ -2,6 +2,16 @@
 
 En yeni kayıt en üstte. Biçim: tarih – ne değişti – neden – etkilenen dosyalar.
 
+## 2026-11-04 – v1.4.1 Logo sola kayıyor, giriş butonu küçüldü, alan adı
+**Ne:**
+- Banner 3 sütunlu grid oldu: logo her zaman banner yüksekliğinde; yer varsa ortada, dar ekranda küçülmek yerine sola kayıyor (soldaki ölü alan kullanılıyor). 360 px telefonda logo 132×22'den 232×43'e çıktı.
+- Giriş butonu, arka plan görselindeki yazıların arasındaki boşluğa sığacak boyuta indirildi (görsel yüksekliğinin %22'si, `--intro-btn-ratio`); 5 ekran boyutunda yazılara binmediği ölçüldü.
+- `index.html`: alan adı `saitas.com.tr` (canonical, og:url, og:image).
+
+**Neden:** Kullanıcı geri bildirimi (logo sıkışınca küçülüyordu; buton logo yazılarının üstüne biniyordu; alan adı verildi).
+
+**Dosyalar:** `public/css/style.css`, `public/index.html`, `GORSEL-REHBERI.md`, `SPEC.md`, `CLAUDE.md`, `CHECKLIST.md`, `TODO.md`.
+
 ## 2026-11-04 – v1.4.0 Giriş ekranı, sonuç ekranı, logo, sekme/Google ayarları
 **Ne:**
 - Giriş ekranı: karartma katmanı ve buton görselindeki %60 soldurma kaldırıldı; görsel daireyi tamamen kaplıyor (köşeler kırpılıyor); "AS" yazısı kaldırıldı; buton büyütüldü ve ekranın tam ortasına alındı.

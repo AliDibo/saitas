@@ -28,14 +28,14 @@ Her madde `CHECKLIST.md` içinde kontrol satırına sahiptir. Değişiklikte ilg
 - **F-23:** Animasyon alanı solda büyük dikey bölmede; üstünde başlık, içinde hata sayısı yazısı yok (hata sayısı sadece ekran okuyucuya duyurulur).
 
 ## Ekran düzeni
-- **F-30:** Üst banner: `10vh`, tam genişlik, kenarlık yok (üst çizgi kullanıcı isteğiyle 2026-11-03'te kaldırıldı), ortada logo (`config.js → IMAGES.logo`). Logo, sağ üst butonlar için iki yanda ayrılan boşluk dışındaki alanı oranını koruyarak doldurur ve barın tam ortasında kalır; önerilen oran 720×120 (6:1) → 360 px telefonda ~132×22 px.
+- **F-30:** Üst banner: `10vh`, tam genişlik, kenarlık yok (üst çizgi kullanıcı isteğiyle 2026-11-03'te kaldırıldı), ortada logo (`config.js → IMAGES.logo`). Logo her zaman banner yüksekliğindedir (oran korunur). Yer varsa sayfanın tam ortasında durur; yer daralınca **küçülmeden sola kayar** ve sağ üst butonlarla çakışmaz (banner 3 sütunlu grid: `[sol ≥ edge | logo | sağ ≥ butonlar]`). Sadece ekran logodan dar ise küçülür. Önerilen oran 720×120 (6:1).
 - **F-31:** Ana alan iki sütun: sol animasyon; sağ üst klavye bölmesi (tuşlar yatay ortalı, flex-wrap); sağ alt kelime bölmesi (kelime yerleri + tahmin + yanlış tahminler). Bölmelerde başlık yazısı yok (kullanıcı isteği, 2026-10-28).
 - **F-32:** Sağ üst sabit: ses ve tema butonları yan yana, banner'ın dikey ortasında; Kurallar/Yeniden Başlat ile aynı el çizimi buton dili (kalın titrek kenar, parıltı gölgesi, el çizimi SVG ikonlar); hover büyümesi hizayı bozmaz.
 - **F-34:** Bölmelerde tek el çizimi çerçeve var, arkasında ikinci soluk çerçeve yok.
 - **F-33:** Sol alt "Kurallar", sağ alt "Yeniden Başlat": eşit boyut/font, aynı yatay çizgi, kenarlardan eşit uzaklık, içerikle çakışmaz.
 
 ## Ekranlar ve akış
-- **F-40:** Giriş ekranı: tam ekran arka plan (cover), karartma yok; ekranın tam ortasında büyük yuvarlak buton (`clamp(170px, 40vmin, 340px)`), görsel daireyi tamamen kaplar (köşeler kırpılır), soldurma yok. "AS" yazısı yok (2026-11-04).
+- **F-40:** Giriş ekranı: tam ekran arka plan (cover), karartma yok; ekranın tam ortasında yuvarlak buton; çapı arka plan görselinin ekrandaki yüksekliğinin `--intro-btn-ratio` (0.22) katı, en az 110 px — arka plan görselindeki yazıların arasındaki boş banda sığar, görsel daireyi tamamen kaplar (köşeler kırpılır), soldurma yok. "AS" yazısı yok (2026-11-04).
 - **F-41:** Giriş butonuna basınca giriş ekranı kapanır, oyun açılır, müzik başlar.
 - **F-42:** Sonuç ekranı: tamamen siyah arka plan (`#000`), ortada GIF (kazanma/kaybetme), altında kelime (kazanınca yeşil, kaybedince kırmızı; orta boy, İ/Ö/Ü noktaları GIF'e binmez), altında "Yeniden Başlat".
 - **F-43:** Sonuç ekranı fade-in; görsel hafif büyüyerek, kelime ve buton sırayla aşağıdan yukarı belirir.
@@ -71,6 +71,6 @@ Her madde `CHECKLIST.md` içinde kontrol satırına sahiptir. Değişiklikte ilg
 - **F-91:** Fiziksel klavyede harfe basınca ilgili tuş tetiklenir; tahmin girişi odaktayken veya bir pencere açıkken tetiklenmez.
 - **F-92:** Erişilebilirlik: görsellerde `alt`, butonlarda `aria-label`, durum değişiklikleri `aria-live` ile duyurulur.
 - **F-94:** `.htaccess` tüm resim türleri için doğru MIME tipini tanımlar (nosniff altında WebP/AVIF/APNG eski sunucularda da açılır).
-- **F-95:** Sekme başlığı, Google açıklaması, favicon ve paylaşım kartı (Open Graph: başlık, açıklama, 1200×630 görsel, adres) `index.html` başındaki işaretli "SEKME / GOOGLE / PAYLAŞIM AYARLARI" bloğundan düzenlenir. Alan adı yer tutucusu `ALAN-ADI.com`.
+- **F-95:** Sekme başlığı, Google açıklaması, favicon ve paylaşım kartı (Open Graph: başlık, açıklama, 1200×630 görsel, adres) `index.html` başındaki işaretli "SEKME / GOOGLE / PAYLAŞIM AYARLARI" bloğundan düzenlenir. Alan adı: `saitas.com.tr`.
 - **F-25b:** Giriş arka planı ve giriş butonu görseli de bulunamazsa yerleşik `.svg` yer tutucuya düşer.
 - **F-93:** Güvenlik: CSP, güvenlik başlıkları, `innerHTML` ile dış veri basılmaz, fetch MIME/köken kontrolü.

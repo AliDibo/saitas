@@ -17,7 +17,7 @@
 - `public/images/giris-buton.png` (193×193) ve `giris-buton2.png` (512×512) → hangisinin kullanılacağına karar verilince
 
 ## Kullanıcıdan beklenen (yeni)
-- [ ] Alan adı → `index.html`'deki `ALAN-ADI.com` (3 yer)
+- [x] Alan adı saitas.com.tr → `index.html`'e yazıldı
 - [ ] `images/favicon.png` (512×512) ve `images/paylasim.png` (1200×630)
 - [ ] Logo `images/logo.png` → **720×120** oranında
 

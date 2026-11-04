@@ -168,29 +168,35 @@ img { max-width: 100%; }
 .sketch-btn.is-blue { background: var(--accent-2); box-shadow: 0 0 22px var(--glow-2), 3px 4px 0 var(--shadow); }
 
 /* === 4. BANNER VE ÜST BUTONLAR ========================================== */
+/* Banner 3 sütun: [sol boşluk | logo | sağ boşluk (en az butonlar kadar)].
+   Yer varsa iki boşluk eşit → logo sayfanın tam ortasında.
+   Yer daralınca önce sol boşluk küçülür → logo KÜÇÜLMEDEN sola kayar,
+   sağ üst butonlarla asla çakışmaz. */
 .banner {
+  --banner-reserve: calc(var(--round-size) * 2 + 10px + var(--edge) + 10px);
   height: var(--banner-h);
   min-height: 48px;
   width: 100%;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(var(--edge), 1fr) auto minmax(var(--banner-reserve), 1fr);
+  grid-template-rows: 100%;
   align-items: center;
-  justify-content: center;
-  /* Logo sağ üst butonlarla çakışmasın */
-  padding: 4px calc(var(--round-size) * 2 + var(--edge) + 18px);
+  padding: 4px 0;
   transition: opacity var(--t);
 }
-/* Logo, sağ üst butonlar için iki yanda ayrılan boşluk dışındaki alanın
-   tamamını doldurur (oranı korunur, banner'ın tam ortasında kalır).
-   Telefonda genişlik dar olduğu için logonun en-boy oranı önemli:
-   720×120 (6:1) gibi kısa bir logo, 1920×120'ye göre ~3 kat büyük görünür. */
+/* Logo her zaman banner yüksekliğinde (oranı korunur). Sadece ekran logodan
+   bile darsa (çok küçük telefon) mecburen küçülür. */
 .banner-logo {
+  grid-column: 2;
   display: block;
-  width: 100%;
   height: 100%;
+  width: auto;
+  max-width: calc(100vw - var(--edge) - var(--banner-reserve));
   object-fit: contain;
 }
 /* Logo dosyası bulunamazsa gösterilen yazı */
 .banner-fallback {
+  grid-column: 2;
   font-family: var(--font-head);
   font-weight: 700;
   font-size: clamp(20px, 4.5vh, 44px);
@@ -623,7 +629,13 @@ body.is-over .toast {
 /* Görsellere karartma / soldurma uygulanmaz; gerekirse görselin kendisi soldurulur */
 .intro-btn {
   position: relative;
-  width: clamp(170px, 40vmin, 340px);
+  /* Boyut, arka plan görselinin ekranda kapladığı yüksekliğe bağlı:
+     cover ile görsel yüksekliği = max(ekran yüksekliği, ekran genişliği × 9/16).
+     --intro-btn-ratio: bu yüksekliğin ne kadarını kaplasın (0.22 = %22).
+     Arka plan görselindeki yazılar arasındaki boşluğa göre ayarlanır. */
+  --intro-btn-ratio: 0.22;
+  width: max(110px, calc(max(100vh, 56.25vw) * var(--intro-btn-ratio)));
+  width: max(110px, calc(max(100dvh, 56.25vw) * var(--intro-btn-ratio)));
   aspect-ratio: 1;
   border-radius: 50%;
   border: 5px solid #1d1d1d;

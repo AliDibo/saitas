@@ -106,6 +106,10 @@ Tırnakları ve satır sonundaki virgülü silme.
 Notlar:
 - **9 – Giriş arka planı:** ekranı tamamen kaplar, telefonda kenarları kesilir; kenarlara önemli şey koyma.
   Site **hiç karartma uygulamaz**; daha soluk olsun istersen görseli kendin soldur.
+- **9 + 10 – Buton boyutu:** buton, giriş arka planındaki iki yazının ("Asa'n Kazanır!" ve "saitas.com.tr")
+  arasındaki boşluğa sığacak şekilde ayarlı: arka plan görselinin ekrandaki yüksekliğinin **%22'si**.
+  Arka planı değiştirir ve buton büyük/küçük gelirse `public\css\style.css` içinde `--intro-btn-ratio: 0.22;`
+  satırındaki sayıyı değiştir (0.18 = daha küçük, 0.28 = daha büyük).
 - **10 – Giriş butonu:** resim yuvarlak butonu **tamamen kaplar**, kare resmin köşeleri daire dışında kalıp
   kırpılır; önemli kısmı ortada tut. Soldurma yok. Buton büyük olduğu için **512×512** kullan
   (193×193 gibi küçük resim bulanık görünür).
@@ -218,7 +222,7 @@ Dosyayı Not Defteri veya VS Code ile aç, sadece tırnak içindeki metinleri de
 | 2 | Google'da başlığın altındaki açıklama | `<meta name="description" content="...">` (en fazla ~155 karakter) | — |
 | 3 | Sekmedeki küçük simge (favicon), telefonda ana ekran simgesi | Dosyayı koy, sonra bloktaki `favicon.svg` yazan **iki satırı sil**, altındaki `<!-- ... favicon.png ... -->` **iki satırın başındaki `<!--` ve sonundaki `-->`'yi sil** | **`favicon.png`** – 512×512, kare, şeffaf PNG |
 | 4 | WhatsApp / Facebook / X'te link paylaşınca çıkan kart | `og:title` ve `og:description` metinleri | **`paylasim.png`** – **1200×630** PNG veya JPG |
-| 5 | Kartın ve Google'ın sitenin adresini bilmesi | `ALAN-ADI.com` yazan **3 yeri** kendi alan adınla değiştir (`https://` kalsın) | — |
+| 5 | Kartın ve Google'ın sitenin adresini bilmesi | Şu an **`saitas.com.tr`** yazılı (3 yerde). Alan adı değişirse üçünü de değiştir (`https://` kalsın) | — |
 
 Notlar:
 - Google değişiklikleri hemen göstermez; sitenin yeniden taranması günler sürebilir.

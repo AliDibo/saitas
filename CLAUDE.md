@@ -109,8 +109,10 @@ animasyonunu sadece `config.js` düzenleyerek takmasını sağlar. Lottie için 
 - Git: https://github.com/AliDibo/saitas (`origin/main`). Değişiklikten sonra commit + push.
 - Banner'da üst çizgi **yok** (2026-11-03).
 - (2026-11-04) Giriş ekranında **karartma ve soldurma yok**, **"AS" yazısı yok**; buton büyük ve ekranın tam ortasında, görsel daireyi **tamamen kaplar** (cover). Sonuç ekranı arka planı **tam siyah**.
-- Logo oranı **720×120** önerilir; ses/tema butonlarının yeri **değiştirilmeyecek** (kullanıcı bunu istemedi), logo kalan alanı doldurur.
-- Sekme/Google/paylaşım bilgileri `index.html` başındaki işaretli blokta (JS ile değil: tarayıcı dışı botlar JS çalıştırmaz). Alan adı henüz yok → `ALAN-ADI.com` yer tutucusu.
+- Logo oranı **720×120** önerilir; ses/tema butonlarının yeri **değiştirilmeyecek**. Logo dar ekranda **küçülmez, sola kayar** (soldaki ölü alanı kullanır), yer varsa tam ortada (2026-11-04).
+- Giriş butonu çapı arka plan görseline bağlı (`style.css → --intro-btn-ratio: 0.22`): kullanıcının `giris-arka-plan.gif`'inde boş bant görsel yüksekliğinin ~%36–%62'si arası (üstte "Asa'n Kazanır!", altta "saitas.com.tr" yazısı). Arka plan değişirse bu oran yeniden ayarlanmalı.
+- `blog/` klasörü yanlışlıkla repoya girmişti, kullanıcı sildi; geçmişten temizlenmesine gerek yok (kullanıcı onayı).
+- Sekme/Google/paylaşım bilgileri `index.html` başındaki işaretli blokta (JS ile değil: tarayıcı dışı botlar JS çalıştırmaz). Alan adı: **saitas.com.tr** (index.html'de 3 yerde).
 - Kullanıcının eklediği büyük medya (`kaybettin.gif` 57 MB, `giris-arka-plan.gif` 23 MB) ve `giris-buton*.png` **commit'e alınmadı** (kullanıcı kararı). `git add -A` kullanırken bunları dışarıda bırak.
 - Ton: samimi, eğlenceli Türkçe.
 
