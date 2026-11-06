@@ -113,7 +113,7 @@ animasyonunu sadece `config.js` düzenleyerek takmasını sağlar. Lottie için 
 - Giriş butonu çapı arka plan görseline bağlı (`style.css → --intro-btn-ratio: 0.22`): kullanıcının `giris-arka-plan.gif`'inde boş bant görsel yüksekliğinin ~%36–%62'si arası (üstte "Asa'n Kazanır!", altta "saitas.com.tr" yazısı). Arka plan değişirse bu oran yeniden ayarlanmalı.
 - `blog/` klasörü yanlışlıkla repoya girmişti, kullanıcı sildi; geçmişten temizlenmesine gerek yok (kullanıcı onayı).
 - Sekme/Google/paylaşım bilgileri `index.html` başındaki işaretli blokta (JS ile değil: tarayıcı dışı botlar JS çalıştırmaz). Alan adı: **saitas.com.tr** (index.html'de 3 yerde).
-- Kullanıcının eklediği büyük medya (`kaybettin.gif` 57 MB, `giris-arka-plan.gif` 23 MB) ve `giris-buton*.png` **commit'e alınmadı** (kullanıcı kararı). `git add -A` kullanırken bunları dışarıda bırak.
+- (2026-11-06) Kullanıcının görselleri commit'lendi: `logo.png`, `kazandin.gif` (18 MB), `kaybettin.gif` (21 MB), `giris-arka-plan.gif` (23 MB), `giris-buton.png`. GIF'ler büyük; hareketli WebP'ye çevrilirse sayfa çok daha hızlı açılır (öneri, zorunlu değil). Artık `git add -A` serbest.
 - Ton: samimi, eğlenceli Türkçe.
 
 ## Bilinen kısıtlar

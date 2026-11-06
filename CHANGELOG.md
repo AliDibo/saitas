@@ -2,6 +2,13 @@
 
 En yeni kayıt en üstte. Biçim: tarih – ne değişti – neden – etkilenen dosyalar.
 
+## 2026-11-06 – v1.5.0 Kullanıcı görselleri eklendi
+**Ne:** Kullanıcının hazırladığı `logo.png`, `giris-buton.png`, `giris-arka-plan.gif`, `kazandin.gif`, `kaybettin.gif` repoya eklendi. Kod değişikliği yok.
+
+**Neden:** Kullanıcı "her şeyi commitle" dedi.
+
+**Dosyalar:** `public/images/*`, `CLAUDE.md`, `TODO.md`, `CHANGELOG.md`.
+
 ## 2026-11-04 – v1.4.1 Logo sola kayıyor, giriş butonu küçüldü, alan adı
 **Ne:**
 - Banner 3 sütunlu grid oldu: logo her zaman banner yüksekliğinde; yer varsa ortada, dar ekranda küçülmek yerine sola kayıyor (soldaki ölü alan kullanılıyor). 360 px telefonda logo 132×22'den 232×43'e çıktı.
