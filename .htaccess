@@ -13,6 +13,9 @@ DirectoryIndex index.html
 </FilesMatch>
 RedirectMatch 404 /\.git
 
+# Eski adres yapısı: saitas.com.tr/public/... → saitas.com.tr/... (kalıcı yönlendirme)
+RedirectMatch 301 ^/public(?:/(.*))?$ /$1
+
 # --- Doğru MIME tipleri (fetch içerik tipini kontrol ediyor) --------------
 AddDefaultCharset utf-8
 AddType "text/plain; charset=utf-8" .txt

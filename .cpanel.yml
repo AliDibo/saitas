@@ -1,9 +1,11 @@
 ---
-# cPanel Git Version Control deploy ayarı
-# KULLANICI_ADI kısmını kendi cPanel kullanıcı adınla değiştir.
-# Sadece public/ klasörünün içeriği public_html'e kopyalanır.
+# cPanel Git Version Control deploy ayarı ("Deploy HEAD Commit").
+# Sitenin dosyaları public_html'e kopyalanır; .git ve ayar dosyaları kopyalanmaz.
+# $HOME = cPanel ana klasörün (/home/kullaniciadin). Deploy hata verirse
+# $HOME yerine tam yolu yaz, ör. /home/kullaniciadin/public_html/
+# Köke yeni bir dosya/klasör eklenirse (ör. robots.txt) alttaki cp satırına da ekle.
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/KULLANICI_ADI/public_html/
+    - export DEPLOYPATH=$HOME/public_html/
     - /bin/mkdir -p $DEPLOYPATH
-    - /bin/cp -R public/. $DEPLOYPATH
+    - /bin/cp -R index.html words.txt kural.txt .htaccess css js images $DEPLOYPATH

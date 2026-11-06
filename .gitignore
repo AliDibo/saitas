@@ -1,3 +1,8 @@
+# Repoya SADECE sitenin kendisi girer (index.html, css, js, images, txt, .htaccess).
+# Proje notları ve araç ayarları bu bilgisayarda kalır, GitHub'a / sunucuya gitmez.
+*.md
+.claude/
+
 # İşletim sistemi / editör
 .DS_Store
 Thumbs.db
@@ -9,6 +14,3 @@ desktop.ini
 .env
 *.key
 *.pem
-
-# Claude yerel ayarları
-.claude/settings.local.json
