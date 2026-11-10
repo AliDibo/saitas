@@ -15,8 +15,8 @@ window.AA_CONFIG = Object.freeze({
     logo:        'images/logo.png',            // Üst banner logosu (720×120, şeffaf PNG; telefonda da okunur)
     introBg:     'images/giris-arka-plan.gif', // Giriş ekranı arka planı (önerilen 1920×1080, GIF olabilir)
     introButton: 'images/giris-buton.png',     // Yuvarlak giriş butonundaki görsel (önerilen 512×512)
-    winGif:      'images/kazandin.gif',        // Kazanma GIF'i (800×600)
-    loseGif:     'images/kaybettin.gif'        // Kaybetme GIF'i (800×600)
+    winGif:      'images/kazandin.webp',       // Kazanma görseli (hareketli WebP / GIF, 800×600)
+    loseGif:     'images/kaybettin.webp'       // Kaybetme görseli (hareketli WebP / GIF, 800×600)
   }),
 
   /* === Sayfa arka planı =================================================
@@ -24,8 +24,8 @@ window.AA_CONFIG = Object.freeze({
      Kendi görselini kullanmak için images/ klasörüne koy ve adını yaz,
      ör. light: 'images/arka-plan-acik.jpg' (önerilen 1920×1080, ekranı kaplar). */
   BACKGROUNDS: Object.freeze({
-    light: '',
-    dark:  ''
+    light: 'images/arka-plan-acik.webp',
+    dark:  'images/arka-plan-koyu.webp'   // dosya yoksa kara tahta görünümü kalır
   }),
 
   /* === Sesler ===========================================================

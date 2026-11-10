@@ -479,21 +479,31 @@
     initBackgrounds();
   }
 
-  /** config.js → BACKGROUNDS: boş değilse o temanın varsayılan dokusu yerine görsel kullanılır. */
+  /**
+   * config.js → BACKGROUNDS: boş değilse o temanın varsayılan dokusu yerine görsel kullanılır.
+   * Sadece ad yazılmışsa ('arka-plan-acik.webp') başına 'images/' eklenir.
+   * Görsel önce yüklenir; bulunamazsa o temada varsayılan doku kalır.
+   */
   function initBackgrounds() {
     const root = document.documentElement;
     const safePath = /^images\/[a-z0-9_\-.]+\.(png|apng|jpe?g|gif|webp|avif|svg)$/;
     ['light', 'dark'].forEach((theme) => {
-      const path = CFG.BACKGROUNDS[theme];
+      let path = CFG.BACKGROUNDS[theme];
       if (!path) return;
+      if (!path.startsWith('images/')) path = 'images/' + path;
       if (!safePath.test(path) || path.includes('..')) {
         console.warn('[Adam Asmaca] Geçersiz arka plan yolu:', path);
         return;
       }
       // Tam adres: değişken CSS içinde kullanıldığında yol css/ klasörüne göre çözülmesin
       const abs = new URL(path, document.baseURI).href;
-      root.style.setProperty('--bg-img-' + theme, 'url("' + abs + '")');
-      root.setAttribute('data-bg-' + theme, '');
+      const probe = new Image();
+      probe.onload = () => {
+        root.style.setProperty('--bg-img-' + theme, 'url("' + abs + '")');
+        root.setAttribute('data-bg-' + theme, '');
+      };
+      probe.onerror = () => console.warn('[Adam Asmaca] Arka plan görseli bulunamadı:', path);
+      probe.src = abs;
     });
   }
 
