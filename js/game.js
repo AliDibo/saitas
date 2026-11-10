@@ -444,20 +444,23 @@
   /* Kullanıcının dosyası henüz yoksa gösterilen yerleşik yer tutucular */
   const PLACEHOLDERS = {
     logo: 'images/logo.svg',
-    introBg: 'images/giris-arka-plan.svg',
+    // Önce eski GIF denenir (WebP'ye geçiş sırasında boş kalmasın), o da yoksa yer tutucu
+    introBg: ['images/giris-arka-plan.gif', 'images/giris-arka-plan.svg'],
     introButton: 'images/giris-buton.svg',
     winGif: 'images/kazandin.svg',
     loseGif: 'images/kaybettin.svg'
   };
 
   /**
-   * Görseli yükler; dosya bulunamazsa bir kez yedeğe geçer.
-   * Yedek de yüklenemezse onLastError çağrılır.
+   * Görseli yükler; dosya bulunamazsa sırayla yedeklere geçer (tek yol veya liste).
+   * Hiçbiri yüklenemezse onLastError çağrılır.
    */
-  function setImage(img, src, fallback, onLastError) {
+  function setImage(img, src, fallbacks, onLastError) {
+    const queue = [].concat(fallbacks || []).filter((f) => f && f !== src);
     img.onerror = () => {
-      if (fallback && img.getAttribute('src') !== fallback) {
-        img.src = fallback;
+      const next = queue.shift();
+      if (next) {
+        img.src = next;
       } else {
         img.onerror = null;
         if (onLastError) onLastError();

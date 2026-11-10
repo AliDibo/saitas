@@ -1,6 +1,7 @@
 # Repoya SADECE sitenin kendisi girer (index.html, css, js, images, txt, .htaccess).
 # Proje notları ve araç ayarları bu bilgisayarda kalır, GitHub'a / sunucuya gitmez.
 *.md
+*.bat
 .claude/
 
 # İşletim sistemi / editör

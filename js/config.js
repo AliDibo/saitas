@@ -13,7 +13,7 @@ window.AA_CONFIG = Object.freeze({
      logo / winGif / loseGif dosyası bulunamazsa yerleşik yer tutucu (.svg) gösterilir. */
   IMAGES: Object.freeze({
     logo:        'images/logo.png',            // Üst banner logosu (720×120, şeffaf PNG; telefonda da okunur)
-    introBg:     'images/giris-arka-plan.gif', // Giriş ekranı arka planı (önerilen 1920×1080, GIF olabilir)
+    introBg:     'images/giris-arka-plan.webp', // Giriş ekranı arka planı (1920×1080, hareketli WebP; yoksa .gif denenir)
     introButton: 'images/giris-buton.png',     // Yuvarlak giriş butonundaki görsel (önerilen 512×512)
     winGif:      'images/kazandin.webp',       // Kazanma görseli (hareketli WebP / GIF, 800×600)
     loseGif:     'images/kaybettin.webp'       // Kaybetme görseli (hareketli WebP / GIF, 800×600)
