@@ -362,6 +362,7 @@ img { max-width: 100%; }
 
 /* Yüz ifadesi: her hata için bir adım daha korku (m1..m5), 6 → baygın (hangman.js → moodFor) */
 .hm-mood { opacity: 0; transition: opacity 0.3s ease; }
+.hangman[data-mood="m0"] .hm-mood-m0,
 .hangman[data-mood="m1"] .hm-mood-m1,
 .hangman[data-mood="m2"] .hm-mood-m2,
 .hangman[data-mood="m3"] .hm-mood-m3,

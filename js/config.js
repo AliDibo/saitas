@@ -114,6 +114,14 @@ window.AA_CONFIG = Object.freeze({
        Kendi görsellerin siyah çizgi + şeffaf zeminse true bırak. */
     invertInDark: true,
 
+    /* Ters oyun: true → adam TAM ASILI başlar, her yanlışta bir parçası kaybolur
+       (sağ bacak, sol bacak, sağ kol, sol kol, gövde, kafa); hiçbir parçası
+       kalmayınca (6. yanlış) oyun kaybedilir. Doğru harf bir parçayı geri getirir.
+       false → klasik: boş darağacı, her yanlışta bir parça eklenir.
+       Kendi görsellerinde (frames / sprite / sequence / video) de geçerlidir:
+       kareler aynı kalır, sadece ters sırayla gösterilir. */
+    reverse: true,
+
     transitionMs: 550          // 'svg', 'frames' ve 'video' geçiş süresi (ms)
   }),
 

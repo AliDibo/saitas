@@ -171,12 +171,27 @@ window.AAHangman = (function () {
       S('M223.5 134.5 c 0 -5, 10 -5, 10 0 c 0 9, -10 9, -10 0 Z', C.mouth, 1),
       F('M225.5 141 c 2 -1.5, 4 -1.5, 6 0 c -1 1.5, -5 1.5, -6 0 Z', '#9a4a3a'),
       drop(247, 103), drop(209, 108), drop(244, 124)],
+    // rahatlamış: kurtulmak üzere (ters oyunda 5. yanlışta)
+    m0: [eye(222, 2.7), eye(234, 2.7), pupil(222, 1.4), pupil(234, 1.4),
+      ...brows(110.5, 111),
+      L('M222.5 136 q 5.5 4 11 0', C.mouth, 1.6)],
     dead: [L('M219 118 q 3 2.5 6 0', INK, 1.5), L('M231 118 q 3 2.5 6 0', INK, 1.5),
       ...brows(112, 113),
       L('M223 138 c 3 -1.5, 7 -1.5, 10 0', C.mouth, 1.6)]
   };
-  /** Hata sayısına göre yüz ifadesi: 1..5 → m1..m5, 6 → baygın */
-  const moodFor = (n) => (n >= MAX ? 'dead' : 'm' + Math.max(1, n));
+  /** Ters oyun mu? (config.js → HANGMAN.reverse) */
+  const REVERSE = CFG.reverse === true;
+
+  /**
+   * Hata sayısına göre yüz ifadesi.
+   * Klasik: 1..5 → m1..m5 (korku artar), 6 → baygın.
+   * Ters: 0 hata = tam asılı ve dehşette (m5); her yanlışta korku azalır
+   *       (m4, m3, m2, m1), 5. yanlışta rahatlamış (m0); 6'da kafa da gitmiştir.
+   */
+  const moodFor = (errors) => {
+    if (REVERSE) return 'm' + Math.max(0, MAX - 1 - errors);
+    return errors >= MAX ? 'dead' : 'm' + Math.max(1, errors);
+  };
 
   let mode = 'svg';
   let root = null;
@@ -208,25 +223,29 @@ window.AAHangman = (function () {
   /** Kare tabanlı modların ayarları (sequence / sprite) */
   const frameCfg = () => (mode === 'sprite' ? CFG.sprite : CFG.sequence);
 
+  /** Hata sayısı → gösterilecek aşama (ters oyunda 0 hata = tam adam). */
+  const shownFor = (errors) => (REVERSE ? MAX - errors : errors);
+
   function setStage(n) {
-    const target = Math.max(0, Math.min(MAX, n | 0));
-    if (mode === 'frames') showFrame(target);
-    else if (mode === 'sequence' || mode === 'sprite') playTo(frameCfg().stageFrames[target]);
-    else if (mode === 'video') seekVideo(target);
-    else drawSvg(target);
-    if (mode === 'sprite' || mode === 'svg') setSwayLevel(target);
-    current = target;
+    const errors = Math.max(0, Math.min(MAX, n | 0));
+    const shown = shownFor(errors);
+    if (mode === 'frames') showFrame(shown);
+    else if (mode === 'sequence' || mode === 'sprite') playTo(frameCfg().stageFrames[shown]);
+    else if (mode === 'video') seekVideo(shown);
+    else drawSvg(shown, errors);
+    if (mode === 'sprite' || mode === 'svg') setSwayLevel(errors);
+    current = errors;
   }
 
   /** Yeni oyun: her şeyi 0'a döndür (svg'de sahneyi yeniden çiz). */
   function reset() {
     if (mode === 'svg') {
-      drawSvg(0);
+      drawSvg(0, 0);   // önce her şeyi sil; setStage(0) aşağıda başlangıç hâlini çizer
       redrawScene();
     }
     if (mode === 'sequence' || mode === 'sprite') {
-      // Yeni oyunda başa geri oynatmak yerine doğrudan ilk kareye atla
-      jumpTo(frameCfg().stageFrames[0]);
+      // Yeni oyunda başa geri oynatmak yerine doğrudan başlangıç karesine atla
+      jumpTo(frameCfg().stageFrames[shownFor(0)]);
     }
     stopSway();
     setStage(0);
@@ -404,12 +423,14 @@ window.AAHangman = (function () {
     requestAnimationFrame(() => groups.forEach((g) => g.classList.add('is-drawn')));
   }
 
-  function drawSvg(n) {
+  /** shown: kaç parça görünsün (1 kafa … 6 sağ bacak); errors: yüz ifadesi için hata sayısı. */
+  function drawSvg(shown, errors) {
     stageEls.forEach((paths, i) => {
-      paths.forEach((p) => p.classList.toggle('is-drawn', i > 0 && i <= n));
+      paths.forEach((p) => p.classList.toggle('is-drawn', i > 0 && i <= shown));
     });
-    root.dataset.mood = moodFor(n);
-    root.classList.toggle('is-dead', n >= MAX);
+    root.dataset.mood = moodFor(errors);
+    // Baş yana düşmesi sadece klasik oyunda (6. hatada baygın)
+    root.classList.toggle('is-dead', !REVERSE && errors >= MAX);
   }
 
   /* === Frames modu (7 görsel) =========================================== */
@@ -587,7 +608,9 @@ window.AAHangman = (function () {
 
   function setSwayLevel(errors) {
     const sw = CFG.sway || {};
-    swayTarget = (Number(sw.maxDeg) || 0) * (errors / MAX);
+    // Ters oyunda adam baştan asılı olduğu için hafifçe sallanarak başlar
+    const level = REVERSE ? 0.35 + 0.65 * (errors / MAX) : errors / MAX;
+    swayTarget = (Number(sw.maxDeg) || 0) * level;
     if (!swayRaf && swayTarget > 0) {
       swayLast = 0;
       swayRaf = requestAnimationFrame(swayTick);
