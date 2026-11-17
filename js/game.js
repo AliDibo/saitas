@@ -383,6 +383,8 @@
   }
 
   function initTheme() {
+    // Koyu tema renk paleti (config.js → GAME.darkPalette)
+    document.documentElement.setAttribute('data-palette', G.darkPalette === 'tebesir' ? 'tebesir' : 'sepya');
     const saved = U.storage.get(CFG.STORAGE_KEYS.theme);
     applyTheme(saved === 'light' || saved === 'dark' ? saved : G.defaultTheme);
     el.btnTheme.addEventListener('click', () => {

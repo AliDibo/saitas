@@ -140,6 +140,7 @@ window.AA_CONFIG = Object.freeze({
     maxLength: 10,
     alphabet: 'ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ', // 29 harf, alfabetik
     defaultTheme: 'dark',                    // 'dark' (kara tahta) | 'light' (kâğıt)
+    darkPalette: 'sepya',                    // koyu tema renkleri: 'sepya' (sıcak, krem) | 'tebesir' (eski: beyaz tebeşir)
     defaultSoundMode: 'all'                  // 'all' | 'fx' | 'mute'
   }),
 

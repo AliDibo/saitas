@@ -82,6 +82,47 @@
   color-scheme: dark;
 }
 
+/* === DENEME: Koyu tema "sepya" paleti (2026-11-18) ========================
+   1920'ler kasaba arka planına uyan sıcak tonlar: saf beyaz yerine eski kâğıt
+   kremi, soluk petrol mavisi / hardal butonlar, adaçayı yeşili / pas kırmızısı.
+   Açma/kapama: config.js → GAME.darkPalette ('sepya' | 'tebesir').
+   Tamamen geri almak için: git etiketi "once-renk-denemesi". */
+:root[data-theme="dark"][data-palette="sepya"] {
+  --bg: #2a2118;
+  --ink: #e8d5ae;
+  --ink-soft: #b9a37c;
+  --card-bg: #2e241a;
+  --green: #a3c98c;
+  --red: #e38a6c;
+  --accent: #d4a24c;
+  --accent-2: #8fb0ad;
+  --glow-1: rgba(212, 162, 76, 0.28);
+  --glow-2: rgba(143, 176, 173, 0.25);
+  --btn-text: #2a1f14;
+  --sound-bg: #3a2e22;
+  --sound-fg: #e8d5ae;
+  --theme-bg: #e8d5ae;
+  --theme-fg: #2a1f14;
+  --shadow: rgba(0, 0, 0, 0.45);
+  --halo: rgba(18, 12, 6, 0.85);
+}
+/* Hareketli arka planda okunaklılık: harf ve çerçevelerin arkasına hafif koyu hare
+   (bölmelerin içi karartılmaz) */
+:root[data-theme="dark"][data-palette="sepya"] .key-letter,
+:root[data-theme="dark"][data-palette="sepya"] .slot,
+:root[data-theme="dark"][data-palette="sepya"] .wrong-title,
+:root[data-theme="dark"][data-palette="sepya"] .guess-hint {
+  text-shadow: 0 0 3px var(--halo), 0 0 8px var(--halo);
+}
+:root[data-theme="dark"][data-palette="sepya"] .panel,
+:root[data-theme="dark"][data-palette="sepya"] .guess-input {
+  box-shadow: 0 0 0 1px rgba(18, 12, 6, 0.35), 0 0 10px rgba(18, 12, 6, 0.55);
+}
+:root[data-theme="dark"][data-palette="sepya"] .slot::after {
+  filter: drop-shadow(0 0 2px var(--halo));
+}
+/* === DENEME SONU ========================================================= */
+
 /* === 2. TEMEL ============================================================ */
 *, *::before, *::after { box-sizing: border-box; }
 
