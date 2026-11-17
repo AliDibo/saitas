@@ -1,11 +1,15 @@
 ---
 # cPanel Git Version Control deploy ayarı ("Deploy HEAD Commit").
-# Sitenin dosyaları public_html'e kopyalanır; .git ve ayar dosyaları kopyalanmaz.
-# $HOME = cPanel ana klasörün (/home/kullaniciadin). Deploy hata verirse
-# $HOME yerine tam yolu yaz, ör. /home/kullaniciadin/public_html/
-# Köke yeni bir dosya/klasör eklenirse (ör. robots.txt) alttaki cp satırına da ekle.
+# Sitenin klasörü (Belge Kökü): $HOME/saitas.com.tr
+#
+# - Repo zaten bu klasöre klonlandıysa hiçbir şey kopyalanmaz: "Update from Remote"
+#   siteyi zaten günceller, Deploy'a gerek yoktur.
+# - Repo başka bir klasördeyse site dosyaları SADECE bu klasöre kopyalanır.
+# - Hedef klasör yoksa hiçbir şey yapılmaz (klasör oluşturulmaz). public_html'e
+#   ya da başka bir siteye ASLA dokunulmaz.
+# Köke yeni bir site dosyası eklenirse (ör. robots.txt) FILES satırına da ekle.
 deployment:
   tasks:
-    - export DEPLOYPATH=$HOME/public_html/
-    - /bin/mkdir -p $DEPLOYPATH
-    - /bin/cp -R index.html words.txt kural.txt .htaccess css js images $DEPLOYPATH
+    - export TARGET=$HOME/saitas.com.tr
+    - export FILES="index.html words.txt kural.txt .htaccess css js images"
+    - 'if [ ! -d "$TARGET" ]; then echo "Hedef klasor yok: $TARGET - hicbir sey kopyalanmadi"; elif [ "$(pwd -P)" = "$(cd "$TARGET" && pwd -P)" ]; then echo "Repo zaten site klasorunde - kopyalama gerekmiyor"; else /bin/cp -R $FILES "$TARGET/" && echo "Kopyalandi: $TARGET"; fi'
