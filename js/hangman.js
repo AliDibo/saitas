@@ -22,20 +22,23 @@ window.AAHangman = (function () {
      boyanır) ya da sadece çizgi (L: damar, kıvrım, yüz detayı).
      Sahne ve urgan hep görünür; adamın parçaları hata sayısına göre gelir.
      Dizi sırası = çizim (katman) sırası: sonra gelen öndedir. */
-  const INK = '#2a1d14';
+  /* 1920'ler havası: soluk, sararmış, sepyaya kaçan renkler.
+     (Ayrıca filtre ile eskitme lekesi ve kâğıt dokusu eklenir.) */
+  const INK = '#2b2018';
   const C = {
-    wood: '#8b5a2b', woodLight: '#a9733d', woodDark: '#5c3a1a',
-    grass: '#6fa64a', soil: '#8a6a40',
-    rope: '#c49a5c', ropeDark: '#5b3d1e',
-    skin: '#c98a5e', skinDark: '#7a4a2c',
-    turban: '#ece3cc', turbanFold: '#b3a483',
-    beard: '#f1f0ea', beardLine: '#a8a8a0',
-    shirt: '#e9dfc5', shirtFold: '#b9ab8c', grime: '#b8a07a',
-    sash: '#3f3a2d', sashDark: '#1f1c15',
-    pants: '#e6dcc2', shoe: '#6b4a2e',
-    eyeWhite: '#fbf8f1', pupil: '#1d140e', mouth: '#4a2318'
+    wood: '#7d5a3a', woodLight: '#9b7650', woodDark: '#4e3622',
+    grass: '#7f9a5a', soil: '#7e6545',
+    rope: '#b9975f', ropeDark: '#5a4128',
+    skin: '#bf8f6a', skinDark: '#6e4a32',
+    turban: '#e3d8bf', turbanFold: '#a8987a',
+    beard: '#e9e5da', beardLine: '#a09a8e',
+    shirt: '#ddd0b2', shirtFold: '#ab9c7c', grime: '#a88d63',
+    sash: '#3d3729', sashDark: '#221e16',
+    pants: '#d9ccae', shoe: '#5e4530',
+    eyeWhite: '#f4ecdc', pupil: '#1f1610', mouth: '#4a2a1c', sweat: '#a9c4c2'
   };
-  const S = (d, fill) => ({ k: 's', d, fill });
+  // S: dolgulu şekil (w verilirse dış çizgi kalınlığı sabit, yoksa elde çizilmiş gibi değişken)
+  const S = (d, fill, w) => ({ k: 's', d, fill, w });
   const L = (d, color, w) => ({ k: 'l', d, color, w: w || 1.4 });
   // F: çizgisiz renk (leke, göz akı, düğme); o = saydamlık
   const F = (d, fill, o) => ({ k: 'f', d, fill, o: o || 1 });
@@ -124,29 +127,41 @@ window.AAHangman = (function () {
     S('M219 133 C 223 129, 233 129, 237 133 C 233 135, 229 134, 228 133 C 227 134, 223 135, 219 133 Z', C.beard),
     L('M228 115 c -1 5, -3 9, 0 11 c 2 1, 4 0, 4 -1', C.skinDark, 1.2)
   ];
-  // Yüz ifadeleri (kafa ile gelir; hangisinin görüneceğini hata sayısı seçer)
+  /* Yüz ifadeleri (kafa ile gelir; hangisinin görüneceğini hata sayısı seçer).
+     Hata arttıkça: kaşlar kalkar, gözler büyür, bebekler küçülür, ağız açılır,
+     ter damlaları çıkar; 5. hatada adam titrer, 6. hatada gözler kapanır. */
+  const eye = (x, r) => S(circle(x, 117, r), C.eyeWhite, 0.9);
+  const pupil = (x, r, dx) => F(circle(x + (dx || 0), 117.4, r), C.pupil);
+  const brows = (yo, yi) => [L('M216.5 ' + yo + ' L225 ' + yi, INK, 1.5), L('M239.5 ' + yo + ' L231 ' + yi, INK, 1.5)];
+  const drop = (x, y) => S('M' + x + ' ' + y + ' c -2 3, -3 5, -1.2 6.6 c 1.8 1.2, 4 -0.4, 3.2 -2.8 c -0.5 -1.5, -1.4 -2.6, -2 -3.8 Z', C.sweat, 0.8);
   const MOODS = {
-    worried: [
-      spot(222, 117, 3, C.eyeWhite), spot(234, 117, 3, C.eyeWhite),
-      spot(222, 117.6, 1.4, C.pupil), spot(234, 117.6, 1.4, C.pupil),
-      L('M217 112 L225 109', INK, 1.3), L('M239 112 L231 109', INK, 1.3),
-      L('M223 137 c 2 -2, 3 0, 5 -1 c 2 -1, 3 1, 5 0', C.mouth, 1.5)
-    ],
-    scared: [
-      spot(222, 117, 3.8, C.eyeWhite), spot(234, 117, 3.8, C.eyeWhite),
-      spot(222, 117, 1.1, C.pupil), spot(234, 117, 1.1, C.pupil),
-      L('M218.5 117 a 3.8 3.8 0 0 1 7 0', INK, 0.9), L('M230.5 117 a 3.8 3.8 0 0 1 7 0', INK, 0.9),
-      L('M216 110 L225 105', INK, 1.4), L('M240 110 L231 105', INK, 1.4),
-      S('M224 136 c 0 -4, 9 -4, 9 0 c 0 6, -9 6, -9 0 Z', C.mouth)
-    ],
-    dead: [
-      L('M219 118 q 3 2.5 6 0', INK, 1.4), L('M231 118 q 3 2.5 6 0', INK, 1.4),
-      L('M218 112 L225 113', INK, 1.3), L('M238 112 L231 113', INK, 1.3),
-      L('M223 138 c 3 -1.5, 7 -1.5, 10 0', C.mouth, 1.5)
-    ]
+    m1: [eye(222, 2.8), eye(234, 2.8), pupil(222, 1.4), pupil(234, 1.4),
+      ...brows(111.5, 110.5),
+      L('M224 137 q 4 -0.8 8 0', C.mouth, 1.5)],
+    m2: [eye(222, 3.1), eye(234, 3.1), pupil(222, 1.3), pupil(234, 1.3),
+      ...brows(112, 108.5),
+      L('M223 137 c 2 -2, 3 0, 5 -1 c 2 -1, 3 1, 5 0', C.mouth, 1.5)],
+    m3: [eye(222, 3.5), eye(234, 3.5), pupil(222, 1.1, 0.9), pupil(234, 1.1, 0.9),
+      ...brows(111, 106.5),
+      S('M225 136 c 0 -2.5, 6 -2.5, 6 0 c 0 3.5, -6 3.5, -6 0 Z', C.mouth, 1),
+      drop(246, 106)],
+    m4: [eye(222, 3.9), eye(234, 3.9), pupil(222, 0.95), pupil(234, 0.95),
+      ...brows(109.5, 104.5),
+      L('M218.5 122.5 q 3.5 1.5 7 0', C.skinDark, 0.8), L('M230.5 122.5 q 3.5 1.5 7 0', C.skinDark, 0.8),
+      S('M224 135.5 c 0 -4, 9 -4, 9 0 c 0 6, -9 6, -9 0 Z', C.mouth, 1),
+      drop(246, 104), drop(210, 110)],
+    m5: [eye(222, 4.3), eye(234, 4.3), pupil(222, 0.8), pupil(234, 0.8),
+      ...brows(108, 102.5),
+      L('M218 123 q 4 2 8 0', C.skinDark, 0.9), L('M230 123 q 4 2 8 0', C.skinDark, 0.9),
+      S('M223.5 134.5 c 0 -5, 10 -5, 10 0 c 0 9, -10 9, -10 0 Z', C.mouth, 1),
+      F('M225.5 141 c 2 -1.5, 4 -1.5, 6 0 c -1 1.5, -5 1.5, -6 0 Z', '#9a4a3a'),
+      drop(247, 103), drop(209, 108), drop(244, 124)],
+    dead: [L('M219 118 q 3 2.5 6 0', INK, 1.5), L('M231 118 q 3 2.5 6 0', INK, 1.5),
+      ...brows(112, 113),
+      L('M223 138 c 3 -1.5, 7 -1.5, 10 0', C.mouth, 1.6)]
   };
-  /** Hata sayısına göre yüz ifadesi */
-  const moodFor = (n) => (n >= MAX ? 'dead' : n >= 4 ? 'scared' : 'worried');
+  /** Hata sayısına göre yüz ifadesi: 1..5 → m1..m5, 6 → baygın */
+  const moodFor = (n) => (n >= MAX ? 'dead' : 'm' + Math.max(1, n));
 
   let mode = 'svg';
   let root = null;
@@ -209,13 +224,31 @@ window.AAHangman = (function () {
     return n;
   }
 
-  /** Tanımdan <path> üretir: S → dolgulu şekil, L → sadece çizgi. */
+  let artCount = 0;   // değişken çizgi kalınlığı için sayaç (her seferinde aynı sonuç)
+
+  /**
+   * Tanımdan öğe(ler) üretir: S → dolgulu şekil (+ üstünden ikinci kez geçilmiş
+   * gibi hafif kaymış ince kalem çizgisi), L → sadece çizgi, F → çizgisiz renk.
+   * Her zaman dizi döner.
+   */
   function makeArt(item, delayMs) {
+    artCount++;
     const p = el('path', { d: item.d, pathLength: '1' });
     if (item.k === 's') {
       p.setAttribute('class', 'hm-shape');
       p.setAttribute('fill', item.fill);
       p.setAttribute('stroke', INK);
+      // El çizimi: kalınlık şekilden şekle değişir (1.6–2.8)
+      p.style.setProperty('stroke-width', item.w || (1.6 + ((artCount * 37) % 13) / 10));
+      p.style.setProperty('--hm-delay', delayMs + 'ms');
+      if (item.w) return [p];
+      const sketch = el('path', {
+        d: item.d, pathLength: '1', class: 'hm-line hm-sketch', stroke: INK,
+        transform: 'translate(' + (0.6 + (artCount % 3) * 0.3) + ' ' + (0.4 + (artCount % 2) * 0.5) + ')'
+      });
+      sketch.style.setProperty('stroke-width', '0.8');
+      sketch.style.setProperty('--hm-delay', (delayMs + 90) + 'ms');
+      return [p, sketch];
     } else if (item.k === 'f') {
       p.setAttribute('class', 'hm-fill');
       p.setAttribute('fill', item.fill);
@@ -226,15 +259,15 @@ window.AAHangman = (function () {
       p.style.setProperty('stroke-width', item.w);
     }
     p.style.setProperty('--hm-delay', delayMs + 'ms');
-    return p;
+    return [p];
   }
 
   /** Bir parçanın öğelerini gruba ekler ve aşama listesine kaydeder. */
   function addPart(group, items, stage) {
     items.forEach((item, j) => {
-      const p = makeArt(item, Math.min(j * 35, 300));
-      group.appendChild(p);
-      stageEls[stage].push(p);
+      const parts = makeArt(item, Math.min(j * 35, 300));
+      group.append(...parts);
+      stageEls[stage].push(...parts);
     });
   }
 
@@ -244,13 +277,31 @@ window.AAHangman = (function () {
       'aria-label': 'Adam asmaca çizimi', preserveAspectRatio: 'xMidYMax meet'
     });
 
-    // Hafif kalem titremesi (çizgileri el çizimi gibi pürüzlü yapar)
+    /* Eskitme filtresi:
+       1) titreme: çizgiler kusursuz değil, elde çizilmiş gibi dalgalı
+       2) sepya: renkler sararmış / solmuş
+       3) leke: büyük, düzensiz koyulaşmalar (eski baskı)
+       4) doku: ince kâğıt tanesi
+       Leke ve doku sadece çizimin üstüne biner (arka plan temiz kalır). */
     const defs = el('defs');
-    const filter = el('filter', { id: 'hm-rough' });
+    const filter = el('filter', { id: 'hm-rough', x: '-4%', y: '-4%', width: '108%', height: '108%' });
     filter.append(
-      el('feTurbulence', { type: 'fractalNoise', baseFrequency: '0.04', numOctaves: '2', seed: '3' }),
-      el('feDisplacementMap', { in: 'SourceGraphic', scale: '1.6' })
+      el('feTurbulence', { type: 'fractalNoise', baseFrequency: '0.035', numOctaves: '2', seed: '3', result: 'warp' }),
+      el('feDisplacementMap', { in: 'SourceGraphic', in2: 'warp', scale: '2.6', xChannelSelector: 'R', yChannelSelector: 'G', result: 'drawn' }),
+      el('feColorMatrix', { in: 'drawn', type: 'matrix', result: 'aged',
+        values: '0.78 0.22 0.06 0 0.03  0.16 0.76 0.08 0 0.02  0.12 0.18 0.58 0 0.01  0 0 0 1 0' }),
+      el('feTurbulence', { type: 'fractalNoise', baseFrequency: '0.014', numOctaves: '2', seed: '11', result: 'blot' }),
+      el('feColorMatrix', { in: 'blot', type: 'matrix', result: 'blotCol',
+        values: '0 0 0 0 0.42  0 0 0 0 0.3  0 0 0 0 0.18  1 0 0 0 -0.45' }),
+      el('feComposite', { in: 'blotCol', in2: 'drawn', operator: 'in', result: 'blotIn' }),
+      el('feTurbulence', { type: 'fractalNoise', baseFrequency: '0.85', numOctaves: '1', seed: '7', result: 'grain' }),
+      el('feColorMatrix', { in: 'grain', type: 'matrix', result: 'grainCol',
+        values: '0 0 0 0 0.3  0 0 0 0 0.22  0 0 0 0 0.12  0.7 0 0 0 -0.32' }),
+      el('feComposite', { in: 'grainCol', in2: 'drawn', operator: 'in', result: 'grainIn' })
     );
+    const merge = el('feMerge');
+    ['aged', 'blotIn', 'grainIn'].forEach((name) => merge.appendChild(el('feMergeNode', { in: name })));
+    filter.appendChild(merge);
     defs.appendChild(filter);
     svg.appendChild(defs);
 
@@ -258,7 +309,7 @@ window.AAHangman = (function () {
 
     // Sabit sahne: darağacı + zemin
     const scene = el('g', { class: 'hm-scene' });
-    SCENE.forEach((item, i) => scene.appendChild(makeArt(item, i * 25)));
+    SCENE.forEach((item, i) => scene.append(...makeArt(item, i * 25)));
     art.appendChild(scene);
 
     // Sallanan grup: urgan + adam (urganın kirişe bağlandığı yerden döner)
@@ -266,10 +317,10 @@ window.AAHangman = (function () {
     const rope = el('g', { class: 'hm-rope' });
     ROPE_PATHS.forEach((d, i) => {
       const delay = SCENE.length * 25 + i * 120;
-      rope.appendChild(makeArt(L(d, C.ropeDark, 6.5), delay));
-      rope.appendChild(makeArt(L(d, C.rope, 4), delay));
+      rope.append(...makeArt(L(d, C.ropeDark, 6.5), delay));
+      rope.append(...makeArt(L(d, C.rope, 4), delay));
     });
-    ROPE_TICKS.forEach((d) => rope.appendChild(makeArt(L(d, C.ropeDark, 1), SCENE.length * 25 + 300)));
+    ROPE_TICKS.forEach((d) => rope.append(...makeArt(L(d, C.ropeDark, 1), SCENE.length * 25 + 300)));
     swing.appendChild(rope);
 
     stageEls = Array.from({ length: MAX + 1 }, () => []);

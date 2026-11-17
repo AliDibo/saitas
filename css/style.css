@@ -357,11 +357,25 @@ img { max-width: 100%; }
   transition: fill-opacity 0.4s ease calc(var(--hm-delay, 0ms) + var(--hm-ms, 550ms) * 0.7);
 }
 
-/* Yüz ifadesi: hata 1–3 endişeli, 4–5 korkmuş, 6 baygın (hangman.js → moodFor) */
+/* Kurşun kalemle ikinci kez geçilmiş gibi, hafif kaymış ince çizgi */
+.hm-sketch { stroke-opacity: 0.45; }
+
+/* Yüz ifadesi: her hata için bir adım daha korku (m1..m5), 6 → baygın (hangman.js → moodFor) */
 .hm-mood { opacity: 0; transition: opacity 0.3s ease; }
-.hangman[data-mood="worried"] .hm-mood-worried,
-.hangman[data-mood="scared"] .hm-mood-scared,
+.hangman[data-mood="m1"] .hm-mood-m1,
+.hangman[data-mood="m2"] .hm-mood-m2,
+.hangman[data-mood="m3"] .hm-mood-m3,
+.hangman[data-mood="m4"] .hm-mood-m4,
+.hangman[data-mood="m5"] .hm-mood-m5,
 .hangman[data-mood="dead"] .hm-mood-dead { opacity: 1; }
+
+/* 5. hatada dehşetten titrer (translate, eğilme transform'uyla çakışmaz) */
+.hangman[data-mood="m5"] .hm-head { animation: hm-shiver 0.14s steps(2) infinite; }
+@keyframes hm-shiver {
+  0% { translate: -0.5px 0; }
+  50% { translate: 0.5px 0.3px; }
+  100% { translate: -0.2px -0.3px; }
+}
 
 /* 6. hatada baş boyun etrafında yana düşer */
 .hm-head {
