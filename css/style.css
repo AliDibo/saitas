@@ -385,11 +385,11 @@ img { max-width: 100%; }
 }
 .hangman.is-dead .hm-head { transform: rotate(-13deg); }
 
-/* Urgan + adam: urganın kirişe bağlandığı nokta (228,16) etrafında sallanır.
+/* Urgan + adam: urganın kirişin altından çıktığı nokta (229,40) etrafında sallanır.
    Açıyı hangman.js verir (hata sayısıyla artar, config.js → HANGMAN.sway). */
 .hm-swing {
   transform-box: view-box;
-  transform-origin: 228px 16px;
+  transform-origin: 229px 40px;
 }
 
 /* frames modu */

@@ -51,6 +51,14 @@ window.AAHangman = (function () {
   // Kafa, boyun (228,140) etrafında bu oranda büyütülür
   const HEAD_SCALE = 1.3;
 
+  // Urgan çizgisi: koyu kalın alt çizgi + açık renkli üst çizgi (sapma uygulanmaz ki üst üste otursun)
+  const R = (d) => [
+    { k: 'l', d, color: C.ropeDark, w: 6.5, nj: true },
+    { k: 'l', d, color: C.rope, w: 4, nj: true }
+  ];
+  // Kirişe iki tur sarılı urgan (sabit, sahnenin parçası)
+  const ROPE_WRAP = [...R('M221 15 C 223 24, 224 33, 226 42'), ...R('M230 14 C 232 23, 233 32, 235 41')];
+
   // Darağacı + zemin (sabit, oyun başında çizilir)
   const SCENE = [
     S('M8 420 C 24 410, 70 410, 96 418 C 74 426, 26 427, 8 420 Z', C.soil),
@@ -66,16 +74,19 @@ window.AAHangman = (function () {
     L('M72 118 L108 52', C.woodDark),
     dot(48, 32, 2.6, C.woodDark), dot(84, 30, 2.6, C.woodDark), dot(47, 126, 2.6, C.woodDark),
     dot(70, 118, 2.2, C.woodDark), dot(290, 28, 2.4, C.woodDark),
+    ...ROPE_WRAP,
     S('M12 419 l5 -11 l3 8 l4 -14 l4 12 l5 -9 l2 9 l6 -15 l3 14 l5 -8 l2 8 l7 -12 l2 12 l5 -7 l2 7 l6 -10 l1 11 l5 -6 l3 6 Z', C.grass)
   ];
 
-  // Urgan: kirişe dolanır, adamla birlikte sallanır (tepesi 228,16 → sallanma noktası)
-  const ROPE_PATHS = [
-    'M220 12 C 216 22, 220 38, 228 40 C 236 38, 240 24, 234 13',
-    'M228 40 C 230 64, 230 92, 240 118',
-    'M240 118 C 250 116, 255 126, 252 135 C 249 143, 240 145, 235 140'
+  /* Sallanan urgan (bağlantı noktası 229,40): aşağı iner, sarmal düğüm, altında KAPALI ilmek.
+     Kafa çizilince düğüm ve ilmek başın arkasında kalır → kafa ilmeğe girmiş görünür. */
+  const ROPE = [
+    ...R('M228 108 C 215 111, 214 135, 228 141 C 242 135, 241 111, 228 108 Z'),
+    ...R('M229 40 C 231 58, 227 76, 229 92'),
+    L('M227 50 l5 2', C.ropeDark, 1), L('M227 62 l5 2', C.ropeDark, 1), L('M227 74 l5 2', C.ropeDark, 1),
+    S('M223 91 L234 90 L235 108 L222 109 Z', C.rope, 1.6),
+    L('M223 95 L235 94', C.ropeDark, 1.1), L('M222 99.5 L235 98.5', C.ropeDark, 1.1), L('M222 104 L235 103', C.ropeDark, 1.1)
   ];
-  const ROPE_TICKS = ['M226 54 l5 2', 'M227 68 l5 2', 'M227 82 l5 2', 'M228 96 l5 2'];
 
   /* Adamın parçaları. st: kaçıncı hatada gelir (1 kafa, 2 gövde, 3 sol kol,
      4 sağ kol, 5 sol bacak, 6 sağ bacak). Katman sırası arkadan öne. */
@@ -115,13 +126,17 @@ window.AAHangman = (function () {
     L('M276 269 l-1 9', C.skinDark, 1.1), L('M272 267 l-1 10', C.skinDark, 1.1)
   ];
   const head = [
+    // boynun sağında görünen düğüm ve başın arkasına giden urgan parçası
+    ...R('M246 121 C 246 110, 241 102, 236 97'),
+    S('M242 121 L248 120 L249 134 L243 135 Z', C.rope, 1.4),
+    L('M242 125 L249 124', C.ropeDark, 1), L('M242.5 129.5 L249 128.5', C.ropeDark, 1),
     S('M220 128 L236 128 L238 145 L218 145 Z', C.skin),
     S('M216 112 c -6 -1, -8 9, -1 11 Z', C.skin), S('M240 112 c 6 -1, 8 9, 1 11 Z', C.skin),
     S('M215 110 C 214 124, 218 136, 228 138 C 238 136, 242 124, 241 110 C 240 102, 216 102, 215 110 Z', C.skin),
     S('M211 113 C 206 98, 214 86, 228 86 C 243 86, 250 98, 245 113 C 236 108, 220 108, 211 113 Z', C.turban),
     L('M213 104 C 222 98, 236 98, 243 104', C.turbanFold), L('M215 96 C 224 92, 234 92, 241 97', C.turbanFold),
     L('M219 90 c 6 -2, 13 -2, 19 1', C.turbanFold),
-    S('M216 122 C 213 140, 215 160, 221 172 C 225 178, 232 178, 236 170 C 242 158, 244 140, 240 122 C 236 132, 220 132, 216 122 Z', C.beard),
+    S('M216 122 C 213 140, 214 158, 219 167 l 2 6 l 2 -4 l 3 8 l 3 -6 l 2 5 l 3 -8 C 241 158, 244 140, 240 122 C 236 132, 220 132, 216 122 Z', C.beard),
     L('M222 145 c 2 8, 1 14, 3 20', C.beardLine), L('M229 142 c 0 10, 1 18, 0 26', C.beardLine),
     L('M235 145 c -1 8, -2 14, -4 19', C.beardLine),
     S('M219 133 C 223 129, 233 129, 237 133 C 233 135, 229 134, 228 133 C 227 134, 223 135, 219 133 Z', C.beard),
@@ -226,14 +241,38 @@ window.AAHangman = (function () {
 
   let artCount = 0;   // değişken çizgi kalınlığı için sayaç (her seferinde aynı sonuç)
 
+  /* Sabit tohumlu rastgele sayı: çizim her açılışta aynı "kusurlarla" çıkar. */
+  let seed = 20261117;
+  function rand() {
+    seed = (seed + 0x6D2B79F5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  }
+
+  /**
+   * Elde çizilmiş gibi: yoldaki her koordinatı ±amp kadar oynatır. Küçük sayılar
+   * (göreli adımlar) daha az oynar ki şekil bozulmasın. Yay (a/A) içeren yollara
+   * (daire) dokunulmaz.
+   */
+  function jitter(d, amp) {
+    if (!amp || /[aA]/.test(d)) return d;
+    return d.replace(/-?\d*\.?\d+/g, (num) => {
+      const n = parseFloat(num);
+      const a = Math.abs(n) > 20 ? amp : amp * 0.35;
+      return (n + (rand() * 2 - 1) * a).toFixed(1);
+    });
+  }
+
   /**
    * Tanımdan öğe(ler) üretir: S → dolgulu şekil (+ üstünden ikinci kez geçilmiş
    * gibi hafif kaymış ince kalem çizgisi), L → sadece çizgi, F → çizgisiz renk.
    * Her zaman dizi döner.
    */
-  function makeArt(item, delayMs) {
+  function makeArt(item, delayMs, amp) {
     artCount++;
-    const p = el('path', { d: item.d, pathLength: '1' });
+    const wobble = item.nj ? 0 : (amp || 0);
+    const p = el('path', { d: jitter(item.d, wobble), pathLength: '1' });
     if (item.k === 's') {
       p.setAttribute('class', 'hm-shape');
       p.setAttribute('fill', item.fill);
@@ -242,8 +281,9 @@ window.AAHangman = (function () {
       p.style.setProperty('stroke-width', item.w || (1.6 + ((artCount * 37) % 13) / 10));
       p.style.setProperty('--hm-delay', delayMs + 'ms');
       if (item.w) return [p];
+      // İkinci kalem geçişi ilkinden farklı sapar (üst üste tam oturmaz)
       const sketch = el('path', {
-        d: item.d, pathLength: '1', class: 'hm-line hm-sketch', stroke: INK,
+        d: jitter(item.d, wobble * 1.3), pathLength: '1', class: 'hm-line hm-sketch', stroke: INK,
         transform: 'translate(' + (0.6 + (artCount % 3) * 0.3) + ' ' + (0.4 + (artCount % 2) * 0.5) + ')'
       });
       sketch.style.setProperty('stroke-width', '0.8');
@@ -263,15 +303,17 @@ window.AAHangman = (function () {
   }
 
   /** Bir parçanın öğelerini gruba ekler ve aşama listesine kaydeder. */
-  function addPart(group, items, stage) {
+  function addPart(group, items, stage, amp) {
     items.forEach((item, j) => {
-      const parts = makeArt(item, Math.min(j * 35, 300));
+      const parts = makeArt(item, Math.min(j * 35, 300), amp);
       group.append(...parts);
       stageEls[stage].push(...parts);
     });
   }
 
   function buildSvg() {
+    seed = 20261117;   // her kurulumda aynı kusurlar
+    artCount = 0;
     const svg = el('svg', {
       viewBox: '0 0 320 430', class: 'hm-svg', role: 'img',
       'aria-label': 'Adam asmaca çizimi', preserveAspectRatio: 'xMidYMax meet'
@@ -309,30 +351,25 @@ window.AAHangman = (function () {
 
     // Sabit sahne: darağacı + zemin
     const scene = el('g', { class: 'hm-scene' });
-    SCENE.forEach((item, i) => scene.append(...makeArt(item, i * 25)));
+    SCENE.forEach((item, i) => scene.append(...makeArt(item, i * 25, 1.1)));
     art.appendChild(scene);
 
     // Sallanan grup: urgan + adam (urganın kirişe bağlandığı yerden döner)
     const swing = el('g', { class: 'hm-swing' });
     const rope = el('g', { class: 'hm-rope' });
-    ROPE_PATHS.forEach((d, i) => {
-      const delay = SCENE.length * 25 + i * 120;
-      rope.append(...makeArt(L(d, C.ropeDark, 6.5), delay));
-      rope.append(...makeArt(L(d, C.rope, 4), delay));
-    });
-    ROPE_TICKS.forEach((d) => rope.append(...makeArt(L(d, C.ropeDark, 1), SCENE.length * 25 + 300)));
+    ROPE.forEach((item, i) => rope.append(...makeArt(item, SCENE.length * 25 + i * 40, 0.6)));
     swing.appendChild(rope);
 
     stageEls = Array.from({ length: MAX + 1 }, () => []);
     const figure = el('g', { class: 'hm-figure' });
     const back = el('g');            // bacaklar gövdenin arkasında
-    addPart(back, legL, 5);
-    addPart(back, legR, 6);
+    addPart(back, legL, 5, 1.4);
+    addPart(back, legR, 6, 1.4);
     figure.appendChild(back);
     const body = el('g');
-    addPart(body, torso, 2);
-    addPart(body, armL, 3);
-    addPart(body, armR, 4);
+    addPart(body, torso, 2, 1.4);
+    addPart(body, armL, 3, 1.4);
+    addPart(body, armR, 4, 1.4);
     figure.appendChild(body);
 
     // Kafa ayrı grupta: 6. hatada boyun etrafında yana düşer
@@ -340,10 +377,10 @@ window.AAHangman = (function () {
     const headScaled = el('g', {
       transform: 'translate(228 140) scale(' + HEAD_SCALE + ') translate(-228 -140)'
     });
-    addPart(headScaled, head, 1);
+    addPart(headScaled, head, 1, 0.8);
     Object.keys(MOODS).forEach((mood) => {
       const g = el('g', { class: 'hm-mood hm-mood-' + mood });
-      addPart(g, MOODS[mood], 1);
+      addPart(g, MOODS[mood], 1, 0.3);
       headScaled.appendChild(g);
     });
     headG.appendChild(headScaled);
