@@ -97,8 +97,10 @@ window.AA_CONFIG = Object.freeze({
       pivot: Object.freeze({ x: 50, y: 2 })
     }),
 
-    /* Sallanma (yerleşik çizim ve 'sprite'): 0 hatada durur, her hatada artar,
-       6 hatada ±maxDeg olur. periodMs: bir tam gidip gelme süresi. */
+    /* Sallanma (yerleşik çizim ve 'sprite').
+       Ters oyunda: tam asılıyken ±maxDeg (en güçlü), her yanlışta azalır.
+       Klasik oyunda: 0 hatada durur, 6 hatada ±maxDeg.
+       periodMs: bir tam gidip gelme süresi (büyük = daha ağır, yavaş salınım). */
     sway: Object.freeze({
       maxDeg: 10,
       periodMs: 2800

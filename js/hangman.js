@@ -380,18 +380,25 @@ window.AAHangman = (function () {
     swing.appendChild(rope);
 
     stageEls = Array.from({ length: MAX + 1 }, () => []);
+    /* Her uzuv kendi grubunda: sallanırken gövde urgandan, kollar ve bacaklar
+       gövdeden biraz geriden gelir (bkz. applyLimbSway). Katman sırası:
+       bacaklar → gövde → kollar → kafa. */
     const figure = el('g', { class: 'hm-figure' });
-    const back = el('g');            // bacaklar gövdenin arkasında
-    addPart(back, legL, 5, 1.4);
-    addPart(back, legR, 6, 1.4);
-    figure.appendChild(back);
-    const body = el('g');
-    addPart(body, torso, 2, 1.4);
-    addPart(body, armL, 3, 1.4);
-    addPart(body, armR, 4, 1.4);
-    figure.appendChild(body);
+    const part = (items, stage, amp) => {
+      const g = el('g');
+      addPart(g, items, stage, amp);
+      figure.appendChild(g);
+      return g;
+    };
+    limbEls = { figure };
+    limbEls.legL = part(legL, 5, 1.4);
+    limbEls.legR = part(legR, 6, 1.4);
+    part(torso, 2, 1.4);
+    limbEls.armL = part(armL, 3, 1.4);
+    limbEls.armR = part(armR, 4, 1.4);
 
-    // Kafa ayrı grupta: 6. hatada boyun etrafında yana düşer
+    // Kafa ayrı grupta: 6. hatada boyun etrafında yana düşer; dış grup sallanma gecikmesi için
+    limbEls.head = el('g');
     const headG = el('g', { class: 'hm-head' });
     const headScaled = el('g', {
       transform: 'translate(228 140) scale(' + HEAD_SCALE + ') translate(-228 -140)'
@@ -403,7 +410,8 @@ window.AAHangman = (function () {
       headScaled.appendChild(g);
     });
     headG.appendChild(headScaled);
-    figure.appendChild(headG);
+    limbEls.head.appendChild(headG);
+    figure.appendChild(limbEls.head);
 
     swing.appendChild(figure);
     art.appendChild(swing);
@@ -598,18 +606,22 @@ window.AAHangman = (function () {
     jumpTo(s.stageFrames[0]);
   }
 
-  /* === Sallanma (svg + sprite): açı hata sayısıyla orantılı ============
-     0 hatada durur, 6 hatada ±maxDeg. Oyun animasyonu sayılır; hareket
-     azaltma ayarında da çalışır (kullanıcı isteği). */
+  /* === Sallanma (svg + sprite) ===========================================
+     Ters oyunda: adam tam asılıyken en güçlü (±maxDeg), her yanlışta azalır.
+     Klasik oyunda: 0 hatada durur, 6 hatada ±maxDeg.
+     Yerleşik çizimde beden tek blok gibi dönmez: urgan önden gider, gövde
+     boyundan, kollar omuzdan, bacaklar kalçadan gecikmeyle takip eder (doğal
+     bükülme); sarkaç hafif düzensizdir ve beden yavaşça kendi etrafında döner.
+     Oyun animasyonu sayılır; hareket azaltma ayarında da çalışır (kullanıcı isteği). */
   let swayAmp = 0;        // şu anki genlik (derece), hedefe yumuşakça yaklaşır
   let swayTarget = 0;
   let swayRaf = 0;
   let swayLast = 0;
+  let limbEls = null;     // svg: { figure, armL, armR, legL, legR, head } grupları
 
   function setSwayLevel(errors) {
     const sw = CFG.sway || {};
-    // Ters oyunda adam baştan asılı olduğu için hafifçe sallanarak başlar
-    const level = REVERSE ? 0.35 + 0.65 * (errors / MAX) : errors / MAX;
+    const level = REVERSE ? 1 - 0.8 * (errors / MAX) : errors / MAX;
     swayTarget = (Number(sw.maxDeg) || 0) * level;
     if (!swayRaf && swayTarget > 0) {
       swayLast = 0;
@@ -617,14 +629,50 @@ window.AAHangman = (function () {
     }
   }
 
+  /** Sarkaç biçimi: ana salınım + yavaş, uyumsuz ikinci bir dalga (tekdüze olmasın) */
+  const pendulum = (ph) => Math.sin(ph) + 0.12 * Math.sin(0.43 * ph + 1.3);
+
+  /* Menteşe noktaları (viewBox birimi) ve ne kadar geriden geldikleri:
+     lag: gecikme (ms), follow: urganı ne kadar takip ettiği (1 = hiç bükülmez) */
+  const HINGES = {
+    figure: { x: 230, y: 128, lag: 240, follow: 0.55 },  // boyun / ilmek
+    head:   { x: 228, y: 140, lag: 140, follow: 0.75 },
+    armL:   { x: 189, y: 150, lag: 420, follow: 0.25 },  // omuzlar
+    armR:   { x: 267, y: 150, lag: 460, follow: 0.25 },
+    legL:   { x: 212, y: 286, lag: 380, follow: 0.35 },  // kalça
+    legR:   { x: 244, y: 286, lag: 410, follow: 0.35 }
+  };
+
+  /** Uzuvlara gecikmeli dönüş uygular. Mutlak açı = urgan + (geciken açı − urgan) × (1 − follow). */
+  function applyLimbSway(now, period, rope) {
+    const w = (Math.PI * 2) / period;
+    const abs = (h) => {
+      const lagged = swayAmp * pendulum((now - h.lag) * w);
+      return rope + (lagged - rope) * (1 - h.follow);
+    };
+    const body = abs(HINGES.figure);
+    // Beden yavaşça kendi ekseninde döner gibi: yatayda çok hafif daralıp genişler
+    const twist = 1 - 0.035 * (swayAmp / ((CFG.sway || {}).maxDeg || 10)) * (0.5 + 0.5 * Math.sin(now * w * 0.37 + 0.8));
+    const f = HINGES.figure;
+    limbEls.figure.setAttribute('transform',
+      'rotate(' + (body - rope).toFixed(2) + ' ' + f.x + ' ' + f.y + ') ' +
+      'translate(228 0) scale(' + twist.toFixed(4) + ' 1) translate(-228 0)');
+    ['head', 'armL', 'armR', 'legL', 'legR'].forEach((name) => {
+      const h = HINGES[name];
+      limbEls[name].setAttribute('transform', 'rotate(' + (abs(h) - body).toFixed(2) + ' ' + h.x + ' ' + h.y + ')');
+    });
+  }
+
   function swayTick(now) {
     const period = Math.max(600, Number((CFG.sway || {}).periodMs) || 2800);
-    // Genlik ~0,5 sn'de yeni hedefe yaklaşır (kare hızından bağımsız)
     const dt = swayLast ? Math.min(100, now - swayLast) : 16;
     swayLast = now;
-    swayAmp += (swayTarget - swayAmp) * (1 - Math.exp(-dt / 250));
-    const angle = swayAmp * Math.sin((now / period) * Math.PI * 2);
+    // Genlik artarken ~0,4 sn'de, azalırken sönümlenen bir sarkaç gibi ~1,2 sn'de yeni hedefe varır
+    const tau = swayTarget > swayAmp ? 400 : 1200;
+    swayAmp += (swayTarget - swayAmp) * (1 - Math.exp(-dt / tau));
+    const angle = swayAmp * pendulum((now / period) * Math.PI * 2);
     swayEl.style.setProperty('transform', 'rotate(' + angle.toFixed(2) + 'deg)');
+    if (mode === 'svg' && limbEls) applyLimbSway(now, period, angle);
     if (swayTarget === 0 && swayAmp < 0.05) {
       stopSway();
       return;
@@ -637,6 +685,7 @@ window.AAHangman = (function () {
     swayRaf = 0;
     swayAmp = 0;
     if (swayEl) swayEl.style.setProperty('transform', 'rotate(0deg)');
+    if (limbEls) Object.values(limbEls).forEach((g) => g.removeAttribute('transform'));
   }
 
   /* === Video modu (scrub) =============================================== */
