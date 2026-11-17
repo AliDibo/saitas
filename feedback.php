@@ -14,6 +14,8 @@
    6) IP başına sınır: 10 dakikada 3, günde 10 mesaj. Toplam: günde 300 mesaj,
       dosya en fazla 5 MB. IP açık yazılmaz, gizli anahtarla özetlenir (KVKK).
    7) Kayıt JSON satırı olarak yazılır (kod olarak çalıştırılamaz), dosya kilitlenir.
+   8) E-posta bildirimi (isteğe bağlı): alıcı adresi sadece sunucudaki
+      ~/saitas-geri-bildirim/eposta.txt dosyasında; günde en fazla 30 mail.
    ========================================================================== */
 declare(strict_types=1);
 
@@ -30,8 +32,11 @@ const LIMIT_DAY = 10;            // IP başına 24 saatte
 const LIMIT_GLOBAL_DAY = 300;    // tüm site, 24 saatte
 const LOG_MAX_BYTES = 5242880;   // oneriler.txt en fazla 5 MB
 const CATEGORIES = ['oneri', 'hata', 'kelime', 'diger'];
-// Yeni mesajda e-posta bildirimi istersen adresini yaz (boş = sadece dosyaya kayıt)
-const NOTIFY_EMAIL = '';
+/* E-posta bildirimi: alıcı adresi BU DOSYAYA YAZILMAZ (repo herkese açık, adres
+   spam botlarına gider). Adres sadece sunucuda durur:
+   ~/saitas-geri-bildirim/eposta.txt  (tek satır, sadece adres). Dosya yoksa mail gitmez. */
+const MAIL_FROM = 'noreply@saitas.com.tr'; // gönderen (alan adının kendi adresi → spam'e düşme riski azalır)
+const MAIL_DAY_LIMIT = 30;                 // 24 saatte en fazla bu kadar bildirim maili (saldırıda gelen kutun dolmasın)
 
 /* Kayıt klasörü: site klasörünün bir üstü (= $HOME) → web'den erişilemez */
 define('STORE_DIR', dirname(__DIR__) . '/saitas-geri-bildirim');
@@ -159,6 +164,9 @@ function save_with_limits(string $ipHash, string $category, string $message): vo
     if (!is_array($rate) || !isset($rate['ip'], $rate['all'], $rate['last']) || !is_array($rate['ip'])) {
         $rate = ['ip' => [], 'all' => [], 'last' => []];
     }
+    if (!isset($rate['mail'])) {
+        $rate['mail'] = [];
+    }
 
     // 24 saatten eski kayıtları ayıkla
     $dayAgo = $now - 86400;
@@ -174,6 +182,7 @@ function save_with_limits(string $ipHash, string $category, string $message): vo
         }
     }
     $rate['all'] = $keep($rate['all']);
+    $rate['mail'] = $keep($rate['mail']);
     $rate['last'] = array_slice(is_array($rate['last']) ? $rate['last'] : [], -50);
 
     $mine = $rate['ip'][$ipHash] ?? [];
@@ -209,9 +218,9 @@ function save_with_limits(string $ipHash, string $category, string $message): vo
         fail(503, 'Öneri kutusu şu an dolu, daha sonra tekrar dene.');
     }
 
-    $tz = new DateTimeZone('Europe/Istanbul');
+    $date = (new DateTime('now', new DateTimeZone('Europe/Istanbul')))->format('Y-m-d H:i:s');
     $line = json_encode([
-        'tarih'  => (new DateTime('now', $tz))->format('Y-m-d H:i:s'),
+        'tarih'  => $date,
         'konu'   => $category,
         'mesaj'  => $message,
         'kisi'   => substr($ipHash, 0, 10), // aynı kişinin mesajlarını ayırt etmek için (IP değil)
@@ -227,13 +236,59 @@ function save_with_limits(string $ipHash, string $category, string $message): vo
     $rate['ip'][$ipHash] = $mine;
     $rate['all'][] = $now;
     $rate['last'][] = $fingerprint;
+    $sendMail = count($rate['mail']) < MAIL_DAY_LIMIT;
+    if ($sendMail) {
+        $rate['mail'][] = $now;
+    }
     @file_put_contents($rateFile, json_encode($rate), LOCK_EX);
     $release();
 
-    if (NOTIFY_EMAIL !== '' && filter_var(NOTIFY_EMAIL, FILTER_VALIDATE_EMAIL)) {
-        // Konu ve alıcı sabit; mesaj sadece gövdede → başlık enjeksiyonu yok
-        @mail(NOTIFY_EMAIL, 'saitas.com.tr - yeni oneri', "Konu: $category\n\n$message\n",
-            'Content-Type: text/plain; charset=utf-8');
+    if ($sendMail) {
+        notify_by_mail($date, $category, $message);
+    }
+}
+
+/* === E-posta bildirimi ================================================== */
+/** Alıcı adresi: sadece sunucudaki eposta.txt (web kökü ve repo dışında). Geçersizse ''. */
+function notify_address(): string
+{
+    $raw = @file_get_contents(STORE_DIR . '/eposta.txt', false, null, 0, 300);
+    $addr = is_string($raw) ? trim($raw) : '';
+    // filter_var satır sonu / virgül / boşluk içeren adresi reddeder → başlık enjeksiyonu ve çoklu alıcı imkânsız
+    return ($addr !== '' && strlen($addr) <= 254 && filter_var($addr, FILTER_VALIDATE_EMAIL)) ? $addr : '';
+}
+
+/**
+ * Konu, gönderen ve alıcı sabit; kullanıcı metni SADECE gövdede (düz metin) →
+ * kimse başlık ekleyemez, alıcıyı değiştiremez, HTML/script çalıştıramaz.
+ * Gönderimde hata olsa bile öneri dosyaya kaydedilmiş olur.
+ */
+function notify_by_mail(string $date, string $category, string $message): void
+{
+    $to = notify_address();
+    if ($to === '') {
+        return;
+    }
+    $labels = ['oneri' => 'Öneri / istek', 'hata' => 'Hata bildirimi', 'kelime' => 'Kelime önerisi', 'diger' => 'Diğer'];
+    $body = "saitas.com.tr öneri kutusuna yeni mesaj geldi.\n\n"
+        . 'Tarih: ' . $date . "\n"
+        . 'Konu : ' . ($labels[$category] ?? $category) . "\n\n"
+        . "Mesaj:\n" . wordwrap($message, 76, "\n", true) . "\n\n"
+        . "--\nBu e-posta otomatik gönderildi; yanıtlama.\n"
+        . "Mesajı ziyaretçi yazdı: içindeki bağlantılara güvenme, tıklama.\n";
+    $headers = implode("\r\n", [
+        'From: saitas.com.tr <' . MAIL_FROM . '>',
+        'MIME-Version: 1.0',
+        'Content-Type: text/plain; charset=UTF-8',
+        'Content-Transfer-Encoding: 8bit',
+        'X-Mailer: saitas-oneri',
+    ]);
+    $subject = '=?UTF-8?B?' . base64_encode('saitas.com.tr – yeni öneri') . '?=';
+    // -f: zarf göndericisi alan adının adresi olsun (SPF uyumu); izin yoksa -f'siz dene
+    if (!@mail($to, $subject, $body, $headers, '-f' . MAIL_FROM)) {
+        if (!@mail($to, $subject, $body, $headers)) {
+            error_log('[feedback] bildirim maili gonderilemedi');
+        }
     }
 }
 
