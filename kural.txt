@@ -1,10 +1,10 @@
 # 🎯 Amaç
-Adam darağacında asılı; gizli kelimeyi, o tamamen kurtulup inmeden bul! Kelime **5 ile 10 harf** arasındadır ve her harfi için bir çizgi görürsün.
+saİT darağacında asılı; gizli kelimeyi, o tamamen kurtulup inmeden bul! Kelime **5 ile 10 harf** arasındadır ve her hatada bir uzvu darağacından kurtulur.
 
 # ⌨️ Harf Tahmini
 Klavyeden bir harfe bas (bilgisayarda kendi klavyeni de kullanabilirsin).
 - Harf kelimede varsa ✅ **yeşil daire** çizilir, harf yerine yerleşir.
-- Harf kelimede yoksa ❌ **kırmızı çarpı** çizilir ve adamın bir parçası kurtulup kaybolur (önce bacaklar, sonra kollar, gövde, en son kafa).
+- Harf kelimede yoksa ❌ **kırmızı çarpı** çizilir ve adamın bir parçası kurtulup kaybolur.
 
 # 💚 İkinci Şans
 Her doğru harf, eğer hatan varsa **bir hatanı siler**; kaybolan son parça geri gelir. Yani doğru tahminlerle adamı darağacında tutabilirsin!
@@ -13,4 +13,4 @@ Her doğru harf, eğer hatan varsa **bir hatanı siler**; kaybolan son parça ge
 Kelimeyi bildiğini düşünüyorsan alttaki kutuya yaz ve **Tahmin Et**'e bas (ya da Enter). Doğruysa anında kazanırsın 🎉. Yanlışsa bir hata sayılır ve kelime *Yanlış Tahminler* listesine eklenir; aynı kelimeyi tekrar denemek sayılmaz.
 
 # 💀 Kazanma ve Kaybetme
-Tüm harfleri açarsan **kazanırsın**. **6 hata** yaparsan adam tamamen kurtulur ve oyunu **kaybedersin**. İstediğin an **Yeniden Başlat** ile yeni kelimeye geçebilirsin. Bol şans! 🍀
+Tüm harfleri açarsan **kazanırsın**. **6 hata** yaparsan adam tamamen kurtulur ve oyunu **kaybedersin**. İstediğin an **Yeniden Başlat** ile yeni kelimeye geçebilirsin.
