@@ -448,7 +448,7 @@ window.AAHangman = (function () {
       root.dataset.mood = 'dead';
       root.classList.add('is-dead');
     }
-    return 1500;
+    return 2500;   // asılma anı izlensin, adam bir-iki kez sallansın
   }
 
   /** shown: kaç parça görünsün (1 kafa … 6 sağ bacak); errors: yüz ifadesi için hata sayısı. */
