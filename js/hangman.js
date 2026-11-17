@@ -431,6 +431,26 @@ window.AAHangman = (function () {
     requestAnimationFrame(() => groups.forEach((g) => g.classList.add('is-drawn')));
   }
 
+  /**
+   * Ters oyunda kelime bulununca: eksik parçalar hızla geri gelir, adam tamamen
+   * asılır (gözler kapanır, baş yana düşer). Sonuç ekranından önce beklenecek
+   * süreyi (ms) döndürür; klasik oyunda animasyon yoktur (0).
+   */
+  function hangFully() {
+    if (!REVERSE) return 0;
+    const full = MAX;   // gösterilecek aşama: tüm parçalar
+    if (mode === 'frames') showFrame(full);
+    else if (mode === 'sequence' || mode === 'sprite') playTo(frameCfg().stageFrames[full]);
+    else if (mode === 'video') seekVideo(full);
+    else {
+      // Eksik parçalar çizilerek geri gelir (~1,2 sn'de tamamlanır)
+      stageEls.forEach((paths, i) => paths.forEach((p) => p.classList.toggle('is-drawn', i > 0)));
+      root.dataset.mood = 'dead';
+      root.classList.add('is-dead');
+    }
+    return 1500;
+  }
+
   /** shown: kaç parça görünsün (1 kafa … 6 sağ bacak); errors: yüz ifadesi için hata sayısı. */
   function drawSvg(shown, errors) {
     stageEls.forEach((paths, i) => {
@@ -723,5 +743,5 @@ window.AAHangman = (function () {
     else video.addEventListener('loadedmetadata', go, { once: true });
   }
 
-  return { mount, setStage, reset, get stage() { return current; } };
+  return { mount, setStage, reset, hangFully, get stage() { return current; } };
 })();

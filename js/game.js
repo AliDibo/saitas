@@ -311,8 +311,9 @@
     keyButtons.forEach((btn) => { btn.disabled = true; });
     el.guessInput.blur();
     if (!won) revealLetters(null);
-    // Son animasyon adımı görünsün, sonra sonuç ekranı
-    window.setTimeout(() => showResult(won), 900);
+    // Ters oyunda kazanınca adam önce tamamen asılır; son animasyon görünsün, sonra sonuç ekranı
+    const finale = won ? Hangman.hangFully() : 0;
+    window.setTimeout(() => showResult(won), finale || 900);
   }
 
   function showResult(won) {
