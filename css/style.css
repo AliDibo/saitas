@@ -124,16 +124,21 @@
 /* KONTUR DENEMESİ (geri dönüş: git etiketi "once-kontur"):
    açılan harfler ve alt çizgiler çizgi roman yazısı gibi kalın koyu dış hatla
    çizilir; zemin doldurulmaz, arka plan aynen görünür. */
-:root[data-theme="dark"][data-palette="sepya"] .slot {
-  --kontur: #1e150c;
+/* Kontur rengi = arka plan görselinin baskın koyu kahverengisi (görselden ölçüldü):
+   kahverengi yerlerde kaybolur, sarı/krem çizgilerin üstünde harfi ayırır. */
+:root[data-theme="dark"][data-palette="sepya"] {
+  --kontur: #271b12;
+}
+:root[data-theme="dark"][data-palette="sepya"] .slot,
+:root[data-theme="dark"][data-palette="sepya"] .key-letter {
   text-shadow:
     2px 0 0 var(--kontur), -2px 0 0 var(--kontur), 0 2px 0 var(--kontur), 0 -2px 0 var(--kontur),
     1.5px 1.5px 0 var(--kontur), -1.5px 1.5px 0 var(--kontur), 1.5px -1.5px 0 var(--kontur), -1.5px -1.5px 0 var(--kontur),
     0 0 6px var(--halo);
 }
 :root[data-theme="dark"][data-palette="sepya"] .slot::after {
-  filter: drop-shadow(1.6px 0 0 #1e150c) drop-shadow(-1.6px 0 0 #1e150c)
-          drop-shadow(0 1.6px 0 #1e150c) drop-shadow(0 -1.6px 0 #1e150c);
+  filter: drop-shadow(1.6px 0 0 var(--kontur)) drop-shadow(-1.6px 0 0 var(--kontur))
+          drop-shadow(0 1.6px 0 var(--kontur)) drop-shadow(0 -1.6px 0 var(--kontur));
 }
 /* KONTUR DENEMESİ SONU */
 
