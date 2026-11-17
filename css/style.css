@@ -39,6 +39,7 @@
   --edge: clamp(12px, 2vw, 28px);
   --gap: clamp(10px, 1.6vw, 22px);
   --round-size: clamp(40px, 6.2vh, 58px);
+  --round-gap: 10px;             /* sağ üst butonlar arası */
   --corner-w: clamp(140px, 15vw, 220px);
   --corner-h: clamp(44px, 6.4vh, 60px);
   --corner-fs: clamp(16px, 1.5vw, 22px);
@@ -267,7 +268,9 @@ img { max-width: 100%; }
    Yer daralınca önce sol boşluk küçülür → logo KÜÇÜLMEDEN sola kayar,
    sağ üst butonlarla asla çakışmaz. */
 .banner {
-  --banner-reserve: calc(var(--round-size) * 3 + 20px + var(--edge) + 10px); /* 3 buton: ses, tema, öneri */
+  /* Sağda ayrılan yer = 3 buton (ses, tema, öneri) + 2 aralık + kenar + 8px nefes payı.
+     Buton ölçüsü / aralığı değişirse bu da kendiliğinden değişir. */
+  --banner-reserve: calc(var(--round-size) * 3 + var(--round-gap) * 2 + var(--edge) + 8px);
   height: var(--banner-h);
   min-height: 48px;
   width: 100%;
@@ -304,7 +307,7 @@ img { max-width: 100%; }
   top: max(24px, calc(var(--banner-h) / 2));
   right: var(--edge);
   display: flex;
-  gap: 10px;
+  gap: var(--round-gap);
   transform: translateY(-50%);
   transition: opacity var(--t), visibility var(--t);
 }
@@ -328,6 +331,10 @@ img { max-width: 100%; }
 .round-btn:active { transform: scale(0.95); }
 /* Görünenden geniş dokunma alanı */
 .round-btn::after { content: ''; position: absolute; inset: -5px; }
+/* Dokunmatik ekranda dokunulan buton "hover"da takılı kalıp büyümesin (logoya taşmasın) */
+@media (hover: none) {
+  .round-btn:hover { transform: none; }
+}
 
 .round-btn-icon {
   width: 64%;
@@ -1116,7 +1123,9 @@ body.is-over .toast {
     --banner-h: 8vh;
     --edge: 12px;
     --gap: 8px;
-    --round-size: 42px;
+    /* 3 buton: dar telefonda logo ezilmesin diye biraz daha küçük, dokunma alanı ::after ile geniş */
+    --round-size: 38px;
+    --round-gap: 7px;
     --corner-w: calc(50vw - 18px);
     --corner-h: 46px;
     --corner-fs: 17px;
@@ -1183,6 +1192,10 @@ body.is-over .toast {
 /* Çok dar ekran (≤ 360px) */
 @media (max-width: 360px) {
   :root { --corner-fs: 15px; }
+  @media (orientation: portrait) {
+    :root { --round-size: 36px; --round-gap: 6px; }
+    .round-btn::after { inset: -6px -3px; }
+  }
   .guess-btn { padding: 0 0.6em; }
 }
 
