@@ -60,6 +60,15 @@ function fail(int $status, string $message): void
     reply($status, ['ok' => false, 'message' => $message]);
 }
 
+/* Beklenmeyen her hata: ayrıntı sunucu günlüğüne, ziyaretçiye sadece genel JSON mesaj (iç bilgi sızmaz) */
+set_exception_handler(static function (\Throwable $e): void {
+    error_log('[feedback] ' . get_class($e) . ': ' . $e->getMessage() . ' @' . $e->getLine());
+    if (!headers_sent()) {
+        http_response_code(500);
+    }
+    echo json_encode(['ok' => false, 'message' => 'Şu an kaydedemiyoruz, biraz sonra tekrar dene.'], JSON_UNESCAPED_UNICODE);
+});
+
 /* === Depolama ========================================================= */
 function store_dir(): string
 {
@@ -244,8 +253,26 @@ function save_with_limits(string $ipHash, string $category, string $message): vo
     $release();
 
     if ($sendMail) {
-        notify_by_mail($date, $category, $message);
+        // Mail ASLA yanıtı bozmamalı: öneri zaten kaydedildi. Sunucu mail()'i kapatmışsa
+        // (PHP 8'de ölümcül hata) ya da gönderim başarısızsa sebep hata.log'a yazılır.
+        try {
+            notify_by_mail($date, $category, $message);
+        } catch (\Throwable $e) {
+            mail_log(get_class($e) . ': ' . $e->getMessage());
+        }
     }
+}
+
+/** Mail sorunlarını ~/saitas-geri-bildirim/hata.log'a yazar (cPanel'den okunur, en fazla 64 KB). */
+function mail_log(string $reason): void
+{
+    $file = STORE_DIR . '/hata.log';
+    if (is_file($file) && filesize($file) > 65536) {
+        return;
+    }
+    $date = (new DateTime('now', new DateTimeZone('Europe/Istanbul')))->format('Y-m-d H:i:s');
+    @file_put_contents($file, $date . ' mail: ' . substr($reason, 0, 300) . "\n", FILE_APPEND | LOCK_EX);
+    @chmod($file, 0600);
 }
 
 /* === E-posta bildirimi ================================================== */
@@ -269,6 +296,10 @@ function notify_by_mail(string $date, string $category, string $message): void
     if ($to === '') {
         return;
     }
+    if (!function_exists('mail')) {
+        mail_log('sunucuda PHP mail() kapali (disable_functions) - hosting destegine sorulmali');
+        return;
+    }
     $labels = ['oneri' => 'Öneri / istek', 'hata' => 'Hata bildirimi', 'kelime' => 'Kelime önerisi', 'diger' => 'Diğer'];
     $body = "saitas.com.tr öneri kutusuna yeni mesaj geldi.\n\n"
         . 'Tarih: ' . $date . "\n"
@@ -287,7 +318,7 @@ function notify_by_mail(string $date, string $category, string $message): void
     // -f: zarf göndericisi alan adının adresi olsun (SPF uyumu); izin yoksa -f'siz dene
     if (!@mail($to, $subject, $body, $headers, '-f' . MAIL_FROM)) {
         if (!@mail($to, $subject, $body, $headers)) {
-            error_log('[feedback] bildirim maili gonderilemedi');
+            mail_log('mail() false dondu (sunucu maili kabul etmedi)');
         }
     }
 }
