@@ -24,15 +24,12 @@
   <!-- 2) Google'da başlığın altında çıkan açıklama (en fazla ~155 karakter) -->
   <meta name="description" content="saİTas; Asanın kazandığı, adam asmacanın geliştirilmiş ve ücretsiz bir versiyonu.">
 
-  <!-- 3) Sekme simgesi (favicon): kare, şeffaf PNG, 512×512 → images/favicon.png
-          Kendi dosyanı koyunca alttaki iki satırı silip yorumdaki iki satırı aç. -->
-  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="images/favicon.svg">
-  <!-- <link rel="icon" href="images/favicon.png" type="image/png"> -->
-  <!-- <link rel="apple-touch-icon" href="images/favicon.png"> -->
+  <!-- 3) Sekme simgesi (favicon): kare, şeffaf PNG, 512×512 → images/favicon.png -->
+  <link rel="icon" href="images/favicon.png" type="image/png" sizes="512x512">
+  <link rel="apple-touch-icon" href="images/favicon.png">
 
   <!-- 4) WhatsApp / Facebook / X'te link paylaşınca çıkan kart.
-          Görsel: 1200×630 PNG/JPG → images/paylasim.png
+          Görsel: 1200×630 JPG → images/paylasim.jpg
           Alan adı: saitas.com.tr (değişirse 3 yerde değiştir, https:// kalsın). -->
   <link rel="canonical" href="https://saitas.com.tr/">
   <meta property="og:type" content="website">
@@ -40,7 +37,11 @@
   <meta property="og:url" content="https://saitas.com.tr/">
   <meta property="og:title" content="saİTas">
   <meta property="og:description" content="saİTas; Asanın kazandığı, adam asmacanın geliştirilmiş ve ücretsiz bir versiyonu.">
-  <meta property="og:image" content="https://saitas.com.tr/images/paylasim.png">
+  <meta property="og:image" content="https://saitas.com.tr/images/paylasim.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="saİTas – adam asmaca oyunu">
   <meta name="twitter:card" content="summary_large_image">
   <!-- ================================================================ -->
 
@@ -136,8 +137,6 @@
           <button type="submit" class="sketch-btn guess-btn" id="guess-btn">Tahmin Et</button>
         </form>
         <p class="guess-hint" id="guess-hint" aria-live="polite"></p>
-        <!-- Metin game.js'te config'teki olasılıkla doldurulur -->
-        <p class="guess-note" id="guess-note"></p>
 
         <div class="wrong-guesses">
           <h3 class="wrong-title">Yanlış Tahminler</h3>

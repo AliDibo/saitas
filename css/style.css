@@ -679,18 +679,6 @@ img { max-width: 100%; }
 .guess-hint:empty { min-height: 0; }
 .guess-hint.is-lucky { color: var(--green); }
 
-/* Kelime tahmini riski: oyuncu her zaman görür */
-.guess-note {
-  margin: -2px 0 0;
-  font-family: var(--font-body);
-  font-size: clamp(14px, 1.05vw, 17px);
-  color: var(--ink-soft);
-  text-align: center;
-  line-height: 1.2;
-}
-.guess-note strong { color: var(--red); font-weight: 400; }
-:root[data-theme="dark"][data-palette="sepya"] .guess-note { text-shadow: 0 0 3px var(--halo), 0 0 8px var(--halo); }
-
 .wrong-guesses {
   display: flex;
   flex-wrap: wrap;

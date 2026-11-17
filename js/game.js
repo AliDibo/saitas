@@ -39,7 +39,6 @@
     guessForm: $('guess-form'),
     guessInput: $('guess-input'),
     guessHint: $('guess-hint'),
-    guessNote: $('guess-note'),
     wrongList: $('wrong-list'),
     btnRules: $('btn-rules'),
     btnRestart: $('btn-restart'),
@@ -298,14 +297,6 @@
   /** Yanlış kelime tahmini can götürsün mü? (config: guessPenaltyChance, ör. 0.3) */
   function guessCostsLife() {
     return U.randomInt(1000) < Math.round(penaltyChance() * 1000);
-  }
-
-  /** Tahmin kutusunun altındaki kalıcı bilgi: oyuncu riski baştan bilsin. */
-  function renderGuessNote() {
-    const strong = document.createElement('strong');
-    strong.textContent = '%' + Math.round(penaltyChance() * 100) + ' ihtimalle 1 can';
-    el.guessNote.textContent = '';
-    el.guessNote.append('⚠️ Yanlış kelime tahmini ', strong, ' götürür.');
   }
 
   function submitGuess(e) {
@@ -704,7 +695,6 @@
     el.fbForm.addEventListener('submit', submitFeedback);
     el.fbMessage.addEventListener('input', updateFbCount);
     el.fbMessage.setAttribute('maxlength', String(FB.maxLength));
-    renderGuessNote();
     el.guessForm.addEventListener('submit', submitGuess);
     el.guessInput.addEventListener('input', onGuessInput);
     document.addEventListener('keydown', onKeyDown);
