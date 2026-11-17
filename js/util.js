@@ -69,6 +69,35 @@ window.AAUtil = (function () {
     return text.replace(/^﻿/, ''); // BOM temizle
   }
 
+  /* === Öneri kutusu isteği ==============================================
+     Sadece config'teki sabit .php yolu, aynı köken, yönlendirme yok, JSON yanıt.
+     Content-Type application/json → başka siteden gönderim tarayıcıda engellenir. */
+  async function requestJSON(path, body) {
+    if (!/^[a-z0-9_\-]+\.php$/.test(path)) throw new Error('Geçersiz adres: ' + path);
+    if (location.protocol === 'file:') throw new Error('file://');
+    const opts = {
+      method: body ? 'POST' : 'GET',
+      mode: 'same-origin',
+      credentials: 'same-origin',
+      cache: 'no-store',
+      redirect: 'error',
+      referrerPolicy: 'no-referrer',
+      headers: { Accept: 'application/json' }
+    };
+    if (body) {
+      opts.headers['Content-Type'] = 'application/json';
+      opts.body = JSON.stringify(body);
+    }
+    const res = await fetch(path, opts);
+    const type = (res.headers.get('Content-Type') || '').toLowerCase();
+    if (!type.startsWith('application/json')) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    if (text.length > 4096) throw new Error('Yanıt çok büyük');
+    const data = JSON.parse(text);
+    if (!data || typeof data !== 'object') throw new Error('Geçersiz yanıt');
+    return { status: res.status, data };
+  }
+
   /* === localStorage (hata toleranslı) ================================== */
   const storage = {
     get(key) {
@@ -165,5 +194,5 @@ window.AAUtil = (function () {
   }
 
 
-  return { upperTR, isTurkishWord, sanitizeGuess, fetchText, storage, renderMarkdown, randomInt };
+  return { upperTR, isTurkishWord, sanitizeGuess, fetchText, requestJSON, storage, renderMarkdown, randomInt };
 })();

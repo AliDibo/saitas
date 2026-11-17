@@ -1,7 +1,8 @@
 /* ==========================================================================
    game.js – Oyun mantığı ve arayüz
    Bölümler: Durum · DOM · Kelime listesi · Klavye · Oyun akışı · Tahmin ·
-   Sonuç ekranı · Kurallar · Tema ve ses · Giriş ekranı · Fiziksel klavye · Başlat
+   Sonuç ekranı · Kurallar · Öneri kutusu · Tema ve ses · Giriş ekranı ·
+   Fiziksel klavye · Başlat
    ========================================================================== */
 'use strict';
 
@@ -10,6 +11,7 @@
   const U = window.AAUtil;
   const Sound = window.AAAudio;
   const Hangman = window.AAHangman;
+  const Tour = window.AATour;
   const G = CFG.GAME;
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -37,6 +39,7 @@
     guessForm: $('guess-form'),
     guessInput: $('guess-input'),
     guessHint: $('guess-hint'),
+    guessNote: $('guess-note'),
     wrongList: $('wrong-list'),
     btnRules: $('btn-rules'),
     btnRestart: $('btn-restart'),
@@ -55,7 +58,18 @@
     resultRestart: $('result-restart'),
     modal: $('rules-modal'),
     rulesContent: $('rules-content'),
-    rulesClose: $('rules-close')
+    rulesClose: $('rules-close'),
+    rulesTour: $('rules-tour'),
+    btnFeedback: $('btn-feedback'),
+    fbModal: $('feedback-modal'),
+    fbForm: $('feedback-form'),
+    fbCategory: $('feedback-category'),
+    fbMessage: $('feedback-message'),
+    fbCount: $('feedback-count'),
+    fbWebsite: $('feedback-website'),
+    fbStatus: $('feedback-status'),
+    fbSend: $('feedback-send'),
+    fbClose: $('feedback-close')
   };
   const keyButtons = new Map(); // harf → buton
 
@@ -228,7 +242,7 @@
     resetKeyboard();
     el.wrongList.textContent = '';
     el.guessInput.value = '';
-    el.guessHint.textContent = '';
+    setHint('');
     Hangman.reset();
     updateErrors();
   }
@@ -268,7 +282,30 @@
     // Sadece Türk harfleri, büyük harf, en fazla maxLength
     const clean = U.sanitizeGuess(el.guessInput.value, G.maxLength);
     if (clean !== el.guessInput.value) el.guessInput.value = clean;
-    el.guessHint.textContent = '';
+    setHint('');
+  }
+
+  /** Tahmin altındaki uyarı; lucky = yeşil (şanslı kurtuluş). */
+  function setHint(text, lucky) {
+    el.guessHint.textContent = text;
+    el.guessHint.classList.toggle('is-lucky', !!lucky);
+  }
+
+  function penaltyChance() {
+    return Math.min(1, Math.max(0, Number(G.guessPenaltyChance) || 0));
+  }
+
+  /** Yanlış kelime tahmini can götürsün mü? (config: guessPenaltyChance, ör. 0.3) */
+  function guessCostsLife() {
+    return U.randomInt(1000) < Math.round(penaltyChance() * 1000);
+  }
+
+  /** Tahmin kutusunun altındaki kalıcı bilgi: oyuncu riski baştan bilsin. */
+  function renderGuessNote() {
+    const strong = document.createElement('strong');
+    strong.textContent = '%' + Math.round(penaltyChance() * 100) + ' ihtimalle 1 can';
+    el.guessNote.textContent = '';
+    el.guessNote.append('⚠️ Yanlış kelime tahmini ', strong, ' götürür.');
   }
 
   function submitGuess(e) {
@@ -277,15 +314,15 @@
     const guess = U.sanitizeGuess(el.guessInput.value, G.maxLength);
 
     if (!guess) {
-      el.guessHint.textContent = 'Bir kelime yaz (sadece harf).';
+      setHint('Bir kelime yaz (sadece harf).');
       return;
     }
     if (guess.length !== state.word.length) {
-      el.guessHint.textContent = 'Kelime ' + state.word.length + ' harfli, tekrar dene.';
+      setHint('Kelime ' + state.word.length + ' harfli, tekrar dene.');
       return;
     }
     el.guessInput.value = '';
-    el.guessHint.textContent = '';
+    setHint('');
 
     if (guess === state.word) {
       for (const ch of state.word) state.guessed.add(ch);
@@ -295,14 +332,22 @@
       return;
     }
     if (state.wrongGuesses.has(guess)) {
-      el.guessHint.textContent = 'Bu kelimeyi zaten denedin.';
+      setHint('Bu kelimeyi zaten denedin.');
       return;
     }
     state.wrongGuesses.add(guess);
     const li = document.createElement('li');
     li.textContent = guess; // textContent → XSS imkânsız
     el.wrongList.appendChild(li);
-    addError();
+    // Yanlış tahmin her zaman can götürmez: %30 (config) ihtimalle 1 hata
+    if (guessCostsLife()) {
+      setHint('Yanlış! Bu sefer 1 can gitti.');
+      addError();
+    } else {
+      li.classList.add('is-lucky');
+      li.title = 'Şanslıydın, can gitmedi';
+      setHint('Yanlış ama şanslısın, can gitmedi! 🍀', true);
+    }
   }
 
   /* === Sonuç ekranı ==================================================== */
@@ -318,6 +363,7 @@
 
   function showResult(won) {
     closeRules(true);
+    closeFeedback(true);
     Sound.stopMusic();
     Sound.play(won ? 'win' : 'lose');
 
@@ -368,6 +414,119 @@
     if (el.modal.hidden) return;
     hideWithTransition(el.modal, 'is-open', 350);
     if (!silent) el.btnRules.focus({ preventScroll: true });
+  }
+
+  /* === Öneri kutusu ==================================================== */
+  const FB = CFG.FEEDBACK;
+  const fb = { token: '', tokenAt: 0, sending: false, closeTimer: 0 };
+
+  function setFbStatus(text, kind) {
+    el.fbStatus.textContent = text;
+    el.fbStatus.className = 'feedback-status' + (kind ? ' is-' + kind : '');
+  }
+
+  function updateFbCount() {
+    // Fazlası kesilir (maxlength'e ek güvence)
+    if (el.fbMessage.value.length > FB.maxLength) {
+      el.fbMessage.value = el.fbMessage.value.slice(0, FB.maxLength);
+    }
+    const n = el.fbMessage.value.trim().length;
+    el.fbCount.textContent = n + ' / ' + FB.maxLength;
+    el.fbCount.classList.toggle('is-over', n > 0 && n < FB.minLength);
+  }
+
+  /** Sunucudan imzalı form jetonu alır (bot ve başka siteden gönderime karşı). */
+  async function fetchFbToken() {
+    fb.token = '';
+    try {
+      const { data } = await U.requestJSON(CFG.FILES.feedback);
+      if (data.ok && typeof data.token === 'string' && data.token.length < 200) {
+        fb.token = data.token;
+        fb.tokenAt = Date.now();
+      }
+    } catch (err) {
+      console.warn('[Adam Asmaca] Öneri kutusu:', err.message);
+    }
+  }
+
+  function openFeedback() {
+    if (state.over && !el.result.hidden) return;
+    clearTimeout(fb.closeTimer);
+    closeRules(true);
+    setFbStatus('');
+    updateFbCount();
+    showWithTransition(el.fbModal, 'is-open');
+    el.fbMessage.focus({ preventScroll: true });
+    fetchFbToken();
+  }
+
+  function closeFeedback(silent) {
+    if (el.fbModal.hidden) return;
+    clearTimeout(fb.closeTimer);
+    hideWithTransition(el.fbModal, 'is-open', 350);
+    if (!silent) el.btnFeedback.focus({ preventScroll: true });
+  }
+
+  const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
+
+  async function submitFeedback(e) {
+    e.preventDefault();
+    if (fb.sending) return;
+    const message = el.fbMessage.value.trim();
+    if (message.length < FB.minLength) {
+      setFbStatus('Mesajın en az ' + FB.minLength + ' karakter olmalı.', 'error');
+      el.fbMessage.focus();
+      return;
+    }
+    if (message.length > FB.maxLength) {
+      setFbStatus('Mesajın en fazla ' + FB.maxLength + ' karakter olabilir.', 'error');
+      return;
+    }
+    fb.sending = true;
+    el.fbSend.disabled = true;
+    setFbStatus('Gönderiliyor…');
+    try {
+      if (!fb.token) await fetchFbToken();
+      if (!fb.token) throw new Error('jeton alınamadı');
+      // Sunucu 3 sn'den hızlı doldurulan formu bot sayar
+      const age = Date.now() - fb.tokenAt;
+      if (age < 3500) await wait(3500 - age);
+
+      const { status, data } = await U.requestJSON(CFG.FILES.feedback, {
+        token: fb.token,
+        category: el.fbCategory.value,
+        message: message,
+        website: el.fbWebsite.value
+      });
+      const text = typeof data.message === 'string' ? data.message.slice(0, 200) : '';
+      if (status === 200 && data.ok) {
+        setFbStatus(text || 'Teşekkürler!', 'ok');
+        el.fbMessage.value = '';
+        updateFbCount();
+        fb.closeTimer = window.setTimeout(() => closeFeedback(false), 2200);
+      } else {
+        setFbStatus(text || 'Gönderilemedi, biraz sonra tekrar dene.', 'error');
+      }
+      fetchFbToken();       // her gönderim için yeni jeton
+    } catch (err) {
+      console.warn('[Adam Asmaca] Öneri gönderilemedi:', err.message);
+      setFbStatus('Şu an gönderilemedi, biraz sonra tekrar dene.', 'error');
+    } finally {
+      fb.sending = false;
+      el.fbSend.disabled = false;
+    }
+  }
+
+  /** Açık penceredeki odağı pencere içinde tutar (Tab / Shift+Tab). */
+  function trapFocus(e, container) {
+    const items = Array.from(container.querySelectorAll('button, select, textarea, input:not([tabindex="-1"])'))
+      .filter((n) => !n.disabled && n.offsetParent !== null);
+    if (!items.length) return;
+    const first = items[0];
+    const last = items[items.length - 1];
+    if (!container.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
+    else if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   }
 
   /* === Tema ve ses ===================================================== */
@@ -424,13 +583,20 @@
     Sound.playMusic(true);
     el.intro.classList.add('is-leaving');
     window.setTimeout(() => { el.intro.hidden = true; }, 500);
+    Tour.maybeStart(650);         // ilk ziyarette hızlı gezgin (giriş ekranı kapandıktan sonra)
   }
 
   /* === Fiziksel klavye ================================================= */
   function onKeyDown(e) {
+    if (Tour.isActive()) return;  // tur kendi tuşlarını yönetir
+    if (!el.fbModal.hidden) {
+      if (e.key === 'Escape') closeFeedback(false);
+      if (e.key === 'Tab') trapFocus(e, el.fbModal);
+      return; // yazarken oyun klavyesi tetiklenmez
+    }
     if (!el.modal.hidden) {
       if (e.key === 'Escape') closeRules(false);
-      if (e.key === 'Tab') { e.preventDefault(); el.rulesClose.focus(); } // odak pencerede kalsın
+      if (e.key === 'Tab') trapFocus(e, el.modal); // odak pencerede kalsın
       return;
     }
     if (!state.started || state.over) return;
@@ -526,8 +692,19 @@
     el.resultRestart.addEventListener('click', restart);
     el.btnRules.addEventListener('click', openRules);
     el.rulesClose.addEventListener('click', () => closeRules(false));
+    el.rulesTour.addEventListener('click', () => {
+      closeRules(true);
+      window.setTimeout(Tour.start, 360); // pencere kapanınca tur başlar
+    });
     el.modal.addEventListener('click', (e) => { if (e.target === el.modal) closeRules(false); });
     el.toastClose.addEventListener('click', () => { el.toast.hidden = true; });
+    el.btnFeedback.addEventListener('click', openFeedback);
+    el.fbClose.addEventListener('click', () => closeFeedback(false));
+    el.fbModal.addEventListener('click', (e) => { if (e.target === el.fbModal) closeFeedback(false); });
+    el.fbForm.addEventListener('submit', submitFeedback);
+    el.fbMessage.addEventListener('input', updateFbCount);
+    el.fbMessage.setAttribute('maxlength', String(FB.maxLength));
+    renderGuessNote();
     el.guessForm.addEventListener('submit', submitGuess);
     el.guessInput.addEventListener('input', onGuessInput);
     document.addEventListener('keydown', onKeyDown);

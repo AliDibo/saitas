@@ -55,6 +55,7 @@
   <script src="js/util.js" defer></script>
   <script src="js/audio.js" defer></script>
   <script src="js/hangman.js" defer></script>
+  <script src="js/tour.js" defer></script>
   <script src="js/game.js" defer></script>
 </head>
 <body>
@@ -75,7 +76,7 @@
     <img class="banner-logo" id="logo" alt="Adam Asmaca logosu">
   </header>
 
-  <!-- Sağ üst: ses + tema -->
+  <!-- Sağ üst: ses + tema + öneri kutusu -->
   <div class="top-controls" id="top-controls">
     <!-- Ses modu: data-mode = all | fx | mute → CSS ilgili ikonu gösterir -->
     <button type="button" class="round-btn sound-btn" id="btn-sound" data-mode="all" aria-label="Ses modu">
@@ -99,6 +100,14 @@
       </svg>
       <svg class="round-btn-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M19.8 14.6c-4.9 1.9-10.4-1.6-10.6-6.9-.1-1.5.2-2.8.8-3.9-4.4 1.2-6.9 5.6-5.9 9.9 1.1 4.6 5.8 7.4 10.3 6.2 2.5-.7 4.4-2.6 5.4-5.3z"/>
+      </svg>
+    </button>
+    <!-- Öneri kutusu: el çizimi konuşma balonu + kalem çizgileri -->
+    <button type="button" class="round-btn feedback-btn" id="btn-feedback"
+            aria-label="Öneri ve istek gönder" title="Öneri ve istek gönder" aria-haspopup="dialog">
+      <svg class="round-btn-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4.2 5.6c4.9-1.2 10.6-1.1 15.6.1.6 3 .7 6.2.1 9.2-3.3.8-6.6 1-9.8.8l-4.6 3.8.6-4.2c-.8-.2-1.4-.3-2-.5-.6-3-.6-6.1.1-9.2z"/>
+        <path d="M7.8 9.4h8.3M7.9 12.2h5.4"/>
       </svg>
     </button>
   </div>
@@ -127,6 +136,8 @@
           <button type="submit" class="sketch-btn guess-btn" id="guess-btn">Tahmin Et</button>
         </form>
         <p class="guess-hint" id="guess-hint" aria-live="polite"></p>
+        <!-- Metin game.js'te config'teki olasılıkla doldurulur -->
+        <p class="guess-note" id="guess-note"></p>
 
         <div class="wrong-guesses">
           <h3 class="wrong-title">Yanlış Tahminler</h3>
@@ -167,8 +178,65 @@
   <div class="modal" id="rules-modal" role="dialog" aria-modal="true" aria-labelledby="rules-title" hidden>
     <div class="modal-card">
       <h2 class="modal-title" id="rules-title">Kurallar</h2>
-      <div class="rules-content" id="rules-content">Yükleniyor…</div>
-      <button type="button" class="sketch-btn modal-close" id="rules-close">Kapat</button>
+      <div class="rules-content sketch-scroll" id="rules-content">Yükleniyor…</div>
+      <div class="modal-actions">
+        <button type="button" class="sketch-btn is-blue modal-close" id="rules-tour">Turu İzle</button>
+        <button type="button" class="sketch-btn modal-close" id="rules-close">Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= ÖNERİ KUTUSU ================= -->
+  <div class="modal" id="feedback-modal" role="dialog" aria-modal="true" aria-labelledby="feedback-title" hidden>
+    <div class="modal-card feedback-card">
+      <h2 class="modal-title" id="feedback-title">Öneri Kutusu</h2>
+      <form class="feedback-form sketch-scroll" id="feedback-form" autocomplete="off" novalidate>
+        <p class="feedback-intro">Oyunla ilgili bir fikrin, isteğin ya da bulduğun bir hata mı var?</p>
+
+        <label class="feedback-label" for="feedback-category">Konu</label>
+        <select class="feedback-field feedback-select" id="feedback-category" required>
+          <option value="oneri">Öneri / istek</option>
+          <option value="hata">Hata bildirimi</option>
+          <option value="kelime">Kelime önerisi</option>
+          <option value="diger">Diğer</option>
+        </select>
+
+        <label class="feedback-label" for="feedback-message">Mesajın</label>
+        <textarea class="feedback-field feedback-text" id="feedback-message" rows="5"
+                  minlength="10" maxlength="1000" required spellcheck="true"
+                  placeholder="Buraya yaz… (en az 10, en fazla 1000 karakter)"></textarea>
+        <p class="feedback-count" id="feedback-count" aria-live="off">0 / 1000</p>
+
+        <!-- Bal küpü: insanlar görmez, botlar doldurur (doluysa kaydedilmez) -->
+        <div class="feedback-hp" aria-hidden="true">
+          <label for="feedback-website">Web sitesi</label>
+          <input type="text" id="feedback-website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
+        <p class="feedback-status" id="feedback-status" role="status" aria-live="polite"></p>
+        <p class="feedback-privacy">Adın, e-postan ya da IP adresin kaydedilmez; sadece mesajın.</p>
+
+        <div class="feedback-actions">
+          <button type="button" class="sketch-btn is-blue" id="feedback-close">Kapat</button>
+          <button type="submit" class="sketch-btn" id="feedback-send">Gönder</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= HIZLI GEZGİN (ilk ziyaret) ================= -->
+  <div class="tour" id="tour" hidden>
+    <div class="tour-spot" id="tour-spot" aria-hidden="true"></div>
+    <div class="tour-card" id="tour-card" role="dialog" aria-modal="true"
+         aria-labelledby="tour-title" aria-describedby="tour-text">
+      <p class="tour-step" id="tour-step"></p>
+      <h2 class="tour-title" id="tour-title"></h2>
+      <p class="tour-text" id="tour-text" aria-live="polite"></p>
+      <div class="tour-actions">
+        <button type="button" class="tour-skip" id="tour-skip">Turu geç</button>
+        <button type="button" class="sketch-btn is-blue tour-btn" id="tour-prev">Geri</button>
+        <button type="button" class="sketch-btn tour-btn" id="tour-next">İleri</button>
+      </div>
     </div>
   </div>
 

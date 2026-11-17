@@ -24,6 +24,9 @@
   --sound-fg: #1d1d1d;
   --theme-bg: #2e2e2e;           /* tema butonu = zıttı */
   --theme-fg: #ffffff;
+  --fb-bg: #f2d06b;              /* öneri butonu: eski kâğıt sarısı */
+  --fb-fg: #3a2a14;
+  --fb-glow: rgba(214, 168, 52, 0.45);
   --shadow: rgba(0, 0, 0, 0.18);
   --texture:
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .07 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>"),
@@ -73,6 +76,9 @@
   --sound-fg: #f1eee3;
   --theme-bg: #ffffff;
   --theme-fg: #1d1d1d;
+  --fb-bg: #8a5a32;              /* öneri butonu: ahşap kahvesi */
+  --fb-fg: #f6e7c8;
+  --fb-glow: rgba(176, 116, 60, 0.45);
   --shadow: rgba(0, 0, 0, 0.35);
   --texture:
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .05 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>"),
@@ -103,6 +109,9 @@
   --sound-fg: #e8d5ae;
   --theme-bg: #e8d5ae;
   --theme-fg: #2a1f14;
+  --fb-bg: #7b4f2c;              /* öneri butonu: darağacı ahşabı kahvesi */
+  --fb-fg: #f0dcb3;
+  --fb-glow: rgba(160, 104, 52, 0.4);
   --shadow: rgba(0, 0, 0, 0.45);
   --halo: rgba(18, 12, 6, 0.85);
 }
@@ -258,7 +267,7 @@ img { max-width: 100%; }
    Yer daralınca önce sol boşluk küçülür → logo KÜÇÜLMEDEN sola kayar,
    sağ üst butonlarla asla çakışmaz. */
 .banner {
-  --banner-reserve: calc(var(--round-size) * 2 + 10px + var(--edge) + 10px);
+  --banner-reserve: calc(var(--round-size) * 3 + 20px + var(--edge) + 10px); /* 3 buton: ses, tema, öneri */
   height: var(--banner-h);
   min-height: 48px;
   width: 100%;
@@ -313,6 +322,7 @@ img { max-width: 100%; }
   transition: transform 0.18s ease, background-color var(--t), color var(--t), border-color var(--t), opacity var(--t);
 }
 .round-btn:nth-child(2) { border-radius: 7px 13px 6px 12px / 12px 6px 13px 7px; }
+.round-btn:nth-child(3) { border-radius: 13px 6px 9px 12px / 9px 12px 6px 13px; }
 /* Büyürken merkezden büyür → dikey hiza bozulmaz */
 .round-btn:hover { transform: scale(1.1) rotate(-3deg); }
 .round-btn:active { transform: scale(0.95); }
@@ -346,6 +356,13 @@ img { max-width: 100%; }
   color: var(--theme-fg);
   box-shadow: 0 0 18px var(--glow-1), 3px 4px 0 var(--shadow);
 }
+/* Öneri kutusu: açık temada kâğıt sarısı, koyu temada ahşap kahvesi */
+.feedback-btn {
+  background: var(--fb-bg);
+  color: var(--fb-fg);
+  box-shadow: 0 0 18px var(--fb-glow), 3px 4px 0 var(--shadow);
+}
+
 /* Koyu temadayken güneş (açığa geç), açık temadayken ay (koyuya geç) */
 :root[data-theme="dark"] .theme-icon-moon,
 :root:not([data-theme="dark"]) .theme-icon-sun { display: none; }
@@ -660,6 +677,19 @@ img { max-width: 100%; }
   text-align: center;
 }
 .guess-hint:empty { min-height: 0; }
+.guess-hint.is-lucky { color: var(--green); }
+
+/* Kelime tahmini riski: oyuncu her zaman görür */
+.guess-note {
+  margin: -2px 0 0;
+  font-family: var(--font-body);
+  font-size: clamp(14px, 1.05vw, 17px);
+  color: var(--ink-soft);
+  text-align: center;
+  line-height: 1.2;
+}
+.guess-note strong { color: var(--red); font-weight: 400; }
+:root[data-theme="dark"][data-palette="sepya"] .guess-note { text-shadow: 0 0 3px var(--halo), 0 0 8px var(--halo); }
 
 .wrong-guesses {
   display: flex;
@@ -686,6 +716,8 @@ img { max-width: 100%; }
   gap: 6px;
 }
 .wrong-list:empty::before { content: '—'; color: var(--ink-soft); }
+/* Can götürmeyen (şanslı) yanlış tahmin: kesik çizgili etiket */
+.wrong-list li.is-lucky { border-style: dashed; opacity: 0.8; }
 .wrong-list li {
   padding: 1px 10px;
   border: 2px solid var(--red);
@@ -919,6 +951,14 @@ body.is-over .toast {
 .rules-content strong { color: var(--accent); }
 :root:not([data-theme="dark"]) .rules-content strong { color: #b4560a; }
 .rules-error { color: var(--red); }
+.modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 14px;
+}
+.modal-actions .modal-close { margin-top: 0; }
 .modal-close {
   align-self: center;
   margin-top: 14px;
@@ -926,6 +966,159 @@ body.is-over .toast {
   font-size: 20px;
   padding: 0 1.6em;
 }
+
+/* === 12a. KALEM KAYDIRMA ÇUBUĞU ==========================================
+   Kurallar ve öneri penceresi: ray = kesik kalem çizgisi, tutamak = el çizimi
+   küçük buton (Kurallar / Yeniden Başlat ile aynı dil). Chrome/Edge/Safari
+   ::-webkit-scrollbar, Firefox ince renkli çubuk. */
+.sketch-scroll::-webkit-scrollbar { width: 14px; }
+.sketch-scroll::-webkit-scrollbar-track {
+  margin: 4px 0;
+  background-image: linear-gradient(var(--ink-soft) 55%, transparent 0);
+  background-size: 2px 11px;
+  background-repeat: repeat-y;
+  background-position: center top;
+}
+.sketch-scroll::-webkit-scrollbar-thumb {
+  min-height: 42px;
+  background: var(--accent);
+  border: 2px solid var(--ink);
+  border-radius: 9px 4px 10px 3px / 4px 10px 3px 9px;
+}
+.sketch-scroll::-webkit-scrollbar-thumb:hover { background: var(--accent-2); }
+.sketch-scroll::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+.sketch-scroll::-webkit-scrollbar-corner { background: transparent; }
+@supports not selector(::-webkit-scrollbar) {
+  .sketch-scroll { scrollbar-width: thin; scrollbar-color: var(--accent) transparent; }
+}
+
+/* === 12c. HIZLI GEZGİN ===================================================
+   Vurgu: kesik çizgili el çizimi çerçeve, etrafı karartılır (dev gölge).
+   Kart: Kurallar penceresiyle aynı kâğıt / tahta dokusu. Yerleşim JS'te. */
+.tour {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.tour.is-open { opacity: 1; }
+.tour-spot {
+  position: fixed;
+  border: 3px dashed var(--accent);
+  border-radius: var(--wobble);
+  box-shadow: 0 0 0 200vmax rgba(0, 0, 0, 0.62), 0 0 22px var(--glow-1), inset 0 0 14px var(--glow-1);
+  pointer-events: none;
+  transition: left 0.35s ease, top 0.35s ease, width 0.35s ease, height 0.35s ease;
+  animation: tour-glow 1.6s ease-in-out infinite alternate;
+}
+@keyframes tour-glow {
+  from { border-color: var(--accent); }
+  to   { border-color: var(--ink); }
+}
+.tour-card {
+  position: fixed;
+  width: min(340px, calc(100vw - 24px));
+  padding: 14px 18px 14px;
+  background-color: var(--card-bg);
+  background-image: var(--texture);
+  color: var(--ink);
+  border: 4px solid var(--ink);
+  border-radius: var(--wobble);
+  box-shadow: 6px 8px 0 rgba(0, 0, 0, 0.35);
+  transform: rotate(-0.8deg);
+  transition: left 0.35s ease, top 0.35s ease;
+}
+.tour-card.is-pop { animation: tour-pop 0.35s cubic-bezier(.3, 1.5, .5, 1); }
+@keyframes tour-pop {
+  from { transform: rotate(-0.8deg) scale(0.92); opacity: 0.4; }
+  to   { transform: rotate(-0.8deg) scale(1); opacity: 1; }
+}
+.tour-step {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.tour-title {
+  margin: 0 0 4px;
+  font-family: var(--font-head);
+  font-size: clamp(22px, 2.2vw, 28px);
+  line-height: 1.1;
+}
+.tour-text {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(17px, 1.3vw, 20px);
+  line-height: 1.25;
+}
+.tour-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+.tour-btn { height: 40px; padding: 0 0.9em; font-size: 17px; border-width: 3px; }
+.tour-btn.is-hidden { visibility: hidden; }
+.tour-skip {
+  margin-right: auto;
+  padding: 4px 2px;
+  border: 0;
+  background: none;
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--ink-soft);
+  text-decoration: underline;
+  text-decoration-style: wavy;
+  text-underline-offset: 4px;
+}
+.tour-skip:hover { color: var(--ink); }
+
+/* === 12b. ÖNERİ KUTUSU ================================================== */
+.feedback-form {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 2px 6px 2px 2px;
+  font-size: clamp(17px, 1.3vw, 20px);
+}
+.feedback-intro { margin: 0 0 6px; }
+.feedback-label { font-family: var(--font-head); font-weight: 700; }
+.feedback-field {
+  width: 100%;
+  padding: 8px 12px;
+  border: 3px solid var(--ink);
+  border-radius: var(--wobble-sm);
+  background: var(--panel-bg);
+  color: var(--ink);
+  font: inherit;
+  transition: border-color var(--t);
+}
+.feedback-field:focus { outline: none; border-color: var(--accent-2); }
+.feedback-select option { background: var(--card-bg); color: var(--ink); }
+/* Yer daralınca önce mesaj kutusu kısalır → pencere kaydırma çubuğu çıkarmaz */
+.feedback-text { flex: 1 1 7.5em; resize: none; min-height: 4.2em; line-height: 1.3; }
+.feedback-text::placeholder { color: var(--ink-soft); opacity: 1; }
+.feedback-count { margin: 0; font-size: 0.85em; color: var(--ink-soft); text-align: right; }
+.feedback-count.is-over { color: var(--red); }
+/* Bal küpü alanı: ekran dışında (display:none kullanılmaz, bazı botlar onu atlar) */
+.feedback-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.feedback-status { margin: 0; min-height: 1.3em; text-align: center; }
+.feedback-status.is-error { color: var(--red); }
+.feedback-status.is-ok { color: var(--green); }
+.feedback-privacy { margin: 0; font-size: 0.8em; color: var(--ink-soft); text-align: center; }
+.feedback-actions {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 8px;
+}
+.feedback-actions .sketch-btn { height: 48px; font-size: 20px; padding: 0 1.4em; }
+.feedback-actions .sketch-btn:disabled { opacity: 0.55; cursor: wait; transform: none; }
 
 /* === 13. MOBİL ========================================================== */
 

@@ -11,5 +11,5 @@
 deployment:
   tasks:
     - export TARGET=$HOME/saitas.com.tr
-    - export FILES="index.html words.txt kural.txt .htaccess css js images"
+    - export FILES="index.html feedback.php words.txt kural.txt .htaccess css js images"
     - 'if [ ! -d "$TARGET" ]; then echo "Hedef klasor yok: $TARGET - hicbir sey kopyalanmadi"; elif [ "$(pwd -P)" = "$(cd "$TARGET" && pwd -P)" ]; then echo "Repo zaten site klasorunde - kopyalama gerekmiyor"; else /bin/cp -R $FILES "$TARGET/" && echo "Kopyalandi: $TARGET"; fi'

@@ -55,9 +55,11 @@ AddType video/webm .webm
 </IfModule>
 
 # --- Sadece GET / HEAD (statik site) ---------------------------------------
+# Tek istisna: öneri kutusu (feedback.php) POST kabul eder.
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteCond %{REQUEST_METHOD} !^(GET|HEAD)$ [NC]
+  RewriteCond %{REQUEST_METHOD}:%{REQUEST_URI} !^POST:/feedback\.php$
   RewriteRule .* - [F,L]
 
   # HTTPS'e yönlendirme (SSL sertifikası aktifse # işaretlerini kaldır)

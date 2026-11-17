@@ -130,12 +130,21 @@ window.AA_CONFIG = Object.freeze({
   /* === Metin dosyaları ================================================= */
   FILES: Object.freeze({
     words: 'words.txt',
-    rules: 'kural.txt'
+    rules: 'kural.txt',
+    feedback: 'feedback.php'   // öneri kutusu (sunucuda PHP gerekir)
+  }),
+
+  /* === Öneri kutusu ====================================================
+     Sınırlar feedback.php içinde de aynı; asıl kontrol sunucuda yapılır. */
+  FEEDBACK: Object.freeze({
+    minLength: 10,
+    maxLength: 1000
   }),
 
   /* === Oyun kuralları ================================================== */
   GAME: Object.freeze({
     maxErrors: 6,
+    guessPenaltyChance: 0.3,                 // yanlış KELİME tahmininin can götürme olasılığı (0.3 = %30)
     minLength: 5,
     maxLength: 10,
     alphabet: 'ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ', // 29 harf, alfabetik
@@ -154,6 +163,7 @@ window.AA_CONFIG = Object.freeze({
   STORAGE_KEYS: Object.freeze({
     theme: 'aa_theme',
     sound: 'aa_sound_mode',
-    used:  'aa_used_words'
+    used:  'aa_used_words',
+    tour:  'aa_tour_done'     // hızlı gezgin bir kez görüldü mü
   })
 });
