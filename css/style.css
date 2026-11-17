@@ -118,9 +118,6 @@
 :root[data-theme="dark"][data-palette="sepya"] .guess-input {
   box-shadow: 0 0 0 1px rgba(18, 12, 6, 0.35), 0 0 10px rgba(18, 12, 6, 0.55);
 }
-:root[data-theme="dark"][data-palette="sepya"] .slot::after {
-  filter: drop-shadow(0 0 2px var(--halo));
-}
 /* KONTUR DENEMESİ (geri dönüş: git etiketi "once-kontur"):
    açılan harfler ve alt çizgiler çizgi roman yazısı gibi kalın koyu dış hatla
    çizilir; zemin doldurulmaz, arka plan aynen görünür. */
@@ -136,10 +133,25 @@
     1.5px 1.5px 0 var(--kontur), -1.5px 1.5px 0 var(--kontur), 1.5px -1.5px 0 var(--kontur), -1.5px -1.5px 0 var(--kontur),
     0 0 6px var(--halo);
 }
+/* Harf sayısını gösteren alt çizgiler maske ile çizildiği için drop-shadow
+   maskeyle birlikte kesiliyor (CSS'te filtre maskeden önce uygulanır).
+   Kontur yerine: çizginin arkasına aynı dalgalı biçimde, daha kalın ve
+   kahverengi ikinci bir çizgi (::before) konur. */
 :root[data-theme="dark"][data-palette="sepya"] .slot::after {
-  filter: drop-shadow(1.6px 0 0 var(--kontur)) drop-shadow(-1.6px 0 0 var(--kontur))
-          drop-shadow(0 1.6px 0 var(--kontur)) drop-shadow(0 -1.6px 0 var(--kontur));
+  filter: none;
 }
+:root[data-theme="dark"][data-palette="sepya"] .slot::before {
+  content: '';
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  height: 13px;
+  background: var(--kontur);
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 12' preserveAspectRatio='none'><path d='M3 7 C 22 4, 40 9, 60 6 S 88 5, 97 7' stroke='black' stroke-width='8' fill='none' stroke-linecap='round'/></svg>") center / 100% 100% no-repeat;
+          mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 12' preserveAspectRatio='none'><path d='M3 7 C 22 4, 40 9, 60 6 S 88 5, 97 7' stroke='black' stroke-width='8' fill='none' stroke-linecap='round'/></svg>") center / 100% 100% no-repeat;
+}
+:root[data-theme="dark"][data-palette="sepya"] .slot:nth-child(even)::before { transform: scaleX(-1); }
 /* KONTUR DENEMESİ SONU */
 
 /* Kelime kutusu arka plandaki çizimle karışmasın: sadece kutunun içi koyu sepya zemin */
