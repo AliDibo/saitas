@@ -121,6 +121,17 @@
 :root[data-theme="dark"][data-palette="sepya"] .slot::after {
   filter: drop-shadow(0 0 2px var(--halo));
 }
+/* Kelime kutusu arka plandaki çizimle karışmasın: sadece kutunun içi koyu sepya zemin */
+:root[data-theme="dark"][data-palette="sepya"] .guess-input {
+  background: rgba(30, 22, 14, 0.9);
+  color: var(--ink);
+}
+:root[data-theme="dark"][data-palette="sepya"] .guess-input::placeholder {
+  color: #9c8866;
+}
+:root[data-theme="dark"][data-palette="sepya"] .guess-input:focus {
+  background: rgba(36, 27, 17, 0.95);
+}
 /* === DENEME SONU ========================================================= */
 
 /* === 2. TEMEL ============================================================ */
