@@ -16,8 +16,6 @@
    7) Kayıt JSON satırı olarak yazılır (kod olarak çalıştırılamaz), dosya kilitlenir.
    8) E-posta bildirimi (isteğe bağlı): alıcı adresi sadece sunucudaki
       ~/saitas-geri-bildirim/eposta.txt dosyasında; günde en fazla 30 mail.
-      Gönderim şifreli SMTP ile (ayarlar sunucudaki smtp.txt'de; paylaşımlı
-      hostingde mail() kapalı). Sorunlar ~/saitas-geri-bildirim/hata.log'a yazılır.
    ========================================================================== */
 declare(strict_types=1);
 
@@ -298,6 +296,10 @@ function notify_by_mail(string $date, string $category, string $message): void
     if ($to === '') {
         return;
     }
+    if (!function_exists('mail')) {
+        mail_log('sunucuda PHP mail() kapali (disable_functions) - hosting destegine sorulmali');
+        return;
+    }
     $labels = ['oneri' => 'Öneri / istek', 'hata' => 'Hata bildirimi', 'kelime' => 'Kelime önerisi', 'diger' => 'Diğer'];
     $body = "saitas.com.tr öneri kutusuna yeni mesaj geldi.\n\n"
         . 'Tarih: ' . $date . "\n"
@@ -305,19 +307,6 @@ function notify_by_mail(string $date, string $category, string $message): void
         . "Mesaj:\n" . wordwrap($message, 76, "\n", true) . "\n\n"
         . "--\nBu e-posta otomatik gönderildi; yanıtlama.\n"
         . "Mesajı ziyaretçi yazdı: içindeki bağlantılara güvenme, tıklama.\n";
-    $subject = '=?UTF-8?B?' . base64_encode('saitas.com.tr – yeni öneri') . '?=';
-
-    // 1) Önce SMTP (paylaşımlı hostingde mail() kapalı; hosting firması açmıyor)
-    $smtp = smtp_config();
-    if ($smtp !== null) {
-        smtp_send($smtp, $to, $subject, $body); // hata → RuntimeException → çağıran hata.log'a yazar
-        return;
-    }
-    // 2) smtp.txt yoksa mail() (başka bir sunucuya taşınırsa çalışsın diye duruyor)
-    if (!function_exists('mail')) {
-        mail_log('mail() kapali ve smtp.txt yok - saitas-geri-bildirim/smtp.txt olusturulmali');
-        return;
-    }
     $headers = implode("\r\n", [
         'From: saitas.com.tr <' . MAIL_FROM . '>',
         'MIME-Version: 1.0',
@@ -325,127 +314,12 @@ function notify_by_mail(string $date, string $category, string $message): void
         'Content-Transfer-Encoding: 8bit',
         'X-Mailer: saitas-oneri',
     ]);
+    $subject = '=?UTF-8?B?' . base64_encode('saitas.com.tr – yeni öneri') . '?=';
     // -f: zarf göndericisi alan adının adresi olsun (SPF uyumu); izin yoksa -f'siz dene
     if (!@mail($to, $subject, $body, $headers, '-f' . MAIL_FROM)) {
         if (!@mail($to, $subject, $body, $headers)) {
             mail_log('mail() false dondu (sunucu maili kabul etmedi)');
         }
-    }
-}
-
-/* === SMTP ================================================================
-   Ayarlar SADECE sunucuda: ~/saitas-geri-bildirim/smtp.txt (repo ve web kökü dışında).
-   Biçim (her satır anahtar=değer):
-     host=mail.saitas.com.tr
-     port=465
-     user=noreply@saitas.com.tr
-     pass=posta-kutusunun-sifresi
-   Güvenlik: bağlantı her zaman şifreli (465 SSL / 587 STARTTLS), sunucu sertifikası
-   doğrulanır (yalnız localhost'ta doğrulama gerekmez: trafik makineden çıkmaz).
-   Şifre hiçbir günlüğe yazılmaz; hata mesajı sadece adım adı + SMTP kodu içerir. */
-
-/** smtp.txt'yi okur ve doğrular. Dosya yoksa null (sessiz), bozuksa null + hata.log. */
-function smtp_config(): ?array
-{
-    $raw = @file_get_contents(STORE_DIR . '/smtp.txt', false, null, 0, 2000);
-    if (!is_string($raw)) {
-        return null;
-    }
-    $cfg = [];
-    foreach (preg_split('/\R/', $raw) as $line) {
-        if (preg_match('/^\s*(host|port|user|pass)\s*=\s*(.*?)\s*$/', $line, $m)) {
-            $cfg[$m[1]] = $m[2];
-        }
-    }
-    $host = strtolower($cfg['host'] ?? '');
-    $port = (int)($cfg['port'] ?? 0);
-    $user = $cfg['user'] ?? '';
-    $pass = $cfg['pass'] ?? '';
-    if (!preg_match('/^[a-z0-9.-]{1,253}$/', $host) || !in_array($port, [465, 587], true)
-        || !filter_var($user, FILTER_VALIDATE_EMAIL) || $pass === '' || strlen($pass) > 200) {
-        mail_log('smtp.txt gecersiz: host / port (465 ya da 587) / user (e-posta) / pass satirlarini kontrol et');
-        return null;
-    }
-    return ['host' => $host, 'port' => $port, 'user' => $user, 'pass' => $pass];
-}
-
-/** Kimlik doğrulamalı, şifreli SMTP ile tek mail gönderir. Hata → RuntimeException. */
-function smtp_send(array $c, string $to, string $subject, string $body): void
-{
-    if (!function_exists('stream_socket_client')) {
-        throw new RuntimeException('stream_socket_client kapali (hosting SMTP baglantisina izin vermiyor)');
-    }
-    $local = in_array($c['host'], ['localhost', '127.0.0.1'], true);
-    $ctx = stream_context_create(['ssl' => [
-        'verify_peer'       => !$local,
-        'verify_peer_name'  => !$local,
-        'allow_self_signed' => $local,
-        'peer_name'         => $c['host'],
-    ]]);
-    $remote = ($c['port'] === 465 ? 'ssl://' : 'tcp://') . $c['host'] . ':' . $c['port'];
-    $s = @stream_socket_client($remote, $errno, $errstr, 8, STREAM_CLIENT_CONNECT, $ctx);
-    if (!$s) {
-        throw new RuntimeException('baglanti kurulamadi: ' . $c['host'] . ':' . $c['port'] . ' (' . $errno . ' ' . $errstr . ')');
-    }
-    stream_set_timeout($s, 8);
-
-    // Çok satırlı SMTP yanıtını okur ("250-..." devam, "250 ..." son satır); sadece kodu döndürür
-    $read = static function () use ($s): int {
-        while (($line = fgets($s, 1024)) !== false) {
-            if (strlen($line) < 4 || $line[3] !== '-') {
-                return (int)substr($line, 0, 3);
-            }
-        }
-        return 0; // zaman aşımı / bağlantı koptu
-    };
-    $step = static function (?string $command, array $okCodes, string $name) use ($s, $read): void {
-        if ($command !== null) {
-            fwrite($s, $command . "\r\n");
-        }
-        $code = $read();
-        if (!in_array($code, $okCodes, true)) {
-            throw new RuntimeException('SMTP ' . $name . ' basarisiz (kod ' . $code . ')');
-        }
-    };
-
-    try {
-        $step(null, [220], 'karsilama');
-        $step('EHLO saitas.com.tr', [250], 'EHLO');
-        if ($c['port'] === 587) {
-            $step('STARTTLS', [220], 'STARTTLS');
-            $method = STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT
-                | (defined('STREAM_CRYPTO_METHOD_TLSv1_3_CLIENT') ? STREAM_CRYPTO_METHOD_TLSv1_3_CLIENT : 0);
-            if (!@stream_socket_enable_crypto($s, true, $method)) {
-                throw new RuntimeException('SMTP TLS baslatilamadi (sertifika / host adi uyusmuyor olabilir)');
-            }
-            $step('EHLO saitas.com.tr', [250], 'EHLO (TLS)');
-        }
-        $step('AUTH LOGIN', [334], 'AUTH');
-        $step(base64_encode($c['user']), [334], 'AUTH kullanici');
-        $step(base64_encode($c['pass']), [235], 'giris (kullanici adi ya da sifre yanlis olabilir)');
-        $step('MAIL FROM:<' . $c['user'] . '>', [250], 'MAIL FROM');
-        $step('RCPT TO:<' . $to . '>', [250, 251], 'RCPT TO');
-        $step('DATA', [354], 'DATA');
-
-        // Gövde base64: nokta ile başlayan satır / 8-bit sorunu olmaz; başlıklar sabit
-        $domain = substr((string)strrchr($c['user'], '@'), 1);
-        $data = implode("\r\n", [
-            'Date: ' . date('r'),
-            'From: saitas.com.tr <' . $c['user'] . '>',
-            'To: <' . $to . '>',
-            'Subject: ' . $subject,
-            'Message-ID: <' . bin2hex(random_bytes(12)) . '@' . $domain . '>',
-            'MIME-Version: 1.0',
-            'Content-Type: text/plain; charset=UTF-8',
-            'Content-Transfer-Encoding: base64',
-            'X-Mailer: saitas-oneri',
-            '',
-            rtrim(chunk_split(base64_encode(str_replace("\n", "\r\n", $body)), 76, "\r\n")),
-        ]);
-        $step($data . "\r\n.", [250], 'gonderim');
-        fwrite($s, "QUIT\r\n");
-    } finally {
-        fclose($s);
     }
 }
 
